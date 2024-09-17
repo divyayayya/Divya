@@ -4,7 +4,7 @@
         
         $host     = 'localhost';
         $port     = '3306';
-        $dbname   = 'finance_tracking';
+        $dbname   = 'employeedb';
         $username = 'root';
         $password = '';
 
