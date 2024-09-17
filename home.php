@@ -29,7 +29,6 @@
     echo "<tr><td>{$employee->getID()}</td><td>{$employee->getStaffName()}</td><td>{$employee->getDept()}</td><td>{$employee->getPosition()}</td><td>{$employee->getCountry()}</td><td>{$employee->getEmail()}</td></tr></table>";
 
     echo "</br>";
-    echo $userRole;
     $deptDetails = '';
     $deptRequests = '';
 
