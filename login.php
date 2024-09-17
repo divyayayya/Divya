@@ -14,6 +14,7 @@
         <input type="submit" value="Check User">
 
         <?php
+        $_SESSION = [];
         if (isset($_GET['error']) && $_GET['error'] === 'true') {
             echo '<p style="color: red;">User ID does not exist. Please re-enter UserID.</p>';
         }
