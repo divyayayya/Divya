@@ -63,13 +63,22 @@
                         title: 'Event 2',
                         start: '2024-09-25'
                     }
-                ]
+                ],
+                dateClick: function() {
+                    alert('a day has been clicked!');
+                }
             });
             calendar.render();
         });
+
+//         var calendar = new Calendar(calendarEl, {
+//   dateClick: function() {
+//     alert('a day has been clicked!');
+//   }
+// });
     </script>
 </body>
 
 <body>
-    <div id='calendar'>Dcalendar placeholder</div>
+    <div id='calendar'></div>
 </body>
