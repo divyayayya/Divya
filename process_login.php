@@ -21,7 +21,12 @@ if (isset($_POST['userID'])) {
 
     if (count($result)> 0) {
         // User ID exists
+        $dao = new EmployeeDAO;
+        $result = $dao->retrieveEmployeeInfo($userID);
+        $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
+
         $_SESSION['userID'] = $userID;
+        $_SESSION['userRole'] = $employee->getRole();
         header("Location: home.php"); // Redirect to another page
         exit();
     } else {
