@@ -12,6 +12,11 @@
 </head>
 <body>
 
-test
+<?php
+    $userID = $_SESSION['userID'];
+    $userRole = $_SESSION['userRole'];
+    
+
+?>
 
 </body>

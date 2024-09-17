@@ -28,5 +28,14 @@ LINES TERMINATED BY '\r\n' -- On Windows, the line endings are often '\r\n'
 IGNORE 1 LINES -- Ignore the header row if it exists
 (Staff_ID, Staff_FName, Staff_LName, Dept, Position, Country, Email, Reporting_Manager, Role);
 
-#Test Data
-select * from employee;
+
+#Create Employee_Arrangement Table
+CREATE TABLE employee_arrangement (
+    Staff_ID INT NOT NULL,
+    Arrangement_Date DATE NOT NULL,
+    Working_Arrangement VARCHAR(50) NOT NULL,
+    CONSTRAINT employee_arrangement_pk PRIMARY KEY (Staff_ID, Arrangement_Date),
+    CONSTRAINT employee_arrangement_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE
+);
+
+Select * from employee_arrangement;
