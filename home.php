@@ -8,6 +8,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- calendar css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.css" />
     <title>HomePage</title>
 </head>
 <body>
@@ -39,9 +41,35 @@
     echo "<table style='border-collapse: separate; border-spacing: 20px;'><tr><td><a href=''>Requests</a></td><td>{$deptDetails}</td><td>{$deptRequests}</td></tr></table>";
 
 
-    echo "</br></br><h1>Calender</h1>";
-    echo "@CALENDAR PPL PLS PUT IT HERE TYVM";
+    echo "</br></br><h1>Calendar</h1>";
+    // echo "@CALENDAR PPL PLS PUT IT HERE TYVM";
+    // echo "<div id='calendar'></div>"
 
 ?>
-    
+    <!-- calendar js -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [
+                    {
+                        title: 'Event 1',
+                        start: '2024-09-17',
+                        end: '2024-09-18'
+                    },
+                    {
+                        title: 'Event 2',
+                        start: '2024-09-25'
+                    }
+                ]
+            });
+            calendar.render();
+        });
+    </script>
+</body>
+
+<body>
+    <div id='calendar'>Dcalendar placeholder</div>
 </body>

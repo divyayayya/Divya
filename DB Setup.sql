@@ -20,13 +20,13 @@ CREATE TABLE employee (
 
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
 #Load Data from employee.csv into DB
-LOAD DATA INFILE 'C:/Users/LimZY/OneDrive/Documents/School/IS212 - Software Project Management/Project/employee.csv'
+LOAD DATA INFILE "C:\\wamp64\\www\\GitHub\\Divya\\employee.csv"
 INTO TABLE employee
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
 LINES TERMINATED BY '\r\n' -- On Windows, the line endings are often '\r\n'
 IGNORE 1 LINES -- Ignore the header row if it exists
-(Staff_ID, Staff_FName, Staff_LName, Dept, Position, Country, Email, Reporting_Manager, Role);
+(Staff_ID, Staff_FName, Staff_LName, Dept, Position, Country, Email, Reporting_Manager, Role    );
 
 
 #Create Employee_Arrangement Table
