@@ -53,6 +53,7 @@
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
+                selectable: true,
                 events: [
                     {
                         title: 'Event 1',
@@ -66,6 +67,7 @@
                 ],
                 dateClick: function() {
                     alert('a day has been clicked!');
+                    
                 }
             });
             calendar.render();
