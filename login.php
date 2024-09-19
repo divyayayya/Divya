@@ -6,6 +6,7 @@
     <title>User Check</title>
 </head>
 <body>
+    <h1 style='display: inline-block; margin-right: 20px;'>Sign In</h1></br>
     <form action="process_login.php" method="post">
         <label for="userID">Enter User ID:</label>
 

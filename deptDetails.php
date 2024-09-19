@@ -45,8 +45,10 @@
     }
 
     if ($userRole == 1){
-        echo "<form method='POST' action=''>";
-        echo "<select name='department'>";
+        
+        echo "<form method='POST' action='' >";
+        echo "<label for='dept'>Select Department: </label>";
+        echo "<select id='dept' name='department'>";
     
         // Iterate over the departments array to populate the dropdown options
         foreach ($departments as $dept) {
