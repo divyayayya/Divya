@@ -1,29 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Work-from-Home Arrangements</title>
+    <title>Delete Work-from-Home Arrangement</title>
 </head>
 <body>
-    <h1>Delete Work-from-Home Arrangements</h1>
+    <h1>Delete Work-from-Home Arrangement</h1>
+    <form id="delete-form">
+        <label for="staff_id">Staff ID:</label>
+        <input type="text" id="staff_id" name="staff_id" required><br><br>
 
-    <!-- Assuming user is logged in and can see their work-from-home schedule -->
-    <form action="process_deletion.php" method="post">
-        <label for="arrangement_id">Select Work-from-Home Arrangement to Delete:</label><br>
-        <select id="arrangement_id" name="arrangement_id" required>
-            <!-- Options would be populated dynamically from the database -->
-            <!-- Example static options -->
-            <option value="1">Arrangement 1 - 2024-09-01 to 2024-09-05</option>
-            <option value="2">Arrangement 2 - 2024-09-10 to 2024-09-12</option>
-        </select><br><br>
+        <label for="arrangement_id">Arrangement ID:</label>
+        <input type="text" id="arrangement_id" name="arrangement_id" required><br><br>
 
-        <label for="reason">Reason for Deleting:</label><br>
+        <label for="reason">Reason for Deletion:</label><br>
         <textarea id="reason" name="reason" rows="4" cols="50" required></textarea><br><br>
 
-        <input type="submit" value="Submit Deletion Request">
+        <button type="button" onclick="submitDeletionRequest()">Submit</button>
     </form>
+
+    <script>
+        function submitDeletionRequest() {
+            const staffId = document.getElementById('staff_id').value;
+            const arrangementId = document.getElementById('arrangement_id').value;
+            const reason = document.getElementById('reason').value;
+
+            fetch('/delete_arrangement', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    staff_id: staffId,
+                    arrangement_id: arrangementId,
+                    reason: reason
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 </html>
-
-<!-- backend not done yet -->
