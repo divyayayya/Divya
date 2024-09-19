@@ -26,7 +26,7 @@
     $dao_req = new RequestDAO;
     $requests = $dao_req -> retrieverequestInfo($userID);
     // $arrangement = new Request($arrangements['Staff_ID'],$arrangements['Arrangement_Date'], $arrangements['Working_Arrangement'], $arrangements);
-    
+
     echo "<h1 style='display: inline-block; margin-right: 20px;'>User Details</h1><a href='login.php' style='display: inline-block; vertical-align: middle;'>Sign Out</a>";
 
     echo "<table border=1>";
@@ -67,61 +67,68 @@
     $requests_json = json_encode($requests);
 ?>
     <!-- calendar js -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-    <script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script>
     const requests = <?php echo $requests_json; ?>;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-             // Convert requests data into FullCalendar event objects
-            const events = requests.map(function(request) {
-                return {
-                    title: request.Working_Arrangement, // Display the arrangement type as the title
-                    start: request.Arrangement_Date, // Use the Arrangement_Date as the event's start date
-                    // Add other fields if needed, e.g., for hover effects
-                };
-            });
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                // nowIndicator: true,
-                // Gotta change the events part to be dynamic and pull from employee_arrangement db
-                events: events,
-                dateClick: function() {
-                    // alert('a day has been clicked!');
-                    window.open('location_details.php', target='_blank');
-                },
-                eventMouseEnter: function(info) {
-                    // Show hover effect or tooltip with event details
-                    var tooltip = document.createElement('div');
-                    tooltip.className = 'tooltip';
-                    tooltip.innerHTML = info.event.title + "<br>" + info.event.start;
-                    document.body.appendChild(tooltip);
-                    
-                    tooltip.style.position = 'absolute';
-                    tooltip.style.top = info.jsEvent.pageY + 'px';
-                    tooltip.style.left = info.jsEvent.pageX + 'px';
-                    tooltip.style.backgroundColor = '#f9f9f9';
-                    tooltip.style.padding = '5px';
-                    tooltip.style.border = '1px solid #ccc';
-                },
-                eventMouseLeave: function() {
-                    // Remove the tooltip when the mouse leaves the event
-                    var tooltip = document.querySelector('.tooltip');
-                    if (tooltip) {
-                        tooltip.remove();
-                    }
-                }
-            });
-            calendar.render();
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
 
-//         var calendar = new Calendar(calendarEl, {
-//   dateClick: function() {
-//     alert('a day has been clicked!');
-//   }
-// });
-    </script>
+        // Convert requests data into FullCalendar event objects
+        const events = requests.map(function(request) {
+            // Correct comparison operator '==' or '===' instead of '='
+            if (request.Request_Status === 'Approved') {
+                return {
+                    title: request.Working_Arrangement,  // Display the arrangement type as the title
+                    start: request.Arrangement_Date,     // Use the Arrangement_Date as the event's start date
+                    extendedProps: {
+                        status: request.Request_Status    // Correctly referencing request.Request_Status
+                    }
+                };
+            } else if (request.Request_Status === 'Pending') {
+                return {
+                    title: request.Working_Arrangement,  // Display the arrangement type as the title
+                    start: request.Arrangement_Date,     // Use the Arrangement_Date as the event's start date
+                    backgroundColor: '#edb95e',
+                    extendedProps: {
+                        status: request.Request_Status    // Correctly referencing request.Request_Status
+                    }
+                };
+            }
+
+        }).filter(event => event !== undefined); // Filter out undefined values for non-approved requests
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            events: events,  // Add dynamic events here
+            dateClick: function() {
+                window.open('location_details.php', target='_blank');
+            },
+            eventMouseEnter: function(info) {
+                var tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.innerHTML = info.event.title + "<br>" + info.event.start;
+                document.body.appendChild(tooltip);
+                
+                tooltip.style.position = 'absolute';
+                tooltip.style.top = info.jsEvent.pageY + 'px';
+                tooltip.style.left = info.jsEvent.pageX + 'px';
+                tooltip.style.backgroundColor = '#f9f9f9';
+                tooltip.style.padding = '5px';
+                tooltip.style.border = '1px solid #ccc';
+            },
+            eventMouseLeave: function() {
+                var tooltip = document.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+
 </body>
 
 <body>
