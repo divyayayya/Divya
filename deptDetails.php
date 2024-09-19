@@ -37,25 +37,29 @@
 
     // If form is submitted, use the selected department to retrieve employees in that department
     $selectedDept = $employee->getDept(); // Default to the user's department
+
+    echo "<h1 style='display: inline-block; margin-right: 20px;'>Department</h1><a href='home.php'>Back</a></br>";
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selectedDept = $_POST['department']; // Get the selected department from the form
     }
 
-    echo "<form method='POST' action=''>";
-    echo "<select name='department'>";
-
-    // Iterate over the departments array to populate the dropdown options
-    foreach ($departments as $dept) {
-        $selected = ($dept['Dept'] == $selectedDept) ? 'selected' : ''; // Set the default selected option
-        echo "<option value='" . htmlspecialchars($dept['Dept']) . "' $selected>" . htmlspecialchars($dept['Dept']) . "</option>";
+    if ($userRole == 1){
+        echo "<form method='POST' action=''>";
+        echo "<select name='department'>";
+    
+        // Iterate over the departments array to populate the dropdown options
+        foreach ($departments as $dept) {
+            $selected = ($dept['Dept'] == $selectedDept) ? 'selected' : ''; // Set the default selected option
+            echo "<option value='" . htmlspecialchars($dept['Dept']) . "' $selected>" . htmlspecialchars($dept['Dept']) . "</option>";
+        }
+    
+        echo "</select>";
+        echo "<input type='submit' value='Submit'>";
+        echo "</form></br>";
     }
-
-    echo "</select>";
-    echo "<input type='submit' value='Submit'>";
-    echo "</form>";
-
-    echo "</br><h3>Employees in the Same Department</h3>";
-
+    
+    
     // Retrieve employees in the selected department
     $employeesInSameDept = $dao->retrieveEmployeesInSameDept($selectedDept);
 

@@ -24,7 +24,7 @@
     $requests = $dao->retrieveRequestInfo($userID);
 
 
-    echo "<h2 style='display: inline-block; margin-right: 20px;'>My Requests</h2></br>";
+    echo "<h1 style='display: inline-block; margin-right: 20px;'>My Requests</h1><a href='home.php'>Back</a></br>";
     echo "<h2 style='display: inline-block; margin-right: 20px;'>Request History</h2><a href='request_form.php' style='display: inline-block; vertical-align: middle;'>New Request</a>";
 
 
