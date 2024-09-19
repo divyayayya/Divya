@@ -15,7 +15,6 @@
 <body>
 
 <?php
-    session_start(); // Ensure the session is started
     $userID = $_SESSION['userID'];
     $userRole = $_SESSION['userRole'];
 

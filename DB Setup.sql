@@ -18,6 +18,8 @@ CREATE TABLE employee (
     CONSTRAINT employee_fk FOREIGN KEY (Reporting_Manager) REFERENCES employee(Staff_ID)
 );
 
+SET FOREIGN_KEY_CHECKS=0;
+
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
 #Load Data from employee.csv into DB
 LOAD DATA INFILE "C:\\wamp64\\www\\GitHub\\Divya\\employeenew.csv"
@@ -27,6 +29,10 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n' -- On Windows, the line endings are often '\r\n'
 IGNORE 1 LINES -- Ignore the header row if it exists
 (Staff_ID, Staff_FName, Staff_LName, Dept, Position, Country, Email, Reporting_Manager, Role);
+
+
+SET FOREIGN_KEY_CHECKS=1;
+
 
 #Create Employee_Arrangement Table
 CREATE TABLE employee_arrangement (

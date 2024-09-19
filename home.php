@@ -54,6 +54,7 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 selectable: true,
+                // Gotta change the events part to be dynamic and pull from employee_arrangement db
                 events: [
                     {
                         title: 'Event 1',
