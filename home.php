@@ -38,7 +38,7 @@
         $deptDetails = "<a href='deptDetails.php'>Department Details</a>";
         $deptRequests = "<a href='pendingRequests'>Pending Requests</a>";
     }
-    echo "<table style='border-collapse: separate; border-spacing: 20px;'><tr><td><a href=''>Requests</a></td><td>{$deptDetails}</td><td>{$deptRequests}</td></tr></table>";
+    echo "<table style='border-collapse: separate; border-spacing: 20px;'><tr><td><a href='my_requests.php'>My Requests</a></td><td>{$deptDetails}</td><td>{$deptRequests}</td></tr></table>";
 
 
     echo "</br></br><h1>Calendar</h1>";

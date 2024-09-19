@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS=0;
 
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
 #Load Data from employee.csv into DB
-LOAD DATA INFILE "C:\\wamp64\\www\\GitHub\\Divya\\employeenew.csv"
+LOAD DATA INFILE "C:\\wamp64\\tmp\\employeenew.csv"
 INTO TABLE employee
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
@@ -37,10 +37,20 @@ SET FOREIGN_KEY_CHECKS=1;
 #Create Employee_Arrangement Table
 CREATE TABLE employee_arrangement (
     Staff_ID INT NOT NULL,
+    Request_ID INT NOT NULL,
     Arrangement_Date DATE NOT NULL,
     Working_Arrangement VARCHAR(50) NOT NULL,
-    CONSTRAINT employee_arrangement_pk PRIMARY KEY (Staff_ID, Arrangement_Date),
+    Request_Status VARCHAR(50) NOT NULL,
+    CONSTRAINT employee_arrangement_pk PRIMARY KEY (Staff_ID, Request_ID, Arrangement_Date),
     CONSTRAINT employee_arrangement_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE
 );
+
+INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Request_Status)
+VALUES 
+(150148, 1, '2024-01-01', 'WFH', 'Approved') ,
+(150148, 1, '2024-01-08', 'WFH', 'Approved') ,
+(150148, 2, '2024-01-15', 'WFH', 'Pending') ,
+(150148, 3, '2024-01-22', 'WFH', 'Rejected'),
+(150148, 4, '2024-01-29', 'WFH', 'Withdrawn') ;
 
 Select * from employee_arrangement;
