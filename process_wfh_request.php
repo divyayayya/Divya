@@ -4,7 +4,7 @@ require_once "model/common.php";
 $connMgr = new ConnectionManager();
 $pdo = $connMgr->getConnection();
 
-session_start();
+// session_start();
 $userID = $_SESSION['userID'];
 
 // Getformdata
