@@ -1,32 +1,24 @@
 <?php
-require_once "model/common.php";
+    require_once "model/common.php";
 
-$connMgr = new ConnectionManager();
-$pdo = $connMgr->getConnection();
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $userID = $_POST['userID'];
+        $wfh_date = $_POST['wfh_date'];
+        $reason = $_POST['reason'];
 
-// session_start();
-$userID = $_SESSION['userID'];
+        // Create a new DAO to handle WFH requests
+        $dao = new RequestDAO();
+        $result = $dao->submitWFHRequest($userID, $wfh_date, $reason);
 
-// Getformdata
-$date1 = $_POST['date1'];
-$date2 = isset($_POST['date2']) ? $_POST['date2'] : null;
-$reason = $_POST['reason'];
-
-// Insert request into the database
-$sql = 'INSERT INTO employee_arrangement (Staff_ID, Arrangement_Date, Working_Arrangement) VALUES (:staffID, :date, :arrangement)';
-$stmt = $pdo->prepare($sql);
-
-$dates = [$date1];
-if ($date2) {
-    $dates[] = $date2;
-}
-
-foreach ($dates as $date) {
-    $stmt->bindParam(':staffID', $userID, PDO::PARAM_INT);
-    $stmt->bindParam(':date', $date);
-    $stmt->bindParam(':arrangement', $reason);
-    $stmt->execute();
-}
-
-// not done yet lol
- ?>
+        if ($result) {
+            // Redirect to success page or show success message
+            header("Location: home.php?message=Request submitted successfully.");
+        } else {
+            // Show error message
+            echo "Error submitting request.";
+        }
+    } else {
+        header("Location: apply_wfh.php");
+        exit();
+    }
+?>
