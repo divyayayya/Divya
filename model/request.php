@@ -5,13 +5,15 @@
         private $date;
         private $arrangement;
         private $status;
+        private $reason;
 
-        public function __construct($staffID, $reqID, $date, $arrangement, $status){
+        public function __construct($staffID, $reqID, $date, $arrangement, $status, $reason){
             $this->staffID = $staffID;
             $this->reqID = $reqID;
             $this->date = $date;
             $this->arrangement = $arrangement;
             $this->status = $status;
+            $this->reason = $reason;
         }
 
         public function getStaffID(){
@@ -32,6 +34,10 @@
 
         public function getStatus(){
             return $this->status;
+        }
+
+        public function getReason(){
+            return $this->reason;
         }
     }
 

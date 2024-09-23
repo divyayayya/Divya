@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<h1>Apply for Work-from-Home Days</h1>
+<h1 style='display: inline-block; margin-right: 20px;'>Apply for Work-from-Home Days</h1><a href='my_requests.php'>Back</a>
 
 <form action="process_wfh_request.php" method="POST">
     <label for="date">Select Date(s):</label><br>
@@ -33,7 +33,7 @@
     <button type="submit">Submit Request</button>
 </form>
 
-<a href="home.php">Go back to home</a>
+
 
 </body>
 </html>

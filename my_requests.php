@@ -51,7 +51,7 @@
     $dao = new RequestDAO;
     $requests = $dao->retrieveRequestInfo($userID);
 
-    echo "<h2 style='display: inline-block; margin-right: 20px;'>My Requests</h2>";
+    echo "<h1 style='display: inline-block; margin-right: 20px;'>My Requests</h1><a href='home.php'>Back</a></br>";
     
     // New Requests Dropdown
     echo "<div class='dropdown'>";
@@ -64,9 +64,9 @@
 
     if (count($requests) > 0) {
         echo "<table border=1>";
-        echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Status</th></tr>";    
+        echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Reason</th><th>Status</th></tr>";    
         foreach ($requests as $request) {
-            echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Request_Status']}</td></tr>";
+            echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Reason']}</td><td>{$request['Request_Status']}</td></tr>";
         }
         echo "</table>";
     } else {

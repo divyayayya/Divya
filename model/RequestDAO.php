@@ -15,27 +15,47 @@
 
             return $result;
         }
-     // Submit a new work-from-home request
+
+        private Function generateReqID(){
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $sql = 'SELECT MAX(Request_ID) AS max_request_id FROM employee_arrangement';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $newRequestID = $result['max_request_id']+1;
+            
+            $stmt = null;
+            $pdo = null;
+
+            return $newRequestID;
+        }
+
+
+        // Submit a new work-from-home request
         public function submitWFHRequest($userID, $wfh_date, $reason) {
-        $conn = new ConnectionManager();
-        $pdo = $conn->getConnection();
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+            
+            $requestID = $this->generateReqID();
+            // Insert the WFH request into the employee_arrangement table
+            $sql = "INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason)
+                    VALUES (:userID, :wfh_date, 'WFH', 'Pending', :reason)";
+            
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+            $stmt->bindParam(':wfh_date', $wfh_date);
+            $stmt->bindParam(':reason', $reason);
 
-        // Insert the WFH request into the employee_arrangement table
-        $sql = "INSERT INTO employee_arrangement (Staff_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason)
-                VALUES (:userID, :wfh_date, 'WFH', 'Pending', :reason)";
-        
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
-        $stmt->bindParam(':wfh_date', $wfh_date);
-        $stmt->bindParam(':reason', $reason);
+            // Execute the insert and return the result (true if success, false if failure)
+            $result = $stmt->execute();
 
-        // Execute the insert and return the result (true if success, false if failure)
-        $result = $stmt->execute();
+            $stmt = null;
+            $pdo = null;
 
-        $stmt = null;
-        $pdo = null;
-
-        return $result;
+            return $result;
     }
 
     }
