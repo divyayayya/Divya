@@ -20,20 +20,31 @@
 </head>
 <body>
 
-<h1 style='display: inline-block; margin-right: 20px;'>Apply for Work-from-Home Days</h1><a href='my_requests.php'>Back</a>
+    <h1 style='display: inline-block; margin-right: 20px;'>Apply for Work-from-Home Days</h1><a href='my_requests.php'>Back</a>
 
-<form action="process_wfh_request.php" method="POST">
-    <label for="date">Select Date(s):</label><br>
-    <input type="date" name="wfh_date" required><br><br>
-    
-    <label for="reason">Reason for WFH:</label><br>
-    <textarea name="reason" required></textarea><br><br>
-    
-    <input type="hidden" name="userID" value="<?php echo $userID; ?>">
-    <button type="submit">Submit Request</button>
-</form>
+    <form action="process_wfh_request.php" method="POST">
+        <label for="date">Select Date(s):</label><br>
+        <input type="date" name="wfh_date" required><br><br>
+        
+        <label for="reason">Reason for WFH:</label><br>
+        <textarea name="reason" required></textarea><br><br>
+        
+        <button type="submit">Submit Request</button>
+    </form>
+
+<?php
+    $msg = '';
+    if (isset($_POST['submit'])){
+        $wfhDate = $_POST['wfh_date'];
+        $reason = $_POST['reason'];
+        $status = "Pending";
+
+        $dao = new RequestDAO;
 
 
+    }
+
+?>
 
 </body>
 </html>
