@@ -52,3 +52,14 @@ VALUES
 (150148, 3, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected'),
 (150148, 4, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn'),
 (140878, 5, '2024-10-15', 'WFH', 'Take care of baby', 'Approved');
+
+CREATE TABLE deletion_request (
+    Request_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Staff_ID INT NOT NULL,
+    Arrangement_ID INT NOT NULL,
+    Deletion_Date DATE NOT NULL,
+    Reason TEXT NOT NULL,
+    Status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    CONSTRAINT deletion_request_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID),
+    CONSTRAINT arrangement_fk FOREIGN KEY (Arrangement_ID) REFERENCES employee_arrangement(Request_ID)
+);
