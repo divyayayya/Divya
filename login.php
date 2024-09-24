@@ -22,20 +22,25 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            filter: grayscale(100%);
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.8); /* Slight transparency for contrast */
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
             text-align: center;
+            width: 100%;
+            max-width: 400px;
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 22px;
             color: #333;
             margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         form {
@@ -45,33 +50,36 @@
         }
 
         label {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 10px;
+            display: none; /* Hides the label, using placeholders instead */
         }
 
-        input[type="text"] {
-            padding: 10px;
+        input[type="text"], input[type="password"] {
+            padding: 15px;
             width: 100%;
-            max-width: 300px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 8px;
             margin-bottom: 20px;
             font-size: 16px;
+            background-color: #f5f5f5;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         input[type="submit"] {
-            padding: 10px 20px;
-            background-color: #007BFF;
+            padding: 15px;
+            background-image: linear-gradient(to right, #ff416c, #ff4b2b);
             color: #fff;
             border: none;
-            border-radius: 4px;
+            border-radius: 50px;
             cursor: pointer;
+            width: 50%;
             font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.3s ease;
         }
 
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-image: linear-gradient(to right, #ff4b2b, #ff416c);
         }
 
         .error-message {
@@ -84,13 +92,10 @@
 
 <body>
     <div class="container">
-        <h1>Sign In</h1>
+        <h1>Account Login</h1>
         <form action="process_login.php" method="post">
-            <label for="userID">Enter User ID:</label>
-            <input type="text" id="userID" name="userID" value="<?php echo isset($_GET['userID']) ? htmlspecialchars($_GET['userID']) : ''; ?>" required />
-
-            <input type="submit" value="Sign In">
-
+            <input type="text" id="userID" name="userID" placeholder="User ID" required />
+            <input type="submit" value="Login">
             <?php
             $_SESSION = [];
             if (isset($_GET['error']) && $_GET['error'] === 'true') {
