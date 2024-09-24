@@ -22,11 +22,10 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: grayscale(100%);
         }
 
         .container {
-            background-color: #fff;
+            background-color: black;
             padding: 40px;
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -37,8 +36,8 @@
 
         h1 {
             font-size: 22px;
-            color: #333;
-            margin-bottom: 20px;
+            color: white;
+            margin: 20px 0; /* Adjust margin to fit logo */
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -87,11 +86,18 @@
             margin-top: 10px;
             font-size: 14px;
         }
+
+        /* Logo Styles */
+        .logo {
+            width: 100px; /* Adjust the logo size as needed */
+            margin-bottom: 20px; /* Add space between logo and heading */
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <img src="images/logo.jpg" alt="Office Logo" class="logo" style="height:100px; width:200px"> <!-- Office Logo -->
         <h1>Account Login</h1>
         <form action="process_login.php" method="post">
             <input type="text" id="userID" name="userID" placeholder="User ID" required />
