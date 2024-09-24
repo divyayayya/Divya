@@ -58,6 +58,7 @@
     echo "<h2 style='display: inline-block; margin-right: 20px;'>New Requests</h2>";
     echo "<div class='dropdown-content'>";
     echo "<a href='apply_wfh.php'>Apply for Work-From-Home</a>";
+    echo "<a href='apply_leave.php'>Apply for Leave</a>";
     echo "<a href='delete_wfh.php'>Delete Request</a>";
     echo "<a href='update_wfh.php'>Update Request</a>";
     echo "</div></div>";

@@ -21,7 +21,7 @@ CREATE TABLE employee (
 SET FOREIGN_KEY_CHECKS=0;
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
 #Load Data from employee.csv into DB
-LOAD DATA INFILE "C:\\wamp64\\www\\SPM\\Divya\\employeenew.csv"
+LOAD DATA INFILE "C:/wamp64/www/GitHub/Divya/employeenew.csv"
 INTO TABLE employee
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
@@ -61,5 +61,5 @@ CREATE TABLE deletion_request (
     Reason TEXT NOT NULL,
     Status VARCHAR(50) NOT NULL DEFAULT 'Pending',
     CONSTRAINT deletion_request_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID),
-    CONSTRAINT arrangement_fk FOREIGN KEY (Arrangement_ID) REFERENCES employee_arrangement(Request_ID)
+    CONSTRAINT arrangement_fk FOREIGN KEY (Staff_ID, Arrangement_ID) REFERENCES employee_arrangement(Staff_ID, Request_ID)
 );

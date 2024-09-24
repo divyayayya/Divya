@@ -98,10 +98,38 @@
 
         }).filter(event => event !== undefined); // Filter out undefined values for non-approved requests
 
+        // var calendar = new FullCalendar.Calendar(calendarEl, {
+        //     initialView: 'dayGridMonth',
+        //     selectable: true,
+        //     events: events,  // Add dynamic events here
+        //     dateClick: function() {
+        //         window.open('location_details.php', target='_blank');
+        //     },
+        //     eventMouseEnter: function(info) {
+        //         var tooltip = document.createElement('div');
+        //         tooltip.className = 'tooltip';
+        //         tooltip.innerHTML = info.event.title + "<br>" + info.event.start;
+        //         document.body.appendChild(tooltip);
+                
+        //         tooltip.style.position = 'absolute';
+        //         tooltip.style.top = info.jsEvent.pageY + 'px';
+        //         tooltip.style.left = info.jsEvent.pageX + 'px';
+        //         tooltip.style.backgroundColor = '#f9f9f9';
+        //         tooltip.style.padding = '5px';
+        //         tooltip.style.border = '1px solid #ccc';
+        //     },
+        //     eventMouseLeave: function() {
+        //         var tooltip = document.querySelector('.tooltip');
+        //         if (tooltip) {
+        //             tooltip.remove();
+        //         }
+        //     }
+        // });
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+            timeZone: 'SST',
+            initialView: 'timeGridWeek',
+            nowIndicator: true,
             selectable: true,
-            events: events,  // Add dynamic events here
             dateClick: function() {
                 window.open('location_details.php', target='_blank');
             },
@@ -123,8 +151,15 @@
                 if (tooltip) {
                     tooltip.remove();
                 }
-            }
+            },
+            headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'timeGridWeek,timeGridDay'
+            },
+            events: 'https://fullcalendar.io/api/demo-feeds/events.json'
         });
+
         calendar.render();
     });
 </script>
