@@ -40,18 +40,19 @@ CREATE TABLE employee_arrangement (
     Working_Arrangement VARCHAR(50) NOT NULL,
     Reason VARCHAR(255) NULL,
     Request_Status VARCHAR(50) NOT NULL,
+    Working_Location VARCHAR(50) NOT NULL,
     CONSTRAINT employee_arrangement_pk PRIMARY KEY (Staff_ID, Request_ID, Arrangement_Date),
     CONSTRAINT employee_arrangement_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE
 );
 
 INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status)
 VALUES 
-(150148, 1, '2024-01-01', 'WFH', "", 'Approved') ,
-(150148, 1, '2024-01-08', 'WFH', "", 'Approved') ,
-(150148, 2, '2024-01-15', 'WFH', '', 'Pending') ,
-(150148, 3, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected'),
-(150148, 4, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn'),
-(140878, 5, '2024-10-15', 'WFH', 'Take care of baby', 'Approved');
+(150148, 1, '2024-01-01', 'WFH', "", 'Approved','Home') ,
+(150148, 1, '2024-01-08', 'WFH', "", 'Approved','Home') ,
+(150148, 2, '2024-01-15', 'WFH', '', 'Pending','Home') ,
+(150148, 3, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office'),
+(150148, 4, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office'),
+(140878, 5, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home');
 
 CREATE TABLE deletion_request (
     Request_ID INT AUTO_INCREMENT PRIMARY KEY,
