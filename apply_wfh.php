@@ -25,38 +25,25 @@
     <br>
 
     <form action="process_wfh_request.php" method="POST">
-        <label for="date">Select Date(s):</label><br>
-        <input type="date" name="wfh_date" required><br><br>
+    <input type="hidden" name="userID" value="<?php echo $userID; ?>">
+    
+    <label for="date">Select Date(s):</label><br>
+    <input type="date" name="wfh_date" required><br><br>
+    
+    <label for="wfh_time">Select Time:</label><br>
+    <select name="wfh_time" id="wfh_time" required>
+        <option value='AM'>AM</option>
+        <option value='PM'>PM</option>
+        <option value='full_day'>Full Day</option>
+    </select>
         
-        <label for="wfh_time">Select Time:</label><br>
-        <select name="wfh_time" id="wfh_time" required>
-            <option value='AM'>AM</option>
-            <option value='PM'>PM</option>
-            <option value='full_day'>Full Day</option>
-        </select>
-            
-        <br><br>
+    <br><br>
 
-        <label for="reason">Reason for WFH:</label><br>
-        <textarea name="reason" required></textarea><br><br>
-        
-        <button type="submit">Submit Request</button>
-    </form>
-
-<?php
-    $msg = '';
-    if (isset($_POST['submit'])){
-        $wfhDate = $_POST['wfh_date'];
-        $wfhTime = $_POST['wfh_time'];
-        $reason = $_POST['reason'];
-        $status = "Pending";
-
-        $dao = new RequestDAO;
-
-
-    }
-
-?>
+    <label for="reason">Reason for WFH:</label><br>
+    <textarea name="reason" required></textarea><br><br>
+    
+    <button type="submit">Submit Request</button>
+</form>
 
 </body>
 </html>
