@@ -66,33 +66,46 @@
         }
 
         // Submit a new leave request
-        public function submitLeaveRequest($userID, $leave_date, $leave_time, $reason) {
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+    
+            // Function to submit a new leave request
+            public function submitLeaveRequest($userID, $leave_date, $time, $reason, $status) {
+                $sql = "INSERT INTO leave_requests (Staff_ID, Leave_Date, Time, Reason, Status)
+                        VALUES (:userID, :leave_date, :time, :reason, :status)";
+                
+                $conn = new ConnectionManager();
+                $pdo = $conn->getConnection();
+                
+                $stmt = $pdo->prepare($sql);
+                
+                // Bind parameters
+                $stmt->bindParam(':userID', $userID);
+                $stmt->bindParam(':leave_date', $leave_date);
+                $stmt->bindParam(':time', $time);
+                $stmt->bindParam(':reason', $reason);
+                $stmt->bindParam(':status', $status);
+                
+                // Try to execute and check for success
+                try {
+                    if ($stmt->execute()) {
+                        return true;
+                    } else {
+                        // Output error information
+                        $errorInfo = $stmt->errorInfo();
+                        echo "SQLSTATE error code: " . $errorInfo[0] . "<br>";
+                        echo "Driver-specific error code: " . $errorInfo[1] . "<br>";
+                        echo "Driver-specific error message: " . $errorInfo[2] . "<br>";
+                        return false;
+                    }
+                } catch (PDOException $e) {
+                    echo "Database error: " . $e->getMessage();
+                    return false;
+                }
+            }
             
-            $requestID = $this->generateReqID();
-            $time_slot = $this->getTimeSlot($leave_time); // Get the time range (AM, PM, or full day)
-            
-            // Insert the leave request into the employee_arrangement table
-            $sql = "INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason)
-                    VALUES (:userID, :requestID, :leave_date, :time_slot, 'Pending', :reason)";
-            
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
-            $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
-            $stmt->bindParam(':leave_date', $leave_date);
-            $stmt->bindParam(':time_slot', $time_slot);
-            $stmt->bindParam(':reason', $reason);
+        
+            // You may also have other functions to fetch available leave days, etc.
+        
 
-            $result = $stmt->execute();
-
-            $stmt = null;
-            $pdo = null;
-
-            return $result;
-        }
-
-        // Helper function to get time slot based on AM/PM/full day selection
         private function getTimeSlot($time_selection) {
             switch($time_selection) {
                 case 'AM':
@@ -105,5 +118,4 @@
             }
         }
     }
-
 ?>
