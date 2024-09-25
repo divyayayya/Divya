@@ -20,7 +20,7 @@ CREATE TABLE employee (
 
 SET FOREIGN_KEY_CHECKS=0;
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
-#Load Data from employee.csv into DB
+#Load Data from employeenew.csv into DB
 LOAD DATA INFILE "C:/wamp64/www/GitHub/Divya/employeenew.csv"
 INTO TABLE employee
 FIELDS TERMINATED BY ',' 
