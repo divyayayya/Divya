@@ -37,7 +37,17 @@
         }
 
         .dropdown-content a:hover {
-            background-color: #f1f1f1;  /* Change background on hover */
+            background-color: #555; /* Change this to dark grey */
+            color: white; /* Change text color to white for better contrast */
+        }
+
+        .hover-change {
+            color: black; /* Default color */
+            transition: color 0.3s; /* Smooth transition */
+        }
+
+        .hover-change:hover {
+            color: grey; /* Change color on hover */
         }
     </style>
 </head>
@@ -55,7 +65,7 @@
     
     // New Requests Dropdown
     echo "<div class='dropdown'>";
-    echo "<h2 style='display: inline-block; margin-right: 20px;'>New Requests</h2>";
+    echo "<h2 class='hover-change' style='display: inline-block; margin-right: 20px;'>New Requests</h2>";
     echo "<div class='dropdown-content'>";
     echo "<a href='apply_wfh.php'>Apply for Work-From-Home</a>";
     echo "<a href='apply_leave.php'>Apply for Leave</a>";
