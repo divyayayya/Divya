@@ -42,21 +42,22 @@
             $requestID = $this->generateReqID();
             // Insert the WFH request into the employee_arrangement table
             $sql = "INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason)
-                    VALUES (:userID, :wfh_date, 'WFH', 'Pending', :reason)";
+                    VALUES (:userID, :requestID, :wfh_date, 'WFH', 'Pending', :reason)";
             
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+            $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
             $stmt->bindParam(':wfh_date', $wfh_date);
             $stmt->bindParam(':reason', $reason);
-
-            // Execute the insert and return the result (true if success, false if failure)
+        
             $result = $stmt->execute();
-
+        
             $stmt = null;
             $pdo = null;
-
+        
             return $result;
-    }
+        }
+        
 
             public function submitLeaveRequest($userID, $leave_date, $reason) {
                 $conn = new ConnectionManager();
