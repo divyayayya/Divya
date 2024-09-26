@@ -33,7 +33,6 @@
     </form>
 
 <?php
-    $msg = '';
     if (isset($_POST['submit'])){
         $wfhDate = $_POST['wfh_date'];
         $reason = $_POST['reason'];
