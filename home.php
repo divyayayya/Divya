@@ -53,10 +53,17 @@
     echo "</br>";
     $deptDetails = '';
     $deptRequests = '';
+    $userDept = $employee->getDept(); 
 
     if ($userRole != 2){
-        $deptDetails = "<a href='deptDetails.php'>Department Details</a>";
-        $deptRequests = "<a href='pendingRequests.php'>Pending Requests</a>";
+        if ($userDept == "HR" || $userDept == "CEO"){ 
+            $deptDetails = "<a href='deptDetails_HR.php'>Department Details</a>";
+            $deptRequests = "<a href='pendingRequests.php'>Pending Requests</a>";
+        } else { 
+            $deptDetails = "<a href='deptDetails.php'>Department Details</a>";
+            $deptRequests = "<a href='pendingRequests.php'>Pending Requests</a>";
+        }
+        
     }
     echo "<table style='border-collapse: separate; border-spacing: 20px;'><tr><td><a href='my_requests.php'>My Requests</a></td><td>{$deptDetails}</td><td>{$deptRequests}</td></tr></table>";
 
@@ -76,98 +83,57 @@
 
         // Convert requests data into FullCalendar event objects
         const events = requests.map(function(request) {
-            let event = {
-                title: request.Working_Arrangement + " (" + request.Request_Status + ")", // Display arrangement type and status
-                extendedProps: {
-                    status: request.Request_Status,
-                }
-            };
-
-            // Set event times based on the type of leave
-            if (request.Working_Arrangement === 'AM') {
-                event.start = request.Arrangement_Date + 'T09:00:00';  // 9 AM
-                event.end = request.Arrangement_Date + 'T13:00:00';    // 1 PM
-            } else if (request.Working_Arrangement === 'PM') {
-                event.start = request.Arrangement_Date + 'T13:00:00';  // 1 PM
-                event.end = request.Arrangement_Date + 'T18:00:00';    // 6 PM
-            } else if (request.Working_Arrangement === 'full_day') {
-                event.start = request.Arrangement_Date + 'T09:00:00';  // 9 AM
-                event.end = request.Arrangement_Date + 'T18:00:00';    // 6 PM
-                event.allDay = false;  // Full day but with specific times
-            } else {
-                event.start = request.Arrangement_Date;  // Default to full day with no specific time
-                event.allDay = true;
-            }
-
-            // Optionally set colors based on status
+            // Correct comparison operator '==' or '===' instead of '='
             if (request.Request_Status === 'Approved') {
-                event.backgroundColor = '#28a745';  // Green for approved
+                return {
+                    title: request.Working_Arrangement,  // Display the arrangement type as the title
+                    start: request.Arrangement_Date,     // Use the Arrangement_Date as the event's start date
+                    extendedProps: {
+                        status: request.Request_Status    // Correctly referencing request.Request_Status
+                    }
+                };
             } else if (request.Request_Status === 'Pending') {
-                event.backgroundColor = '#ffc107';  // Yellow for pending
-            } else {
-                event.backgroundColor = '#dc3545';  // Red for rejected or other statuses
+                return {
+                    title: request.Working_Arrangement,  // Display the arrangement type as the title
+                    start: request.Arrangement_Date,     // Use the Arrangement_Date as the event's start date
+                    backgroundColor: '#edb95e',
+                    extendedProps: {
+                        status: request.Request_Status    // Correctly referencing request.Request_Status
+                    }
+                };
             }
 
-            return event;
-        }).filter(event => event !== undefined);
+        }).filter(event => event !== undefined); // Filter out undefined values for non-approved requests
 
-        // var calendar = new FullCalendar.Calendar(calendarEl, {
-        //     initialView: 'dayGridMonth',
-        //     selectable: true,
-        //     events: events,  // Add dynamic events here
-        //     dateClick: function() {
-        //         window.open('location_details.php', target='_blank');
-        //     },
-        //     eventMouseEnter: function(info) {
-        //         var tooltip = document.createElement('div');
-        //         tooltip.className = 'tooltip';
-        //         tooltip.innerHTML = info.event.title + "<br>" + info.event.start;
-        //         document.body.appendChild(tooltip);
-                
-        //         tooltip.style.position = 'absolute';
-        //         tooltip.style.top = info.jsEvent.pageY + 'px';
-        //         tooltip.style.left = info.jsEvent.pageX + 'px';
-        //         tooltip.style.backgroundColor = '#f9f9f9';
-        //         tooltip.style.padding = '5px';
-        //         tooltip.style.border = '1px solid #ccc';
-        //     },
-        //     eventMouseLeave: function() {
-        //         var tooltip = document.querySelector('.tooltip');
-        //         if (tooltip) {
-        //             tooltip.remove();
-        //         }
-        //     }
-        // });
         var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',  // or 'timeGridWeek' if you prefer
-        selectable: true,
-        events: events,  // Add dynamic events here
-        dateClick: function() {
-            window.open('location_details.php', '_blank');  // Open another page on date click
-        },
-        eventMouseEnter: function(info) {
-            var tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.innerHTML = info.event.title + "<br>" + info.event.start;
-            document.body.appendChild(tooltip);
-
-            tooltip.style.position = 'absolute';
-            tooltip.style.top = info.jsEvent.pageY + 'px';
-            tooltip.style.left = info.jsEvent.pageX + 'px';
-            tooltip.style.backgroundColor = '#f9f9f9';
-            tooltip.style.padding = '5px';
-            tooltip.style.border = '1px solid #ccc';
-        },
-        eventMouseLeave: function() {
-            var tooltip = document.querySelector('.tooltip');
-            if (tooltip) {
-                tooltip.remove();
+            initialView: 'dayGridMonth',
+            selectable: true,
+            events: events,  // Add dynamic events here
+            dateClick: function() {
+                window.open('location_details.php', target='_blank');
+            },
+            eventMouseEnter: function(info) {
+                var tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.innerHTML = info.event.title + "<br>" + info.event.start;
+                document.body.appendChild(tooltip);
+                
+                tooltip.style.position = 'absolute';
+                tooltip.style.top = info.jsEvent.pageY + 'px';
+                tooltip.style.left = info.jsEvent.pageX + 'px';
+                tooltip.style.backgroundColor = '#f9f9f9';
+                tooltip.style.padding = '5px';
+                tooltip.style.border = '1px solid #ccc';
+            },
+            eventMouseLeave: function() {
+                var tooltip = document.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
             }
-        }
+        });
+        calendar.render();
     });
-
-    calendar.render();
-});
 </script>
 
 </body>
