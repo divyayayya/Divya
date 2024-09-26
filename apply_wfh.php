@@ -45,14 +45,6 @@
         <button type="submit">Submit Request</button>
     </form>
 
-<<<<<<< HEAD
-<?php
-    if (isset($_POST['submit'])){
-        $wfhDate = $_POST['wfh_date'];
-        $reason = $_POST['reason'];
-        $status = "Pending";
-=======
->>>>>>> ffa5ae69b954b972c787a34d1036d0a00720958c
 
 
 </body>
