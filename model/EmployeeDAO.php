@@ -35,6 +35,24 @@
             return $results;
         }
 
+        public function retrieveUnderlings($userID){
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $sql = 'SELECT * FROM employee WHERE Reporting_Manager = :userID';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_STR);
+            $stmt->execute();
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $results = $stmt->fetchAll(); // Fetch all employees in the department
+
+            $stmt = null;
+            $pdo = null;
+
+            return $results;
+        }
+
+        
         public function getAllDepartments() {
             // Database connection
             $conn = new ConnectionManager();

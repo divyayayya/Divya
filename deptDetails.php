@@ -188,17 +188,17 @@
     echo "</div>";
 
     // Retrieve employees in the selected department
-    $employeesInSameDept = $dao->retrieveEmployeesInSameDept($selectedDept);
+    $underlings = $dao->retrieveUnderlings($userID);
 
-    echo "<table>";
+    echo "<table border=1>";
     echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
-    foreach ($employeesInSameDept as $deptEmployee) {
+    foreach ($underlings as $underling) {
         echo "<tr>";
-        echo "<td>{$deptEmployee['Staff_ID']}</td>";
-        echo "<td>{$deptEmployee['Staff_FName']} {$deptEmployee['Staff_LName']}</td>";
-        echo "<td>{$deptEmployee['Position']}</td>";
-        echo "<td>{$deptEmployee['Country']}</td>";
-        echo "<td>{$deptEmployee['Email']}</td>";
+        echo "<td>{$underling['Staff_ID']}</td>";
+        echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
+        echo "<td>{$underling['Position']}</td>";
+        echo "<td>{$underling['Country']}</td>";
+        echo "<td>{$underling['Email']}</td>";
         echo "</tr>";
     }
     echo "</table>";
