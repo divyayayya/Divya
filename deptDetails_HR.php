@@ -27,22 +27,20 @@
         }
 
         /* Navbar Styling */
-        /* Navbar Styling */
         .navbar {
             background-color: black;
             color: #fff;
             display: flex;
             justify-content: space-between;
-            align-items: center; /* This keeps items vertically centered */
-            height: 80px; /* Set a fixed height for the navbar */
-            padding: 0 20px; /* Adjust padding for left and right */
-            margin-bottom: 10px;
+            align-items: center;
+            height: 80px;
+            padding: 0 30px;
+            margin-bottom: 20px;
             border-radius: 5px;
         }
 
         .navbar img {
-            height: 100px; /* Set the logo height */
-            margin-top: 2px; /* Adjust the top margin to align the image properly */
+            height: 60px;
         }
 
         .navbar h1 {
@@ -53,10 +51,11 @@
         .navbar form {
             display: flex;
             align-items: center;
+            gap: 15px; /* Spacing between form elements */
         }
 
         .navbar label {
-            margin-right: 10px;
+            margin-right: 5px;
             font-size: 16px;
             color: #fff;
         }
@@ -76,26 +75,12 @@
             color: #333;
             border: none;
             border-radius: 5px;
-            margin-left: 10px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
         .navbar input[type='submit']:hover {
             background-color: #ddd;
-        }
-
-        /* Link Styling */
-        a {
-            color: #fff; /* Change color to white for visibility */
-            text-decoration: none;
-            padding: 0; /* Remove padding */
-            margin-right: 15px; /* Add some margin if needed */
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: #ddd; /* Change color on hover */
         }
 
         /* Table Styling */
@@ -160,35 +145,49 @@
 
     # Fetch all departments in the company 
     $departments = $dao->getAllDepartments();
+    # Fetch all positions in the company 
+    $positions = $dao->getAllPositions(); 
 
-    // If form is submitted, use the selected department to retrieve employees in that department
+    // If form is submitted, use the selected department and position to retrieve employees
     $selectedDept = $employee->getDept(); // Default to the user's department
+    $selectedPosition = ''; 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selectedDept = $_POST['department']; // Get the selected department from the form
+        $selectedPosition = $_POST['position']; // Get the selected position from the form
     }
 
     echo "<div class='navbar'>";
-    echo "<a href='home.php'><img src='images/logo.jpg' alt='Company Logo' style='height: 60px;'></a>"; // Link to homepage 
+    echo "<a href='home.php'><img src='images/logo.jpg' alt='Company Logo'></a>"; // Link to homepage 
     if ($userRole == 1){
         echo "<form method='POST' action='' >";
+        
+        // Department dropdown
         echo "<label for='dept'>Search Department: </label>";
         echo "<select id='dept' name='department'>";
-    
-        // Iterate over the departments array to populate the dropdown options
         foreach ($departments as $dept) {
             $selected = ($dept['Dept'] == $selectedDept) ? 'selected' : ''; // Set the default selected option
             echo "<option value='" . htmlspecialchars($dept['Dept']) . "' $selected>" . htmlspecialchars($dept['Dept']) . "</option>";
         }
-    
         echo "</select>";
+        
+        // Position dropdown
+        echo "<label for='position'>Search Position: </label>";
+        echo "<select id='position' name='position'>";
+        echo "<option value=''>All Positions</option>"; // Add a default option for all positions
+        foreach ($positions as $position) {
+            $selected = ($position['Position'] == $selectedPosition) ? 'selected' : '';
+            echo "<option value='" . htmlspecialchars($position['Position']) . "' $selected>" . htmlspecialchars($position['Position']) . "</option>";
+        }
+        echo "</select>";
+
         echo "<input type='submit' value='View'>";
         echo "</form>";
     }
     echo "</div>";
 
-    // Retrieve employees in the selected department
-    $employeesInSameDept = $dao->retrieveEmployeesInSameDept($selectedDept);
+    // Retrieve employees in the selected department and position
+    $employeesInSameDept = $dao->retrieveEmployeesByDeptAndPosition($selectedDept, $selectedPosition);
 
     echo "<table>";
     echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
