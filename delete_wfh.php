@@ -5,12 +5,13 @@
 </head>
 <body>
     <h1>Delete Work-from-Home Arrangement</h1>
+    
     <form id="delete-form">
         <label for="staff_id">Staff ID:</label>
         <input type="text" id="staff_id" name="staff_id" required><br><br>
 
-        <label for="arrangement_id">Arrangement ID:</label>
-        <input type="text" id="arrangement_id" name="arrangement_id" required><br><br>
+        <label for="request_id">Request ID:</label>
+        <input type="text" id="request_id" name="request_id" required><br><br>
 
         <label for="reason">Reason for Deletion:</label><br>
         <textarea id="reason" name="reason" rows="4" cols="50" required></textarea><br><br>
@@ -21,7 +22,7 @@
     <script>
         function submitDeletionRequest() {
             const staffId = document.getElementById('staff_id').value;
-            const arrangementId = document.getElementById('arrangement_id').value;
+            const requestId = document.getElementById('request_id').value;  
             const reason = document.getElementById('reason').value;
 
             fetch('/delete_arrangement', {
@@ -31,7 +32,7 @@
                 },
                 body: JSON.stringify({
                     staff_id: staffId,
-                    arrangement_id: arrangementId,
+                    request_id: requestId,  
                     reason: reason
                 })
             })
@@ -46,3 +47,4 @@
     </script>
 </body>
 </html>
+

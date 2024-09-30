@@ -55,12 +55,12 @@ VALUES
 (140878, 5, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home');
 
 CREATE TABLE deletion_request (
-    Request_ID INT AUTO_INCREMENT PRIMARY KEY,
-    Staff_ID INT NOT NULL,
-    Arrangement_ID INT NOT NULL,
-    Deletion_Date DATE NOT NULL,
-    Reason TEXT NOT NULL,
-    Status VARCHAR(50) NOT NULL DEFAULT 'Pending',
-    CONSTRAINT deletion_request_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID),
-    CONSTRAINT arrangement_fk FOREIGN KEY (Staff_ID, Arrangement_ID) REFERENCES employee_arrangement(Staff_ID, Request_ID)
+    Deletion_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Staff_ID INT NOT NULL,                     
+    Request_ID INT NOT NULL,                   
+    Deletion_Date DATE NOT NULL,               
+    Reason TEXT NOT NULL,                      
+    Status VARCHAR(50) NOT NULL DEFAULT 'Pending', -- Status of the request (Pending/Approved/Rejected)
+    CONSTRAINT deletion_request_fk_staff FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE,
+    CONSTRAINT deletion_request_fk_arrangement FOREIGN KEY (Request_ID) REFERENCES employee_arrangement(Request_ID) ON DELETE CASCADE
 );
