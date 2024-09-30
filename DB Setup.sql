@@ -45,7 +45,7 @@ CREATE TABLE employee_arrangement (
     CONSTRAINT employee_arrangement_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE
 );
 
-INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Location)
+INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location)
 VALUES 
 (150148, 1, '2024-01-01', 'WFH', "", 'Approved','Home') ,
 (150148, 1, '2024-01-08', 'WFH', "", 'Approved','Home') ,
