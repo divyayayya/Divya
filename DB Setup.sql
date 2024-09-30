@@ -1,4 +1,4 @@
-#Employee
+
 DROP SCHEMA IF EXISTS employeeDB;
 CREATE SCHEMA employeeDB;
 USE employeeDB;
