@@ -35,36 +35,91 @@
         
             return $newRequestID;
         }
-        
 
-
-        // Submit a new work-from-home request
         public function submitWFHRequest($userID, $wfh_date, $wfh_time, $reason) {
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
-            
-            $requestID = $this->generateReqID();
-            $time_slot = $this->getTimeSlot($wfh_time); // Get the time range (AM, PM, or full day)
-            
-            // Insert the WFH request into the employee_arrangement table
-            $sql = "INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason)
-                    VALUES (:userID, :requestID, :wfh_date, :time_slot, 'Pending', :reason)";
-            
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
-            $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
-            $stmt->bindParam(':wfh_date', $wfh_date);
-            $stmt->bindParam(':time_slot', $time_slot);
-            $stmt->bindParam(':reason', $reason);
-
-            $result = $stmt->execute();
-
-            $stmt = null;
-            $pdo = null;
-
-            return $result;
+            try {
+                $conn = new ConnectionManager();
+                $pdo = $conn->getConnection();
+        
+                $requestID = $this->generateReqID();
+                $time_slot = $this->getTimeSlot($wfh_time); // Get the time range (AM, PM, or full day)
+        
+                $sql = "INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason, Working_Location)
+                        VALUES (:userID, :requestID, :wfh_date, :time_slot, 'Pending', :reason, 'Home')";
+        
+                $stmt = $pdo->prepare($sql);
+                $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+                $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
+                $stmt->bindParam(':wfh_date', $wfh_date);
+                $stmt->bindParam(':time_slot', $time_slot);
+                $stmt->bindParam(':reason', $reason);
+        
+                $result = $stmt->execute();
+        
+                $stmt = null;
+                $pdo = null;
+        
+                return $result;
+        
+            } catch (PDOException $e) {
+                echo "SQL error: " . $e->getMessage();
+                return false;
+            }
         }
-
+        
+        
+        public function submitRecurringWFHRequest($userID, $start_date, $end_date, $recurring_days, $wfh_time, $reason) {
+            try {
+                $conn = new ConnectionManager();
+                $pdo = $conn->getConnection();
+        
+                $time_slot = $this->getTimeSlot($wfh_time); // Get the time range (AM, PM, or full day)
+        
+                // Convert start and end dates to timestamps
+                $current_date = strtotime($start_date);
+                $end_date = strtotime($end_date);
+        
+                // Loop through each day in the range
+                while ($current_date <= $end_date) {
+                    $day_of_week = date('l', $current_date); // Get day of the week (e.g., Monday)
+        
+                    // If this day is in the selected recurring days, insert the request
+                    if (in_array($day_of_week, $recurring_days)) {
+                        // Generate a new Request_ID for each request
+                        $requestID = $this->generateReqID();
+        
+                        $sql = "INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason, Working_Location)
+                                VALUES (:userID, :requestID, :arrangement_date, :time_slot, 'Pending', :reason, 'Home')";
+        
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+                        $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
+                        $arrangement_date = date('Y-m-d', $current_date);
+                        $stmt->bindParam(':arrangement_date', $arrangement_date);
+                        $stmt->bindParam(':time_slot', $time_slot);
+                        $stmt->bindParam(':reason', $reason);
+        
+                        $stmt->execute();
+                    }
+        
+                    // Move to the next day
+                    $current_date = strtotime('+1 day', $current_date);
+                }
+        
+                $stmt = null;
+                $pdo = null;
+        
+                return true;
+        
+            } catch (PDOException $e) {
+                echo "SQL error: " . $e->getMessage();
+                return false;
+            }
+        }
+        
+        
+                
+        
         // Submit a new leave request
     
             // Function to submit a new leave request

@@ -1,51 +1,44 @@
-<?php
-    require_once "model/common.php";
-    // Check if the user is logged in
-    if (!isset($_SESSION['userID'])) {
-        header("Location: login.php");
-        exit();
-    }
-
-    // Fetch user details
-    $userID = $_SESSION['userID'];
-    $userRole = $_SESSION['userRole'];
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apply for Work-From-Home</title>
+    <title>Work From Home Request</title>
+    <script>
+        function toggleRequestType() {
+            const singleDay = document.getElementById("single-day");
+            const recurring = document.getElementById("recurring");
+            document.getElementById("recurring-inputs").style.display = recurring.checked ? "block" : "none";
+            document.getElementById("single-day-inputs").style.display = singleDay.checked ? "block" : "none";
+        }
+    </script>
 </head>
 <body>
-
-    <h1 style='display: inline-block; margin-right: 20px;'>Apply for Work-from-Home Days</h1><a href='my_requests.php'>Back</a>
-
-    <br>
-
+    <h2>Work From Home Request</h2>
     <form action="process_wfh_request.php" method="POST">
-        <input type="hidden" name="userID" value="<?php echo $userID; ?>">
-        <label for="date">Select Date(s):</label><br>
-        <input type="date" name="wfh_date" required><br><br>
+        <label><input type="radio" id="single-day" name="request_type" value="single" onclick="toggleRequestType()" checked> Single Day</label>
+        <label><input type="radio" id="recurring" name="request_type" value="recurring" onclick="toggleRequestType()"> Recurring</label>
 
-        <label for="arrangement_type"></label><br>
-        <input type="hidden" name="arrangement_type" id="arrangement_type" value="WFH" required></input>
-        
-        <label for="wfh_time">Select Time:</label><br>
-        <select name="wfh_time" id="wfh_time" required>
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-            <option value="full_day">Full Day</option>
-        </select><br><br>
+        <div id="single-day-inputs">
+            <label for="date">Date:</label>
+            <input type="date" name="start_date" required>
+        </div>
 
-        <label for="reason">Reason for WFH:</label><br>
-        <textarea name="reason" required></textarea><br><br>
-        
+        <div id="recurring-inputs" style="display: none;">
+            <label for="start_date">Start Date:</label>
+            <input type="date" name="start_date" required>
+            <label for="end_date">End Date:</label>
+            <input type="date" name="end_date" required>
+            <label for="frequency">Frequency:</label>
+            <select name="frequency" required>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+        </div>
+
+        <label for="reason">Reason:</label>
+        <textarea name="reason" required></textarea>
         <button type="submit">Submit Request</button>
     </form>
-
-
-
 </body>
 </html>
