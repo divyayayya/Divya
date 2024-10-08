@@ -172,5 +172,30 @@
                     return 'Full Day (9:00 AM - 6:00 PM)';
             }
         }
+
+        public function deleteRequest($requestId) {
+            try {
+                $conn = new ConnectionManager();
+                $pdo = $conn->getConnection();
+        
+                // Prepare the SQL statement
+                $sql = "DELETE FROM employee_arrangement WHERE Request_ID = :requestId";
+        
+                $stmt = $pdo->prepare($sql);
+                // Bind the request ID parameter
+                $stmt->bindParam(':requestId', $requestId, PDO::PARAM_INT);
+        
+                // Execute the statement
+                if ($stmt->execute()) {
+                    return true; // Deletion successful
+                } else {
+                    return false; // Deletion failed
+                }
+            } catch (PDOException $e) {
+                echo "Error deleting request: " . $e->getMessage();
+                return false; // Error occurred
+            }
+        }
+        
     }
 ?>
