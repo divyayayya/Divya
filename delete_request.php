@@ -1,9 +1,9 @@
 <?php
 require_once "model/common.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['request_id'])) {
-        $requestId = $_POST['request_id'];
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (isset($_GET['request_id'])) {
+        $requestId = $_GET['request_id'];
 
         $dao = new RequestDAO();
 
