@@ -56,14 +56,24 @@
             echo "<table border=1>";
             echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Location</th></tr>";
             # Inside the foreach loop
+            # Inside the foreach loop
             foreach ($employeesInDept as $emp) {
-                # Pass the employee's Staff_ID and the selected date
+                # Retrieve the arrangement details for the employee
                 $arrangement = $dao->retrieveArrangementDetailsByDate($emp['Staff_ID'], $selectedDate);
-                $workingLocation = $arrangement ? $arrangement['Working_Location'] : 'In-office';  // Default to 'In-Office' if no arrangement found
+                # Check if $arrangement is an array and contains the 'Working_Location'
+                if ($arrangement && isset($arrangement['Working_Location'])) {
+                    $workingLocation = $arrangement['Working_Location'];
+                    echo "<tr bgcolor='fbec5d'><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>";
+                    echo "<td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td></tr>";
+                } else {
+                    $workingLocation = 'In-Office';  // Default if no arrangement is found
+                    echo "<tr><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>";
+                    echo "<td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td></tr>";
+                }
 
-                echo "<tr><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>";
-                echo "<td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td></tr>";
+                # Echo out individual fields in the array
             }
+
             echo "</table>";
         } else {
             echo "No employees found in the same department.";

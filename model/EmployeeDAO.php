@@ -154,21 +154,21 @@
         //     return $result;
         // }
 
-        public function retrieveArrangementDetailsByDate($userDept, $arrangement_date) {
+        public function retrieveArrangementDetailsByDate($staffID, $arrangement_date) {
             $conn = new ConnectionManager();
             $pdo = $conn->getConnection();
         
             $sql = 'SELECT Working_Location 
                     FROM employee_arrangement 
-                    WHERE Department = :userDept AND Arrangement_Date = :arrangement_date';
+                    WHERE Staff_ID = :staffID AND Arrangement_Date = :arrangement_date';
             
             $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':userDept', $userDept, PDO::PARAM_STR);
+            $stmt->bindParam(':staffID', $staffID, PDO::PARAM_INT);
             $stmt->bindParam(':arrangement_date', $arrangement_date, PDO::PARAM_STR);
             $stmt->execute();
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $result = $stmt->fetch();  // Fetch the latest approved working arrangement
-        
+            
             $stmt = null;
             $pdo = null;
         
