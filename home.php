@@ -65,8 +65,10 @@
         }
         
     }
-    echo "<table style='border-collapse: separate; border-spacing: 20px;'><tr><td><a href='my_requests.php'>My Requests</a></td><td>{$deptDetails}</td><td>{$deptRequests}</td></tr></table>";
-
+    echo "<a href='my_requests.php'>My Requests</a></td><td>{$deptDetails}</td><td>{$deptRequests}</td></tr></table>";
+    echo "<br>";
+    echo "<br>";
+    echo "<a href='location_details.php'>View where your colleagues are working</a>";
 
     echo "</br></br><h1>Calendar</h1>";
     // echo "@CALENDAR PPL PLS PUT IT HERE TYVM";
