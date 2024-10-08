@@ -28,8 +28,8 @@ ENCLOSED BY '"'
 LINES TERMINATED BY '\r\n' -- On Windows, the line endings are often '\r\n'
 IGNORE 1 LINES -- Ignore the header row if it exists
 (Staff_ID, Staff_FName, Staff_LName, Dept, Position, Country, Email, Reporting_Manager, Role);
-
 SET FOREIGN_KEY_CHECKS=1;
+
 
 
 #Create Employee_Arrangement Table
@@ -53,3 +53,5 @@ VALUES
 (150148, 3, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office'),
 (150148, 4, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office'),
 (140878, 5, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home');
+
+SET FOREIGN_KEY_CHECKS=1;
