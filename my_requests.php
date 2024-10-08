@@ -50,6 +50,16 @@
             color: grey; /* Change color on hover */
         }
     </style>
+
+    <script>
+        function confirmDelete(requestId) {
+            if (confirm("Are you sure you want to delete this request?")) {
+                // If confirmed, redirect to delete script
+                window.location.href = "delete_request.php?request_id=" + requestId;
+            }
+        }
+    
+    </script>
 </head>
 <body>
 
@@ -78,6 +88,7 @@
         echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Reason</th><th>Status</th></tr>";    
         foreach ($requests as $request) {
             echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Reason']}</td><td>{$request['Request_Status']}</td></tr>";
+            echo "<td><button onclick='confirmDelete({$request['Request_ID']})'>Delete</button></td></tr>";
         }
         echo "</table>";
     } else {
