@@ -52,10 +52,18 @@
     </style>
 
     <script>
-        function confirmDelete(requestId) {
-            if (confirm("Are you sure you want to delete this request?")) {
-                // If confirmed, redirect to delete script
-                window.location.href = "delete_request.php?request_id=" + requestId;
+      
+        function confirmDelete(requestId, staffId, arrangementDate) {
+            var message = "Are you sure you want to delete the request with:\n" +
+                        "Request ID: " + requestId + "\n" +
+                        "Staff ID: " + staffId + "\n" +
+                        "Arrangement Date: " + arrangementDate + "?";
+            
+            if (confirm(message)) {
+                // If confirmed, redirect to delete script with all parameters
+                window.location.href = "delete_request.php?request_id=" + requestId +
+                                    "&staff_id=" + staffId +
+                                    "&arrangement_date=" + arrangementDate;
             }
         }
     
@@ -85,10 +93,14 @@
 
     if (count($requests) > 0) {
         echo "<table border=1>";
-        echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Reason</th><th>Status</th></tr>";    
+        echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Reason</th><th>Status</th><th>Delete</th></tr>";    
         foreach ($requests as $request) {
-            echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Reason']}</td><td>{$request['Request_Status']}</td></tr>";
-            echo "<td><button onclick='confirmDelete({$request['Request_ID']})'>Delete</button></td></tr>";
+            echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Reason']}</td><td>{$request['Request_Status']}</td>";
+            echo "<td>
+                    <button onclick='confirmDelete({$request['Request_ID']}, {$request['Staff_ID']}, \"{$request['Arrangement_Date']}\")'>Delete</button>
+                </td>
+                </tr>";
+            
         }
         echo "</table>";
     } else {

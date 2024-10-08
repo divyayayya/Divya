@@ -166,5 +166,28 @@
                     return 'Full Day (9:00 AM - 6:00 PM)';
             }
         }
+
+        public function deleteRequest($requestId, $staffId, $arrangementDate) {
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+        
+            // Prepare the SQL statement
+            $sql = "DELETE FROM employee_arrangement 
+                    WHERE Request_ID = :requestId 
+                    AND Staff_ID = :staffId 
+                    AND Arrangement_Date = :arrangementDate";
+        
+            $stmt = $pdo->prepare($sql);
+            
+            // Bind parameters
+            $stmt->bindParam(':requestId', $requestId, PDO::PARAM_INT);
+            $stmt->bindParam(':staffId', $staffId, PDO::PARAM_INT);
+            $stmt->bindParam(':arrangementDate', $arrangementDate);
+        
+            // Execute the statement and return the result
+            return $stmt->execute();
+        }
+        
+        
     }
 ?>

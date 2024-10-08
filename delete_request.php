@@ -1,18 +1,24 @@
 <?php
 require_once "model/common.php";
 
-if (isset($_GET['request_id'])) {
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['request_id'], $_GET['staff_id'], $_GET['arrangement_date'])) {
     $requestId = $_GET['request_id'];
-    $dao = new RequestDAO;
+    $staffId = $_GET['staff_id'];
+    $arrangementDate = $_GET['arrangement_date'];
 
-    $result = $dao->deleteRequest($requestId);
+    $dao = new RequestDAO();
 
-    if ($result) {
-        header("Location: my_requests.php?message=Request deleted successfully.");
+    // Call the deleteRequest method with all three parameters
+    if ($dao->deleteRequest($requestId, $staffId, $arrangementDate)) {
+        echo "Request deleted successfully.";
+        // Optionally redirect back to the requests page
+        header("Location: my_requests.php"); // Update this to your actual requests page
         exit();
     } else {
-        header("Location: my_requests.php?message=Failed to delete request.");
-        exit();
+        echo "Error deleting request. Please try again.";
     }
+} else {
+    echo "No request ID, staff ID, or arrangement date provided or invalid request method.";
 }
 ?>
+
