@@ -172,5 +172,28 @@
                     return 'Full Day (9:00 AM - 6:00 PM)';
             }
         }
+
+        public function deleteRequest($requestId) {
+            $conn = $this->getConnection();
+    
+            // Prepare the SQL statement
+            $sql = "DELETE FROM employee_arrangement WHERE Request_ID = ?";
+            
+            if ($stmt = $conn->prepare($sql)) {
+                // Bind the request ID parameter
+                $stmt->bind_param("i", $requestId);
+                
+                // Execute the statement
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    return true; // Deletion successful
+                } else {
+                    $stmt->close();
+                    return false; // Deletion failed
+                }
+            } else {
+                return false; // SQL preparation failed
+            }
+        }
     }
 ?>
