@@ -37,11 +37,16 @@
     $deptDetails = '';
     $deptRequests = '';
     $userDept = $employee->getDept(); 
-    $employeesInDept = $userDept -> retrieveEmployeesInSameDept();
+    $employeesInDept = $dao -> retrieveEmployeesInSameDept($userDept);  
 
     echo "Department: $userDept";
     echo "<br>";
-    echo "Employees List";
+    echo "<br>";
+    echo "<u>Employees List<u>";
+    echo "<br>";
+    echo "<br>";
+    echo "{$employeesInDept}";
+
     
     if ($userRole != 2){
         if ($userDept == "HR" || $userDept == "CEO"){ 
