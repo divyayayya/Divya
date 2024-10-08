@@ -97,7 +97,7 @@
         foreach ($requests as $request) {
             echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Reason']}</td><td>{$request['Request_Status']}</td>";
             echo "<td>
-                    <button onclick='confirmDelete({$request['Request_ID']})'>Delete</button>
+                    <button onclick='confirmDelete({$request['Request_ID']}, {$request['Staff_ID']}, \"{$request['Arrangement_Date']}\")'>Delete</button>
                 </td>
                 </tr>";
             
