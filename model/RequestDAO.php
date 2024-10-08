@@ -173,29 +173,27 @@
             }
         }
 
-        public function deleteRequest($requestId) {
-            try {
-                $conn = new ConnectionManager();
-                $pdo = $conn->getConnection();
+        public function deleteRequest($requestId, $staffId, $arrangementDate) {
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
         
-                // Prepare the SQL statement
-                $sql = "DELETE FROM employee_arrangement WHERE Request_ID = :requestId";
+            // Prepare the SQL statement
+            $sql = "DELETE FROM employee_arrangement 
+                    WHERE Request_ID = :requestId 
+                    AND Staff_ID = :staffId 
+                    AND Arrangement_Date = :arrangementDate";
         
-                $stmt = $pdo->prepare($sql);
-                // Bind the request ID parameter
-                $stmt->bindParam(':requestId', $requestId, PDO::PARAM_INT);
+            $stmt = $pdo->prepare($sql);
+            
+            // Bind parameters
+            $stmt->bindParam(':requestId', $requestId, PDO::PARAM_INT);
+            $stmt->bindParam(':staffId', $staffId, PDO::PARAM_INT);
+            $stmt->bindParam(':arrangementDate', $arrangementDate);
         
-                // Execute the statement
-                if ($stmt->execute()) {
-                    return true; // Deletion successful
-                } else {
-                    return false; // Deletion failed
-                }
-            } catch (PDOException $e) {
-                echo "Error deleting request: " . $e->getMessage();
-                return false; // Error occurred
-            }
+            // Execute the statement and return the result
+            return $stmt->execute();
         }
+        
         
     }
 ?>

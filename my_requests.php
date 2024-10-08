@@ -52,10 +52,18 @@
     </style>
 
     <script>
-        function confirmDelete(requestId) {
-            if (confirm("Are you sure you want to delete this request?")) {
-                // If confirmed, redirect to delete script
-                window.location.href = "delete_request.php?request_id=" + requestId;
+      
+        function confirmDelete(requestId, staffId, arrangementDate) {
+            var message = "Are you sure you want to delete the request with:\n" +
+                        "Request ID: " + requestId + "\n" +
+                        "Staff ID: " + staffId + "\n" +
+                        "Arrangement Date: " + arrangementDate + "?";
+            
+            if (confirm(message)) {
+                // If confirmed, redirect to delete script with all parameters
+                window.location.href = "delete_request.php?request_id=" + requestId +
+                                    "&staff_id=" + staffId +
+                                    "&arrangement_date=" + arrangementDate;
             }
         }
     
