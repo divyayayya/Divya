@@ -3,13 +3,14 @@ session_start(); // Ensure session is started
 
 include '/Applications/MAMP/htdocs/GitHub/Divya/model/ConnectionManager.php'; // Include your connection manager
 
+// Enable error reporting to see any issues
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $connManager = new ConnectionManager();
 $conn = $connManager->getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Debugging output for incoming POST data
-    var_dump($_POST);
-
     // Check if user ID is set
     if (!isset($_SESSION['userID'])) {
         echo "Error: Employee ID is not set in session.";
@@ -23,6 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Check if the request type is single or recurring
     if ($requestType === 'single') {
+        // Debugging information
+        echo "Processing single request...<br>";
+        echo "User ID: $userID<br>";
+        echo "Start Date: $startDate<br>";
+        echo "Reason: $reason<br>";
+
         // Insert single request
         $sql = "INSERT INTO employee_arrangement (Staff_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
@@ -32,46 +39,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Check for errors
         if (!$executed) {
-            print_r($stmt->errorInfo());
+            echo "Error during execution: " . implode(", ", $stmt->errorInfo());
+            exit(); // Stop further execution if there's an error
         } else {
-            echo "Request submitted successfully!";
+            // Redirect to my_requests.php after successful submission
+            header("Location: my_requests.php");
+            exit();
         }
         
     } elseif ($requestType === 'recurring') {
         $endDate = $_POST['end_date'];
-        $frequency = $_POST['frequency'];
+        $daysOfWeek = $_POST['days_of_week']; // Get selected days of the week
 
         // Convert dates
-        $date = new DateTime($startDate);
-        $end = new DateTime($endDate);
+        $startDateObj = new DateTime($startDate);
+        $endDateObj = new DateTime($endDate);
+
+        if (count($daysOfWeek) > 2) {
+            echo "Error: You can only select a maximum of 2 days per week.";
+            exit();
+        }
 
         try {
             $conn->beginTransaction(); // Start transaction
 
-            while ($date <= $end) {
-                $sql = "INSERT INTO employee_arrangement (Staff_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location, Recurring_Days, Start_Date, End_Date) VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                
-                // Execute statement
-                $executed = $stmt->execute([$userID, 'WFH', $reason, 'Pending', 'Home', $_POST['recurring_days'], $startDate, $endDate]);
+            while ($startDateObj <= $endDateObj) {
+                $day_of_week = $startDateObj->format('l'); // Get the day of the week
 
-                // Check for errors
-                if (!$executed) {
-                    print_r($stmt->errorInfo());
+                // Check if the current day is one of the selected days of the week
+                if (in_array($day_of_week, $daysOfWeek)) {
+                    $sql = "INSERT INTO employee_arrangement (Staff_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location) VALUES (?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($sql);
+                    
+                    // Execute statement
+                    $executed = $stmt->execute([$userID, $startDateObj->format('Y-m-d'), 'WFH', $reason, 'Pending', 'Home']);
+
+                    // Check for errors
+                    if (!$executed) {
+                        echo "Error during execution (recurring): " . implode(", ", $stmt->errorInfo());
+                        exit(); // Stop further execution if there's an error
+                    }
                 }
 
-                // Update date based on frequency
-                if ($frequency === 'daily') {
-                    $date->modify('+1 day');
-                } elseif ($frequency === 'weekly') {
-                    $date->modify('+1 week');
-                } elseif ($frequency === 'monthly') {
-                    $date->modify('+1 month');
-                }
+                // Move to the next day
+                $startDateObj->modify('+1 day');
             }
 
             $conn->commit(); // Commit transaction
-            echo "Recurring request submitted successfully!";
+            // Redirect to my_requests.php after successful submission
+            header("Location: my_requests.php");
+            exit();
         } catch (Exception $e) {
             $conn->rollBack(); // Rollback on error
             echo "Failed: " . $e->getMessage();
