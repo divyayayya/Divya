@@ -35,6 +35,7 @@ SET FOREIGN_KEY_CHECKS=1;
 #Create Employee_Arrangement Table
 CREATE TABLE employee_arrangement (
     Staff_ID INT NOT NULL,
+    Department VARCHAR(256) NOT NULL,
     Request_ID INT NOT NULL,
     Arrangement_Date DATE NOT NULL,
     Working_Arrangement VARCHAR(50) NOT NULL,
@@ -45,13 +46,13 @@ CREATE TABLE employee_arrangement (
     CONSTRAINT employee_arrangement_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE
 );
 
-INSERT INTO employee_arrangement (Staff_ID, Request_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location)
+INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location)
 VALUES 
-(150148, 1, '2024-01-01', 'WFH', "", 'Approved','Home') ,
-(150148, 1, '2024-01-08', 'WFH', "", 'Approved','Home') ,
-(150148, 2, '2024-01-15', 'WFH', '', 'Pending','Home') ,
-(150148, 3, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office'),
-(150148, 4, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office'),
-(140878, 5, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home');
+(150148, 'Engineering', 1, '2024-01-01', 'WFH', "", 'Approved','Home') ,
+(150148, 'Engineering', 2, '2024-01-08', 'WFH', "", 'Approved','Home') ,
+(150148, 'Engineering', 3, '2024-01-15', 'WFH', '', 'Pending','Home') ,
+(150148, 'Engineering', 4, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office'),
+(150148, 'Engineering', 5, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office'),
+(140878, 'Sales', 6, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home');
 
 SET FOREIGN_KEY_CHECKS=1;

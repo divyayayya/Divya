@@ -13,53 +13,73 @@
 <body>
 
 <?php
-
-    #Display User Details
+    # Start session and retrieve user details
     $userID = $_SESSION['userID'];
     $userRole = $_SESSION['userRole'];
 
+    # Initialize DAO objects
     $dao = new EmployeeDAO;
     $result = $dao->retrieveEmployeeInfo($userID);
-    $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
-    $dao_req = new RequestDAO;
-    $requests = $dao_req -> retrieverequestInfo($userID);
-    // $arrangement = new Request($arrangements['Staff_ID'],$arrangements['Arrangement_Date'], $arrangements['Working_Arrangement'], $arrangements);
 
-    echo "<h1 style='display: inline-block; margin-right: 20px;'>User Details</h1><a href='login.php' style='display: inline-block; vertical-align: middle;'>Sign Out</a>";
+    # Create Employee object based on the current user’s details
+    $employee = new Employee(
+        $result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], 
+        $result['Dept'], $result['Position'], $result['Country'], 
+        $result['Email'], $result['Reporting_Manager'], $result['Role']
+    );
 
-    echo "<table border=1>";
-    echo "<tr><th>ID</th><th>Name</th><th>Department</th><th>Position</th><th>Country</th><th>Email</th></tr>";
-    echo "<tr><td>{$employee->getID()}</td><td>{$employee->getStaffName()}</td><td>{$employee->getDept()}</td><td>{$employee->getPosition()}</td><td>{$employee->getCountry()}</td><td>{$employee->getEmail()}</td></tr></table>";
+    # Retrieve the user's department
+    $userDept = $employee->getDept();
 
-
-
-    echo "</br>";
-    $deptDetails = '';
-    $deptRequests = '';
-    $userDept = $employee->getDept(); 
-    $employeesInDept = $dao -> retrieveEmployeesInSameDept($userDept);  
-
-    echo "Department: $userDept";
-    echo "<br>";
-    echo "<br>";
-    echo "<u>Employees List<u>";
-    echo "<br>";
-    echo "<br>";
-    echo "{$employeesInDept}";
-
-    
-    if ($userRole != 2){
-        if ($userDept == "HR" || $userDept == "CEO"){ 
-            $deptDetails = "<a href='deptDetails_HR.php'>Department Details</a>";
-            $deptRequests = "<a href='pendingRequests.php'>Pending Requests</a>";
-        } else { 
-            $deptDetails = "<a href='deptDetails.php'>Department Details</a>";
-            $deptRequests = "<a href='pendingRequests.php'>Pending Requests</a>";
-        }
-        
-    }
-    
-    
-    $requests_json = json_encode($requests);
+    echo "<a href='login.php' style='display: inline-block; vertical-align: middle;'>Sign Out</a>";
+    echo "<br><br>";
 ?>
+
+<!-- Form to select the date -->
+<form method="POST" action="">
+    <label for="arrangement_date">Select Date: </label>
+    <input id="arrangement_date" type="date" name="arrangement_date">
+    <input type="submit" value="Retrieve Locations">
+</form>
+
+<?php
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['arrangement_date'])) {
+        $selectedDate = $_POST['arrangement_date'];
+
+        # Retrieve employees in the same department using the DAO method
+        $employeesInDept = $dao->retrieveEmployeesInSameDept($userDept);
+
+        echo "<br><u>Employees List for Date: $selectedDate</u><br>";
+
+        # Display employees from the same department and their location on the selected date
+        if (!empty($employeesInDept)) {
+            echo "<table border=1>";
+            echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Location</th></tr>";
+            # Inside the foreach loop
+            # Inside the foreach loop
+            foreach ($employeesInDept as $emp) {
+                # Retrieve the arrangement details for the employee
+                $arrangement = $dao->retrieveArrangementDetailsByDate($emp['Staff_ID'], $selectedDate);
+                # Check if $arrangement is an array and contains the 'Working_Location'
+                if ($arrangement && isset($arrangement['Working_Location'])) {
+                    $workingLocation = $arrangement['Working_Location'];
+                    echo "<tr bgcolor='fbec5d'><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>";
+                    echo "<td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td></tr>";
+                } else {
+                    $workingLocation = 'In-Office';  // Default if no arrangement is found
+                    echo "<tr><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>";
+                    echo "<td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td></tr>";
+                }
+
+                # Echo out individual fields in the array
+            }
+
+            echo "</table>";
+        } else {
+            echo "No employees found in the same department.";
+        }
+    }
+?>
+
 </body>
+</html>
