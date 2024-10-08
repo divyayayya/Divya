@@ -85,7 +85,7 @@
 
     if (count($requests) > 0) {
         echo "<table border=1>";
-        echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Reason</th><th>Status</th></tr>";    
+        echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Reason</th><th>Status</th><th>Delete</th></tr>";    
         foreach ($requests as $request) {
             echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Reason']}</td><td>{$request['Request_Status']}</td>";
             echo "<td>
