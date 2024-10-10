@@ -170,65 +170,65 @@
 
 
     // Retrieve employees in the selected department
-    // if (!isset($_POST['submit'])){
-    //     $underlings = $dao->retrieveUnderlings($userID);
+    if (!isset($_POST['submit'])){
+        $underlings = $dao->retrieveUnderlings($userID);
 
-    //     echo "<table border=1>";
-    //     echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
-    //     foreach ($underlings as $underling) {
-    //         echo "<tr>";
-    //         echo "<td>{$underling['Staff_ID']}</td>";
-    //         echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
-    //         echo "<td>{$underling['Position']}</td>";
-    //         echo "<td>{$underling['Country']}</td>";
-    //         echo "<td>{$underling['Email']}</td>";
-    //         echo "</tr>";
-    //     }
-    //     echo "</table>";
-    // } else{
-    //     $staffName = $_POST['staffName'];
+        echo "<table border=1>";
+        echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
+        foreach ($underlings as $underling) {
+            echo "<tr>";
+            echo "<td>{$underling['Staff_ID']}</td>";
+            echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
+            echo "<td>{$underling['Position']}</td>";
+            echo "<td>{$underling['Country']}</td>";
+            echo "<td>{$underling['Email']}</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+    } else{
+        $staffName = $_POST['staffName'];
 
-    //     if ($staffName == ""){
-    //         $underlings = $dao->retrieveUnderlings($userID);
-    //         echo "<table border=1>";
-    //         echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
-    //         foreach ($underlings as $underling) {
-    //             echo "<tr>";
-    //             echo "<td>{$underling['Staff_ID']}</td>";
-    //             echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
-    //             echo "<td>{$underling['Position']}</td>";
-    //             echo "<td>{$underling['Country']}</td>";
-    //             echo "<td>{$underling['Email']}</td>";
-    //             echo "</tr>";
-    //         }
-    //         echo "</table>";            
-    //     } else{
-    //         $sql = "SELECT * FROM employee WHERE Reporting_Manager = $userID AND (Staff_FName LIKE '$staffName' OR Staff_LName LIKE '$staffName' OR CONCAT(Staff_FName, ' ', Staff_LName) LIKE '$staffName');";
-    //         $showData = $dao->searchEmployee($sql);
+        if ($staffName == ""){
+            $underlings = $dao->retrieveUnderlings($userID);
+            echo "<table border=1>";
+            echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
+            foreach ($underlings as $underling) {
+                echo "<tr>";
+                echo "<td>{$underling['Staff_ID']}</td>";
+                echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
+                echo "<td>{$underling['Position']}</td>";
+                echo "<td>{$underling['Country']}</td>";
+                echo "<td>{$underling['Email']}</td>";
+                echo "</tr>";
+            }
+            echo "</table>";            
+        } else{
+            $sql = "SELECT * FROM employee WHERE Reporting_Manager = $userID AND (Staff_FName LIKE '$staffName' OR Staff_LName LIKE '$staffName' OR CONCAT(Staff_FName, ' ', Staff_LName) LIKE '$staffName');";
+            $showData = $dao->searchEmployee($sql);
     
-    //         if ($showData == "No employee found!"){
-    //             echo "<h2>$showData</h2>";
-    //         } else{
-    //             echo "<table border=1>";
-    //             echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
-    //             echo "<tr>";
-    //                 echo "<td>{$showData['Staff_ID']}</td>";
-    //                 echo "<td>{$showData['Staff_FName']} {$showData['Staff_LName']}</td>";
-    //                 echo "<td>{$showData['Position']}</td>";
-    //                 echo "<td>{$showData['Country']}</td>";
-    //                 echo "<td>{$showData['Email']}</td>";
-    //             echo "</tr>";
-    //             echo "</table>";
+            if ($showData == "No employee found!"){
+                echo "<h2>$showData</h2>";
+            } else{
+                echo "<table border=1>";
+                echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
+                echo "<tr>";
+                    echo "<td>{$showData['Staff_ID']}</td>";
+                    echo "<td>{$showData['Staff_FName']} {$showData['Staff_LName']}</td>";
+                    echo "<td>{$showData['Position']}</td>";
+                    echo "<td>{$showData['Country']}</td>";
+                    echo "<td>{$showData['Email']}</td>";
+                echo "</tr>";
+                echo "</table>";
         
-    //         }
+            }
             
-    //     }
-    //     }
+        }
+        }
 
         
-    // echo "</div>";
+    echo "</div>";
 
-    // echo "<br><h1>Calendar</h1>";
+    echo "<br><h1>Calendar</h1>";
 
     //Retrieve Underling Requests
     $underlings = $dao->retrieveUnderlings($userID);
