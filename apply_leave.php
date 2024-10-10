@@ -24,7 +24,7 @@
 </head>
 <body>
 
-    <h1 style='display: inline-block; margin-right: 20px;'>Apply for Work-from-Home Days</h1><a href='my_requests.php'>Back</a>
+    <h1 style='display: inline-block; margin-right: 20px;'>Apply for Leave</h1><a href='my_requests.php'>Back</a>
 
     <!-- <h3>Number of Available Leaves</h3>
     <table border="1">
@@ -55,7 +55,7 @@
             <option value='full_day'>Full Day</option>
         </select><br><br>
 
-        <label for="reason">Reason for WFH:</label><br>
+        <label for="reason">Reason for leave:</label><br>
         <textarea name="reason" required></textarea><br><br>
         
         <button type="submit">Submit Request</button>
