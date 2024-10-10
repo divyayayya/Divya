@@ -21,7 +21,7 @@ CREATE TABLE employee (
 SET FOREIGN_KEY_CHECKS=0;
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
 #Load Data from employeenew.csv into DB
-LOAD DATA INFILE "C:/wamp64/tmp/employeenew.csv"
+LOAD DATA INFILE "C:\\wamp64\\www\\SPM\\Divya\\employeenew.csv"
 INTO TABLE employee
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
@@ -53,6 +53,13 @@ VALUES
 (150148, 'Engineering', 3, '2024-01-15', 'WFH', '', 'Pending','Home') ,
 (150148, 'Engineering', 4, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office'),
 (150148, 'Engineering', 5, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office'),
-(140878, 'Sales', 6, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home');
+(140878, 'Sales', 6, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home'),
+(140880, 'Sales', 7, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
+(140881, 'Sales', 8, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
+(140882, 'Sales', 9, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
+(140883, 'Sales', 10, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
+(140887, 'Sales', 11, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
+(140890, 'Sales', 12, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
+(140891, 'Sales', 13, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home');
 
 SET FOREIGN_KEY_CHECKS=1;
