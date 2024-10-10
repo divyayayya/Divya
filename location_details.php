@@ -38,7 +38,7 @@
 <!-- Form to select the date -->
 <form method="POST" action="">
     <label for="arrangement_date">Select Date: </label>
-    <input id="arrangement_date" type="date" name="arrangement_date">
+    <input id="arrangement_date" type="date" name="arrangement_date" value="<?php echo isset($_POST['arrangement_date']) ? htmlspecialchars($_POST['arrangement_date']) : ''; ?>">    
     <input type="submit" value="Retrieve Locations">
 </form>
 
