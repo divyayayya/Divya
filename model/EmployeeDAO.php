@@ -173,7 +173,24 @@
             $pdo = null;
         
             return $result;
-        }        
+        }
+        
+        public function searchEmployee($sql){
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch();
+            
+            if ($result == null){
+                $errorMsg = "No employee found!";
+                return $errorMsg;
+            }
+            return $result;
+
+        }
         
     }
 
