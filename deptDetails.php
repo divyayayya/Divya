@@ -145,63 +145,77 @@
     $userRole = $_SESSION['userRole'];
 
     $dao = new EmployeeDAO();
-    $result = $dao->retrieveEmployeeInfo($userID);
-    $employee = new Employee(
-        $result['Staff_ID'], 
-        $result['Staff_FName'], 
-        $result['Staff_LName'], 
-        $result['Dept'], 
-        $result['Position'], 
-        $result['Country'], 
-        $result['Email'], 
-        $result['Reporting_Manager'], 
-        $result['Role']
-    );
-
-    # Fetch all departments in the company 
-    $departments = $dao->getAllDepartments();
-
-    // If form is submitted, use the selected department to retrieve employees in that department
-    $selectedDept = $employee->getDept(); // Default to the user's department
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $selectedDept = $_POST['department']; // Get the selected department from the form
-    }
 
     echo "<div class='navbar'>";
     echo "<a href='home.php'><img src='images/logo.jpg' alt='Company Logo' style='height: 60px;'></a>"; // Link to homepage 
-    if ($userRole == 1){
-        echo "<form method='POST' action='' >";
-        echo "<label for='dept'>Search Department: </label>";
-        echo "<select id='dept' name='department'>";
-    
-        // Iterate over the departments array to populate the dropdown options
-        foreach ($departments as $dept) {
-            $selected = ($dept['Dept'] == $selectedDept) ? 'selected' : ''; // Set the default selected option
-            echo "<option value='" . htmlspecialchars($dept['Dept']) . "' $selected>" . htmlspecialchars($dept['Dept']) . "</option>";
-        }
-    
-        echo "</select>";
-        echo "<input type='submit' value='View'>";
-        echo "</form>";
-    }
     echo "</div>";
 
-    // Retrieve employees in the selected department
-    $underlings = $dao->retrieveUnderlings($userID);
+    echo "<div>";
+    $staffName = "";
+    echo "<form action='deptDetails.php' method='POST'>";
+    echo "<label for='staffName'>Search Employee: </label>";
+    echo "<input type='text' id='staffName' name='staffName' placeholder='Employee Name' value='$staffName'>";
+    echo "<input type='submit' name='submit' value='Search'/>";
 
-    echo "<table border=1>";
-    echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
-    foreach ($underlings as $underling) {
-        echo "<tr>";
-        echo "<td>{$underling['Staff_ID']}</td>";
-        echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
-        echo "<td>{$underling['Position']}</td>";
-        echo "<td>{$underling['Country']}</td>";
-        echo "<td>{$underling['Email']}</td>";
-        echo "</tr>";
-    }
-    echo "</table>";
+
+    // Retrieve employees in the selected department
+    if (!isset($_POST['submit'])){
+        $underlings = $dao->retrieveUnderlings($userID);
+
+        echo "<table border=1>";
+        echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
+        foreach ($underlings as $underling) {
+            echo "<tr>";
+            echo "<td>{$underling['Staff_ID']}</td>";
+            echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
+            echo "<td>{$underling['Position']}</td>";
+            echo "<td>{$underling['Country']}</td>";
+            echo "<td>{$underling['Email']}</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+    } else{
+        $staffName = $_POST['staffName'];
+
+        if ($staffName == ""){
+            $underlings = $dao->retrieveUnderlings($userID);
+            echo "<table border=1>";
+            echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
+            foreach ($underlings as $underling) {
+                echo "<tr>";
+                echo "<td>{$underling['Staff_ID']}</td>";
+                echo "<td>{$underling['Staff_FName']} {$underling['Staff_LName']}</td>";
+                echo "<td>{$underling['Position']}</td>";
+                echo "<td>{$underling['Country']}</td>";
+                echo "<td>{$underling['Email']}</td>";
+                echo "</tr>";
+            }
+            echo "</table>";            
+        } else{
+            $sql = "SELECT * FROM employee WHERE Reporting_Manager = $userID AND (Staff_FName LIKE '$staffName' OR Staff_LName LIKE '$staffName' OR CONCAT(Staff_FName, ' ', Staff_LName) LIKE '$staffName');";
+            $showData = $dao->searchEmployee($sql);
+    
+            if ($showData == "No employee found!"){
+                echo "<h2>$showData</h2>";
+            } else{
+                echo "<table border=1>";
+                echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Email</th></tr>";
+                echo "<tr>";
+                    echo "<td>{$showData['Staff_ID']}</td>";
+                    echo "<td>{$showData['Staff_FName']} {$showData['Staff_LName']}</td>";
+                    echo "<td>{$showData['Position']}</td>";
+                    echo "<td>{$showData['Country']}</td>";
+                    echo "<td>{$showData['Email']}</td>";
+                echo "</tr>";
+                echo "</table>";
+        
+            }
+            
+        }
+        }
+
+        
+    echo "</div>";
 
     echo "<br><h1>Calendar</h1>";
 ?>
