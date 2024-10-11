@@ -24,7 +24,7 @@
         $workingLocation = $requestDetails['Working_Location'];
         
         // Request Details
-        echo "<h2>Request Details for Request ID: {$requestID}</h2>";
+        echo "<h1 style='display: inline-block; margin-right: 20px;'>Request Details for Request ID: {$requestID}</h2><a href='pendingRequests.php'>Back</a></br> ";
         echo "<table border='1'>
                 <tr>
                     <th>Staff ID</th><th>Staff Name</th><th>Arrangement Date</th><th>Working Arrangement</th><th>Reason</th><th>Working Location</th>
