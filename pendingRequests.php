@@ -50,11 +50,11 @@
         
                 // Create buttons for 'Approve' and 'Reject' actions
                 echo "<td>
-                        <form method='POST' action='handle_request.php' style='display:inline;'>
+                        <form method='POST' action='approve_request.php' style='display:inline;'>
                             <input type='hidden' name='requestID' value='{$requestID}'>
                             <button type='submit' name='action' value='approve'>Approve</button>
                         </form>
-                        <form method='POST' action='handle_request.php' style='display:inline;'>
+                        <form method='POST' action='reject_form.php' style='display:inline;'>
                             <input type='hidden' name='requestID' value='{$requestID}'>
                             <button type='submit' name='action' value='reject'>Reject</button>
                         </form>

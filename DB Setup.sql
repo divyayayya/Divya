@@ -42,26 +42,25 @@ CREATE TABLE employee_arrangement (
     Reason VARCHAR(255) NULL,
     Request_Status VARCHAR(50) NOT NULL,
     Working_Location VARCHAR(50) NOT NULL,
+    Rejection_Reason VARCHAR(255) NULL,
     CONSTRAINT employee_arrangement_pk PRIMARY KEY (Staff_ID, Request_ID, Arrangement_Date),
     CONSTRAINT employee_arrangement_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE
 );
 
-INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location)
+INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location, Rejection_Reason)
 VALUES 
-(150148, 'Engineering', 1, '2024-01-01', 'WFH', "", 'Approved','Home') ,
-(150148, 'Engineering', 2, '2024-01-08', 'WFH', "", 'Approved','Home') ,
-(150148, 'Engineering', 3, '2024-01-15', 'WFH', '', 'Pending','Home') ,
-(150148, 'Engineering', 4, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office'),
-(150148, 'Engineering', 5, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office'),
-(150065, 'Engineering', 7, '2024-01-01', 'WFH', '', 'Approved','Home'),
-(150166, 'Engineering', 8, '2024-01-01', 'Leave', 'Holiday', 'Approved', 'Home');
-(140878, 'Sales', 6, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home'),
-(140880, 'Sales', 7, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
-(140881, 'Sales', 8, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
-(140882, 'Sales', 9, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
-(140883, 'Sales', 10, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
-(140887, 'Sales', 11, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
-(140890, 'Sales', 12, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
-(140891, 'Sales', 13, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home');
+(150148, 'Engineering', 1, '2024-01-01', 'WFH', "", 'Approved','Home', NULL) ,
+(150148, 'Engineering', 2, '2024-01-08', 'WFH', "", 'Approved','Home', NULL) ,
+(150148, 'Engineering', 3, '2024-01-15', 'WFH', '', 'Pending','Home', NULL) ,
+(150148, 'Engineering', 4, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office', 'Not Valid'),
+(150148, 'Engineering', 5, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office', 'Canceled'),
+(140878, 'Sales', 6, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home', NULL),
+(140880, 'Sales', 7, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home', NULL),
+(140881, 'Sales', 8, '2024-11-03', 'WFH', 'Take care of baby', 'Pending', 'Home', NULL),
+(140882, 'Sales', 9, '2024-11-07', 'WFH', 'Go out with gf', 'Pending', 'Home', NULL),
+(140883, 'Sales', 10, '2024-12-05', 'WFH', 'Lazy to work in office', 'Pending', 'Home', NULL),
+(140887, 'Sales', 11, '2024-12-01', 'WFH', 'Take care of baby', 'Pending', 'Home', NULL),
+(140890, 'Sales', 12, '2024-12-24', 'WFH', 'Family', 'Pending', 'Home', NULL),
+(140891, 'Sales', 13, '2024-12-25', 'WFH', 'Family', 'Pending', 'Home', NULL);
 
 SET FOREIGN_KEY_CHECKS=1;

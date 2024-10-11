@@ -205,6 +205,62 @@
             return $results;
         }
         
+        public function approveRequest($requestID){
+            $conn = new ConnectionManager;
+            $pdo = $conn->getConnection();
+
+            $sql = "UPDATE employee_arrangement SET Request_Status = 'Approved' WHERE Request_ID = :requestID AND Request_Status = 'Pending'";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
+            $stmt->execute();
+            $affectedRows = $stmt->rowCount();
+
+            $stmt = null;
+            $pdo = null;
+
+            if ($affectedRows == 1){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public function rejectRequest($requestID, $reason){
+            $conn = new ConnectionManager;
+            $pdo = $conn->getConnection();
+
+            $sql = "UPDATE employee_arrangement SET Request_Status = 'Rejected', Rejection_Reason = :reason WHERE Request_ID = :requestID AND Request_Status = 'Pending'";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
+            $stmt->bindParam(':reason', $reason, PDO::PARAM_STR);
+            $stmt->execute();
+            $affectedRows = $stmt->rowCount();
+
+            $stmt = null;
+            $pdo = null;
+
+            if ($affectedRows == 1){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public function retrieveByReqID($requestID){
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $sql = 'SELECT * FROM employee_arrangement WHERE Request_ID = :requestID';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':requestID', $requestID, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $stmt = null;
+            $pdo = null;
+
+            return $result;
+        }
         
     }
 ?>
