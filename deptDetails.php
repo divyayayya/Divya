@@ -253,24 +253,22 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
-
         // Step 1: Group requests by date and Working_Arrangement
         const groupedEvents = {};
 
         data.requests.forEach(function(request) {
             if (request.Request_Status === 'Approved') {
                 const eventDate = request.Arrangement_Date.substring(0, 10);  // Extract YYYY-MM-DD
-
                 // Initialize the date if not already present
                 if (!groupedEvents[eventDate]) {
-                    groupedEvents[eventDate] = { WFH: 0, Office: 0 };
+                    groupedEvents[eventDate] = { WFH: 0, Leave: 0, Office: 0 };
                 }
 
                 // Count events based on Working_Arrangement
                 if (request.Working_Arrangement === 'WFH') {
                     groupedEvents[eventDate].WFH++;
-                } else if (request.Working_Arrangement === 'Office') {
-                    groupedEvents[eventDate].Office++;
+                } else if(request.Working_Arrangement === 'Leave'){
+                    groupedEvents[eventDate].Leave++;
                 }
             }
         });
@@ -284,7 +282,18 @@
                     start: date,
                     extendedProps: {
                         wfhCount: counts.WFH,
-                        officeCount: data.underlingCount - counts.WFH
+                        leaveCount: counts.Leave,
+                        officeCount: data.underlingCount - counts.WFH - counts.Leave
+                    }
+                });
+            } if (counts.Leave > 0) {
+                result.push({
+                    title: 'Leave',  // Display 'Leave' as the title
+                    start: date,
+                    extendedProps: {
+                        wfhCount: counts.WFH,
+                        leaveCount: counts.Leave,
+                        officeCount: data.underlingCount - counts.WFH - counts.Leave
                     }
                 });
             }
@@ -324,7 +333,7 @@
             eventMouseEnter: function(info) {
                 var tooltip = document.createElement('div');
                 tooltip.className = 'tooltip';
-                tooltip.innerHTML = `WFH: ${info.event.extendedProps.wfhCount} <br> Office: ${info.event.extendedProps.officeCount}`;
+                tooltip.innerHTML = `WFH: ${info.event.extendedProps.wfhCount} <br> Leave: ${info.event.extendedProps.leaveCount} <br> Office: ${info.event.extendedProps.officeCount}`;
                 document.body.appendChild(tooltip);
                 
                 tooltip.style.position = 'absolute';
