@@ -84,26 +84,18 @@
 
             // Convert requests data into FullCalendar event objects
             const events = requests.map(function(request) {
-                // Correct comparison operator '==' or '===' instead of '='
-                if (request.Request_Status === 'Approved') {
+                if (request.Request_Status === 'Approved' || request.Request_Status === 'Pending') {
                     return {
                         title: request.Working_Arrangement,  // Display the arrangement type as the title
                         start: request.Arrangement_Date,     // Use the Arrangement_Date as the event's start date
-                        extendedProps: {
-                            status: request.Request_Status    // Correctly referencing request.Request_Status
-                        }
-                    };
-                } else if (request.Request_Status === 'Pending') {
-                    return {
-                        title: request.Working_Arrangement,  // Display the arrangement type as the title
-                        start: request.Arrangement_Date,     // Use the Arrangement_Date as the event's start date
-                        backgroundColor: '#edb95e',
+                        time: request.Arrangement_Time,      // Include the arrangement time
+                        reason : request.Reason,
+                        backgroundColor: (request.Request_Status === 'Pending') ? '#edb95e' : '',  // Color for pending
                         extendedProps: {
                             status: request.Request_Status    // Correctly referencing request.Request_Status
                         }
                     };
                 }
-
             }).filter(event => event !== undefined); // Filter out undefined values for non-approved requests
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -114,11 +106,15 @@
                     window.open('location_details.php', target='_blank');
                 },
                 eventMouseEnter: function(info) {
+                    // Create the tooltip
                     var tooltip = document.createElement('div');
                     tooltip.className = 'tooltip';
-                    tooltip.innerHTML = info.event.title + "<br>" + info.event.start;
+                    tooltip.innerHTML = info.event.title + "<br>" + info.event.extendedProps.time + "<br>" + "Reason: " + info.event.extendedProps.reason; // Display date and time
+
+                    // Append tooltip to the document body
                     document.body.appendChild(tooltip);
                     
+                    // Style the tooltip and position it
                     tooltip.style.position = 'absolute';
                     tooltip.style.top = info.jsEvent.pageY + 'px';
                     tooltip.style.left = info.jsEvent.pageX + 'px';
@@ -127,6 +123,7 @@
                     tooltip.style.border = '1px solid #ccc';
                 },
                 eventMouseLeave: function() {
+                    // Remove the tooltip on mouse leave
                     var tooltip = document.querySelector('.tooltip');
                     if (tooltip) {
                         tooltip.remove();

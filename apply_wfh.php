@@ -39,10 +39,14 @@
         <label for="single_start_date">Date:</label>
         <input type="date" name="single_start_date" 
                min=<?php echo(date("Y-m-d"))?> required><br>
-        <input type="radio" name="time" required>AM
-        <input type="radio" name="time" required>PM
-        <input type="radio" name="time" required>Full Day
+        
+        <!-- Time selection -->
+        <label for="time">Select Time:</label><br>
+        <input type="radio" name="time" value="AM" required> AM
+        <input type="radio" name="time" value="PM" required> PM
+        <input type="radio" name="time" value="Full Day" required> Full Day
         <br>
+
         <label for="reason">Reason:</label>
         <textarea name="reason" required></textarea><br>
 

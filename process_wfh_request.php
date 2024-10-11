@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userID = $_SESSION['userID'];
     $reason = $_POST['reason'];
     $requestType = $_POST['request_type'];  // Single or Recurring request type
-    $startDate = $_POST['single_start_date'];
 
     //User Data
     $dao = new EmployeeDAO;
@@ -27,30 +26,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
     $dept = $employee -> getDept();
 
-    //DEON TEST
-    echo $userID;
-    echo $dept;
-    echo $startDate;
-    echo $reason;
-    echo $requestType;
-    
+    // Generate a new Request_ID based on the current number of requests
+    $sql = "SELECT COUNT(*) as total_requests FROM employee_arrangement";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $requestID = $result['total_requests'] + 1;  // Increment the count for the new request ID
+
     // Check if the request is for 'single' day WFH
     if ($requestType === 'single_day') {
-        // $startDate = $_POST['single_start_date'];
-        // console.log($startDate);
+        $startDate = $_POST['single_start_date'];
+        $time = $_POST['time'];  // AM, PM, or Full Day
+
         echo "Processing single day WFH request...<br>";
         echo "User ID: $userID<br>";
-        echo $dept;
         echo "Start Date: $startDate<br>";
+        echo "Time: $time<br>";
         echo "Reason: $reason<br>";
+        echo $requestType;
+        echo $time;
 
-        // Prepare the SQL for a single request
-        $sql = "INSERT INTO employee_arrangement (Staff_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+        // Prepare the SQL for a single request with time selection
+        $sql = "INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
 
         // Execute the query with user data
-        $executed = $stmt->execute([$userID, $startDate, 'WFH', $reason, 'Pending', 'Home']);
+        $executed = $stmt->execute([$userID, $dept, $requestID, $startDate, 'WFH', $time, $reason, 'Pending', 'Home/ OOF', NULL]);
 
         // Error handling and redirection
         if (!$executed) {
@@ -64,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } elseif ($requestType === 'recurring') {
         // Recurring request handling
+        $startDate = $_POST['recurring_start_date'];  // Start date for recurring requests
         $endDate = $_POST['end_date'];  // End date for recurring requests
         $daysOfWeek = $_POST['days_of_week'];  // Days of the week selected (array)
 
@@ -88,12 +91,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Check if the current day matches the selected days of the week
                 if (in_array($dayOfWeek, $daysOfWeek)) {
                     // Prepare SQL for recurring requests
-                    $sql = "INSERT INTO employee_arrangement (Staff_ID, Arrangement_Date, Working_Arrangement, Reason, Request_Status, Working_Location) 
-                            VALUES (?, ?, ?, ?, ?, ?)";
+                    $sql = "INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $stmt = $conn->prepare($sql);
 
                     // Execute the SQL for each valid recurring day
-                    $executed = $stmt->execute([$userID, $startDateObj->format('Y-m-d'), 'WFH', $reason, 'Pending', 'Home']);
+                    $executed = $stmt->execute([$userID, $dept, $requestID, $startDateObj->format('Y-m-d'), 'WFH', 'Full Day', $reason, 'Pending', 'Home', NULL]);
 
                     // Error handling in case of execution issues
                     if (!$executed) {
@@ -120,4 +123,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-?>
