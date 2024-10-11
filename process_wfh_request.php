@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Make sure user has not selected more than 2 days per week
         if (count($daysOfWeek) > 2) {
             echo "Error: You can only select a maximum of 2 days per week.";
+            echo "<br><a href='javascript:history.back()'> Go Back</a>";
             exit();
         }
 

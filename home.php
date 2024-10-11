@@ -86,10 +86,11 @@
             const events = requests.map(function(request) {
                 if (request.Request_Status === 'Approved' || request.Request_Status === 'Pending') {
                     return {
-                        title: request.Working_Arrangement,  // Display the arrangement type as the title
-                        start: request.Arrangement_Date,     // Use the Arrangement_Date as the event's start date
-                        time: request.Arrangement_Time,      // Include the arrangement time
+                        title: request.Working_Arrangement,
+                        start: request.Arrangement_Date,     
+                        time: request.Arrangement_Time,
                         reason : request.Reason,
+                        status: request.Request_Status,
                         backgroundColor: (request.Request_Status === 'Pending') ? '#edb95e' : '',  // Color for pending
                         extendedProps: {
                             status: request.Request_Status    // Correctly referencing request.Request_Status
@@ -109,7 +110,7 @@
                     // Create the tooltip
                     var tooltip = document.createElement('div');
                     tooltip.className = 'tooltip';
-                    tooltip.innerHTML = info.event.title + "<br>" + info.event.extendedProps.time + "<br>" + "Reason: " + info.event.extendedProps.reason; // Display date and time
+                    tooltip.innerHTML = info.event.title + "<br>" + info.event.extendedProps.time + "<br>" + "Reason: " + info.event.extendedProps.reason + "<br>Status: " + info.event.extendedProps.status; // Display date and time
 
                     // Append tooltip to the document body
                     document.body.appendChild(tooltip);
