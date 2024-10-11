@@ -6,70 +6,155 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X -UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.css" />
     <title>HomePage</title>
+
+    <style>
+        /* Navbar Styling */
+        .navbar {
+            background-color: black;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            padding: 0 30px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .navbar img {
+            height: 60px;
+        }
+
+        .dropdown {
+            float: left;
+            overflow: visible;
+        }
+
+        .dropdown .dropbtn {
+            font-size: 16px;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 14px 20px;
+            background-color: inherit;
+            font-family: inherit;
+            margin: 0;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 100px;
+            max-width: 150px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            float: none;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .content {
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        * Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #f1f1f1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    </style>
 </head>
 <body>
 
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="login.php"><img src="images/logo.jpg" alt="Company Logo"></a> <!-- Link to homepage -->
+        <div class="dropdown">
+            <button class="dropbtn">Actions</button>
+            <div class="dropdown-content">
+                <a href="my_requests.php">My Requests</a>
+                <?php
+                    // Display department-specific links based on user role and department
+                    $userID = $_SESSION['userID'];
+                    $userRole = $_SESSION['userRole'];
+
+                    $dao = new EmployeeDAO;
+                    $result = $dao->retrieveEmployeeInfo($userID);   
+                    $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
+                    $userDept = $employee->getDept();
+                    $dao_req = new RequestDAO;
+                    $requests = $dao_req->retrieverequestInfo($userID);
+
+                    if ($userRole != 2) {
+                        if ($userDept == "HR" || $userDept == "CEO") { 
+                            echo "<a href='deptDetails_HR.php'>Department Details</a>";
+                            echo "<a href='pendingRequests.php'>Pending Requests</a>";
+                        } else { 
+                            echo "<a href='deptDetails.php'>Department Details</a>";
+                            echo "<a href='pendingRequests.php'>Pending Requests</a>";
+                        }
+                    }
+                ?>
+                <a href="location_details.php">View where your colleagues are working</a>
+            </div>
+        </div>
+    </div>
+
     <?php
         #Display User Details
-        $userID = $_SESSION['userID'];
-        $userRole = $_SESSION['userRole'];
-
-        $dao = new EmployeeDAO;
-        $result = $dao->retrieveEmployeeInfo($userID);   
-        $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
-        $dao_req = new RequestDAO;
-        $requests = $dao_req->retrieverequestInfo($userID);
-        // $arrangement = new Request($arrangements['Staff_ID'],$arrangements['Arrangement_Date'], $arrangements['Working_Arrangement'], $arrangements);
-
-        echo "<h1 style='display: inline-block; margin-right: 20px;'>User Details</h1><a href='login.php' style='display: inline-block; vertical-align: middle;'>Sign Out</a>";
-
         echo "<table border=1>";
         echo "<tr><th>ID</th><th>Name</th><th>Department</th><th>Position</th><th>Country</th><th>Email</th></tr>";
         echo "<tr><td>{$employee->getID()}</td><td>{$employee->getStaffName()}</td><td>{$employee->getDept()}</td><td>{$employee->getPosition()}</td><td>{$employee->getCountry()}</td><td>{$employee->getEmail()}</td></tr></table>";
 
-        // TESTING RETRIEVAL OF ARRANGEMENTS
-        // echo "<br><br>";
-        //     if(count($requests) > 1){
-        //         echo "<table border=1>";
-        //         echo "<tr><th>ID</th><th>Request ID</th><th>Date</th><th>Arrangement</th><th>Status</th></tr>";    
-        //         foreach($requests as $request){
-        //             echo "<tr><td>{$request['Staff_ID']}</td><td>{$request['Request_ID']}</td><td>{$request['Arrangement_Date']}</td><td>{$request['Working_Arrangement']}</td><td>{$request['Request_Status']}</td></tr>";
-        //         }
-        //     }
-        //     else{
-        //         echo '<p style="color: red;">No Requests Found</p>';
-        //     }
-
-        // echo "</table>";
-        // END OF TESTING
-
-
-        echo "</br>";
-        $deptDetails = '';
-        $deptRequests = '';
-        $userDept = $employee->getDept(); 
-
-        if ($userRole != 2){
-            if ($userDept == "HR" || $userDept == "CEO"){ 
-                $deptDetails = "<a href='deptDetails_HR.php'>Department Details</a>";
-                $deptRequests = "<a href='pendingRequests.php'>Pending Requests</a>";
-            } else { 
-                $deptDetails = "<a href='deptDetails.php'>Department Details</a>";
-                $deptRequests = "<a href='pendingRequests.php'>Pending Requests</a>";
-            }
-            
-        }
-        echo "<table><td><a href='my_requests.php'>My Requests</a></td><td></td><td>{$deptDetails}</td><td></td><td>{$deptRequests}</td><td></td></tr></table>";
-        echo "<br>";
-        echo "<p>Click on a date to view where your colleagues are working</p>";
-        echo "</br><h1>Calendar</h1>";
-        // echo "@CALENDAR PPL PLS PUT IT HERE TYVM";
-        // echo "<div id='calendar'></div>"
+        echo "</br></br><h1>Calendar</h1>";
         $requests_json = json_encode($requests);
     ?>
 
@@ -85,52 +170,30 @@
                 if (request.Request_Status === 'Approved' || request.Request_Status === 'Pending') {
                     return {
                         title: request.Working_Arrangement,
-                        start: request.Arrangement_Date,     
+                        start: request.Arrangement_Date,
                         time: request.Arrangement_Time,
-                        reason : request.Reason,
-                        status: request.Request_Status,
-                        backgroundColor: (request.Request_Status === 'Pending') ? '#edb95e' : '',  // Color for pending
+                        reason: request.Reason,
+                        backgroundColor: (request.Request_Status === 'Pending') ? '#edb95e' : '',
                         extendedProps: {
-                            status: request.Request_Status    // Correctly referencing request.Request_Status
+                            status: request.Request_Status
                         }
                     };
                 }
-            }).filter(event => event !== undefined); // Filter out undefined values for non-approved requests
+            }).filter(event => event !== undefined);
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 selectable: true,
                 events: events, 
-                dateClick: function(info) {
-                    // Create a form element
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = 'location_details.php';
-                    form.target = '_blank';  // Open in a new tab
-
-                    // Create a hidden input to store the date
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'date';  // Name of the input field
-                    input.value = info.dateStr;  // The date value from FullCalendar
-
-                    // Append the input to the form
-                    form.appendChild(input);
-
-                    // Append the form to the body and submit it
-                    document.body.appendChild(form);
-                    form.submit();
+                dateClick: function() {
+                    window.open('location_details.php', target='_blank');
                 },
                 eventMouseEnter: function(info) {
-                    // Create the tooltip
                     var tooltip = document.createElement('div');
                     tooltip.className = 'tooltip';
-                    tooltip.innerHTML = info.event.title + "<br>" + info.event.extendedProps.time + "<br>" + "Reason: " + info.event.extendedProps.reason + "<br>Status: " + info.event.extendedProps.status; // Display date and time
+                    tooltip.innerHTML = info.event.title + "<br>" + info.event.extendedProps.time + "<br>" + "Reason: " + info.event.extendedProps.reason;
 
-                    // Append tooltip to the document body
                     document.body.appendChild(tooltip);
-                    
-                    // Style the tooltip and position it
                     tooltip.style.position = 'absolute';
                     tooltip.style.top = info.jsEvent.pageY + 'px';
                     tooltip.style.left = info.jsEvent.pageX + 'px';
@@ -139,7 +202,6 @@
                     tooltip.style.border = '1px solid #ccc';
                 },
                 eventMouseLeave: function() {
-                    // Remove the tooltip on mouse leave
                     var tooltip = document.querySelector('.tooltip');
                     if (tooltip) {
                         tooltip.remove();
@@ -151,3 +213,4 @@
     </script>
     <div id='calendar'></div>
 </body>
+</html>
