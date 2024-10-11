@@ -12,19 +12,20 @@
             <option value="single_day">Single Day</option>
             <option value="recurring">Recurring</option>
         </select>
-
-        <!-- Add Single Day fields (initially visible) -->
+        <br>
+ 
+        <!-- for single day application -->
         <div id="single-day-fields">
-            <label for="single_date">Date:</label>
-            <input type="date" name="single_date" required>
+            <label for="start_date">Date:</label>
+            <input type="date" name="start_date" min=<?php echo(date("Y-m-d"))?> required>
         </div>
 
-        <!-- Add Recurring fields (initially hidden) -->
+        <!-- for recurring application only if recurring is chosen -->
         <div id="recurring-fields" style="display:none;">
             <label for="start_date">Start Date:</label>
-            <input type="date" name="start_date">
+            <input type="date" name="start_date" min=<?php echo(date("Y-m-d"))?> required>
             <label for="end_date">End Date:</label>
-            <input type="date" name="end_date">
+            <input type="date" name="end_date" min=<?php echo(date("Y-m-d"))?> required>
 
             <label>Select days of the week (maximum 2):</label><br>
             <input type="checkbox" name="days_of_week[]" value="Monday"> Monday<br>

@@ -1,8 +1,6 @@
 <?php
 require_once "model/common.php";
 
-echo "DEON'S TEST";
-
 // Enable error reporting to see any issues during development
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -20,12 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get necessary POST data
     $userID = $_SESSION['userID'];
     $reason = $_POST['reason'];
-    $startDate = $_POST['start_date'];
     $requestType = $_POST['request_type'];  // Single or Recurring request type
 
+
     // Check if the request is for 'single' day WFH
-    if ($requestType === 'single') {
-        // Debugging output to see the form data (optional, for testing)
+    if ($requestType === 'single_day') {
+        $startDate = $_POST['start_date'];
+        // console.log($startDate);
         echo "Processing single day WFH request...<br>";
         echo "User ID: $userID<br>";
         echo "Start Date: $startDate<br>";
