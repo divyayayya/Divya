@@ -64,7 +64,7 @@
             }
             
         }
-        echo "<a href='my_requests.php'>My Requests</a></td><td>{$deptDetails}</td><td>{$deptRequests}</td></tr></table>";
+        echo "<table><td><a href='my_requests.php'>My Requests</a></td><td></td><td>{$deptDetails}</td><td></td><td>{$deptRequests}</td><td></td></tr></table>";
         echo "<br>";
         echo "<br>";
         echo "<a href='location_details.php'>View where your colleagues are working</a>";
