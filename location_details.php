@@ -13,10 +13,12 @@
 <body>
 
 <?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $selectedDate = $_POST['date'] ?? null;
+    };  
     # Start session and retrieve user details
     $userID = $_SESSION['userID'];
     $userRole = $_SESSION['userRole'];
-
     $dao = new EmployeeDAO;
     $result = $dao->retrieveEmployeeInfo($userID);
     $employee = new Employee(
@@ -40,10 +42,6 @@
 </form>
 
 <?php
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['arrangement_date'])) {
-        $selectedDate = $_POST['arrangement_date'];
-
-        // filter employees to be listed based on user role:
         if ($userDept != 'HR') {
             $employeesInDept = $dao->retrieveEmployeesInSameDept($userDept);
             echo ("<br>In the <strong>$userDept</strong> department: <br>");
@@ -79,7 +77,7 @@
 
             echo "</table>";
         }
-    }
+    // }
 ?>
 
 </body>

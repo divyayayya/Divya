@@ -103,8 +103,25 @@
                 initialView: 'dayGridMonth',
                 selectable: true,
                 events: events, 
-                dateClick: function() {
-                    window.open('location_details.php', target='_blank');
+                dateClick: function(info) {
+                    // Create a form element
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'location_details.php';
+                    form.target = '_blank';  // Open in a new tab
+
+                    // Create a hidden input to store the date
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'date';  // Name of the input field
+                    input.value = info.dateStr;  // The date value from FullCalendar
+
+                    // Append the input to the form
+                    form.appendChild(input);
+
+                    // Append the form to the body and submit it
+                    document.body.appendChild(form);
+                    form.submit();
                 },
                 eventMouseEnter: function(info) {
                     // Create the tooltip
