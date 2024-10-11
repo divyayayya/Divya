@@ -17,16 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get necessary POST data
     $userID = $_SESSION['userID'];
+    $dept = $_SESSION['dept'];
     $reason = $_POST['reason'];
     $requestType = $_POST['request_type'];  // Single or Recurring request type
 
 
     // Check if the request is for 'single' day WFH
     if ($requestType === 'single_day') {
-        $startDate = $_POST['start_date'];
+        $startDate = $_POST['wfh_date'];
         // console.log($startDate);
         echo "Processing single day WFH request...<br>";
         echo "User ID: $userID<br>";
+        echo $dept;
         echo "Start Date: $startDate<br>";
         echo "Reason: $reason<br>";
 
