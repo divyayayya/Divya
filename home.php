@@ -66,10 +66,8 @@
         }
         echo "<table><td><a href='my_requests.php'>My Requests</a></td><td></td><td>{$deptDetails}</td><td></td><td>{$deptRequests}</td><td></td></tr></table>";
         echo "<br>";
-        echo "<br>";
-        echo "<a href='location_details.php'>View where your colleagues are working</a>";
-
-        echo "</br></br><h1>Calendar</h1>";
+        echo "<p>Click on a date to view where your colleagues are working</p>";
+        echo "</br><h1>Calendar</h1>";
         // echo "@CALENDAR PPL PLS PUT IT HERE TYVM";
         // echo "<div id='calendar'></div>"
         $requests_json = json_encode($requests);

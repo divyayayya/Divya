@@ -83,7 +83,7 @@
     
     // New Requests Dropdown
     echo "<div class='dropdown'>";
-    echo "<h2 class='hover-change' style='display: inline-block; margin-right: 20px;'>New Requests</h2>";
+    echo "<h2 class='hover-change' style='display: inline-block; margin-right: 20px; color:blue; text-decoration:underline'>New Requests</h2>";
     echo "<div class='dropdown-content'>";
     echo "<a href='apply_wfh.php'>Apply for Work-From-Home</a>";
     echo "<a href='apply_leave.php'>Apply for Leave</a>";
