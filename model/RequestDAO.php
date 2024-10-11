@@ -187,6 +187,23 @@
             // Execute the statement and return the result
             return $stmt->execute();
         }
+
+        public function retrievePendingArrangements($staffID){
+            $conn = new ConnectionManager;
+            $pdo = $conn->getConnection();
+            
+            $sql = "SELECT * FROM employee_arrangement WHERE Staff_ID = :staffID AND Request_Status = 'Pending' ORDER BY Arrangement_Date";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':staffID', $staffID, PDO::PARAM_STR);
+            $stmt->execute();
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $results = $stmt->fetchAll(); // Fetch all employees in the department
+            
+            $stmt = null;
+            $pdo = null;
+
+            return $results;
+        }
         
         
     }

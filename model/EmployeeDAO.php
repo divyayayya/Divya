@@ -191,6 +191,48 @@
             return $result;
 
         }
+
+        public function retrieveUnderlingsID($userID){
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $sql = 'SELECT Staff_ID FROM employee WHERE Reporting_Manager = :userID ORDER BY Staff_ID';
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_STR);
+            $stmt->execute();
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $results = $stmt->fetchAll(); // Fetch all employees in the department
+
+            $stmt = null;
+            $pdo = null;
+
+            $idArray = [];
+            foreach ($results as $row){
+                $id = $row['Staff_ID'];
+                $idArray[] = $id;
+            }
+
+            return $idArray;
+        }
+
+        public function getStaffName($userID){
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $sql = "SELECT CONCAT(Staff_FName, ' ', Staff_LName) AS staffName FROM employee WHERE Staff_ID = :userID";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_STR);
+            $stmt->execute();
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $stmt->fetch(); // Fetch all employees in the department
+
+            $stmt = null;
+            $pdo = null;
+
+            return $result ? $result['staffName'] : null;
+        }
+
+        
         
     }
 
