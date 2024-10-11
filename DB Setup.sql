@@ -53,6 +53,8 @@ VALUES
 (150148, 'Engineering', 3, '2024-01-15', 'WFH', '', 'Pending','Home') ,
 (150148, 'Engineering', 4, '2024-01-22', 'WFH', 'want to sleep more', 'Rejected','In-Office'),
 (150148, 'Engineering', 5, '2024-01-29', 'WFH', 'Carousel deal at home', 'Withdrawn','In-Office'),
+(150065, 'Engineering', 7, '2024-01-01', 'WFH', '', 'Approved','Home'),
+(150166, 'Engineering', 8, '2024-01-01', 'Leave', 'Holiday', 'Approved', 'Home');
 (140878, 'Sales', 6, '2024-10-15', 'WFH', 'Take care of baby', 'Approved','Home'),
 (140880, 'Sales', 7, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
 (140881, 'Sales', 8, '2024-10-31', 'WFH', 'Family', 'Pending', 'Home'),
