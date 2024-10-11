@@ -26,17 +26,23 @@
 <p>Click on the radio button to switch between Single Day and Recurring requests:</p>
 
 <!-- Request Type Selection Using Radio Buttons -->
-<input type='radio' name="request_type" onclick="showSingleDay()" checked> Single Day
-<input type='radio' name="request_type" onclick="showRecurring()"> Recurring
+<input type='radio' name="request_type" id="single_day_radio" onclick="showSingleDay()" checked> Single Day
+<input type='radio' name="request_type" id="recurring_radio" onclick="showRecurring()"> Recurring
 
 <!-- Single Day Application Fields -->
 <div id="single-day-fields">
     <h3>Single Day Application</h3>
     <form action="process_wfh_request.php" method="POST">
+        <!-- Hidden field to store request type -->
+        <input type="hidden" id="request_type_hidden" name="request_type" value="single_day">
+
         <label for="single_start_date">Date:</label>
         <input type="date" name="single_start_date" 
                min=<?php echo(date("Y-m-d"))?> required><br>
-
+        <input type="radio" name="time" required>AM
+        <input type="radio" name="time" required>PM
+        <input type="radio" name="time" required>Full Day
+        <br>
         <label for="reason">Reason:</label>
         <textarea name="reason" required></textarea><br>
 
@@ -48,6 +54,9 @@
 <div id="recurring-fields">
     <h3>Recurring Application</h3>
     <form action="process_wfh_request.php" method="POST">
+        <!-- Hidden field to store request type -->
+        <input type="hidden" id="request_type_hidden" name="request_type" value="recurring">
+
         <label for="recurring_start_date">Start Date:</label>
         <input type="date" name="recurring_start_date" 
                min=<?php echo(date("Y-m-d"))?> required><br>
@@ -74,12 +83,18 @@
     function showSingleDay() {
         document.getElementById("single-day-fields").style.display = "block";
         document.getElementById("recurring-fields").style.display = "none";
+
+        // Update hidden field to reflect single day request
+        document.getElementById("request_type_hidden").value = "single_day";
     }
 
     // Function to show the Recurring fields and hide Single Day fields
     function showRecurring() {
         document.getElementById("single-day-fields").style.display = "none";
         document.getElementById("recurring-fields").style.display = "block";
+
+        // Update hidden field to reflect recurring request
+        document.getElementById("request_type_hidden").value = "recurring";
     }
 </script>
 

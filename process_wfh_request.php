@@ -17,14 +17,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Get necessary POST data
     $userID = $_SESSION['userID'];
-    $dept = $_SESSION['dept'];
     $reason = $_POST['reason'];
     $requestType = $_POST['request_type'];  // Single or Recurring request type
+    $startDate = $_POST['single_start_date'];
 
+    //User Data
+    $dao = new EmployeeDAO;
+    $result = $dao->retrieveEmployeeInfo($userID);   
+    $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
+    $dept = $employee -> getDept();
 
+    //DEON TEST
+    echo $userID;
+    echo $dept;
+    echo $startDate;
+    echo $reason;
+    echo $requestType;
+    
     // Check if the request is for 'single' day WFH
     if ($requestType === 'single_day') {
-        $startDate = $_POST['wfh_date'];
+        // $startDate = $_POST['single_start_date'];
         // console.log($startDate);
         echo "Processing single day WFH request...<br>";
         echo "User ID: $userID<br>";
