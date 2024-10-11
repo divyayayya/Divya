@@ -17,6 +17,30 @@
             return $result;
         }
 
+        public function retrieveAllEmployees() {
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $sql = 'SELECT * FROM employee';
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            // $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            // $results = $stmt->fetchAll(); // Fetch all employees in the department
+
+            // $stmt = null;
+            // $pdo = null;
+
+            // return $results;
+            $employees = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $employees[] = $row;
+            }
+            $stmt->closeCursor();
+            $pdo = null;
+        
+            return $employees;
+        }
+
         // New method to retrieve all employees in the same department
         public function retrieveEmployeesInSameDept($dept){
             $conn = new ConnectionManager();

@@ -101,7 +101,7 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 selectable: true,
-                events: events,  // Add dynamic events here
+                events: events, 
                 dateClick: function() {
                     window.open('location_details.php', target='_blank');
                 },

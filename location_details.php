@@ -17,22 +17,19 @@
     $userID = $_SESSION['userID'];
     $userRole = $_SESSION['userRole'];
 
-    # Initialize DAO objects
     $dao = new EmployeeDAO;
     $result = $dao->retrieveEmployeeInfo($userID);
-
-    # Create Employee object based on the current user’s details
     $employee = new Employee(
         $result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], 
         $result['Dept'], $result['Position'], $result['Country'], 
         $result['Email'], $result['Reporting_Manager'], $result['Role']
     );
 
-    # Retrieve the user's department
     $userDept = $employee->getDept();
 
     echo "<a href='login.php' style='display: inline-block; vertical-align: middle;'>Sign Out</a>";
     echo "<br><br>";
+    // echo var_dump($userDept != 'HRHB')
 ?>
 
 <!-- Form to select the date -->
@@ -46,17 +43,23 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['arrangement_date'])) {
         $selectedDate = $_POST['arrangement_date'];
 
-        # Retrieve employees in the same department using the DAO method
-        $employeesInDept = $dao->retrieveEmployeesInSameDept($userDept);
+        // filter employees to be listed based on user role:
+        if ($userDept != 'HR') {
+            $employeesInDept = $dao->retrieveEmployeesInSameDept($userDept);
+            echo ("<br>In the <strong>$userDept</strong> department: <br>");
+        } else if ($userDept == 'HR') {
+            $employeesInDept = $dao -> retrieveAllEmployees();
+        } else {
+            echo "No employees found in the same department.";
+        }
 
+        // select date to be displayed
         echo "<br><u>Employees List for Date: $selectedDate</u><br>";
 
-        # Display employees from the same department and their location on the selected date
+        # Display employees from the department and their location on the selected date
         if (!empty($employeesInDept)) {
             echo "<table border=1>";
             echo "<tr><th>ID</th><th>Name</th><th>Position</th><th>Country</th><th>Location</th></tr>";
-            # Inside the foreach loop
-            # Inside the foreach loop
             foreach ($employeesInDept as $emp) {
                 # Retrieve the arrangement details for the employee
                 $arrangement = $dao->retrieveArrangementDetailsByDate($emp['Staff_ID'], $selectedDate);
@@ -75,8 +78,6 @@
             }
 
             echo "</table>";
-        } else {
-            echo "No employees found in the same department.";
         }
     }
 ?>
