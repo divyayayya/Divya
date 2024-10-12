@@ -12,42 +12,93 @@
     <title>My Requests</title>
     <style>
         .dropdown {
-            display: inline-block;
-            position: relative;
+            float: left;
+            overflow: visible;
+        }
+
+        .dropdown .dropbtn {
+            font-size: 16px;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 14px 20px;
+            background-color: inherit;
+            font-family: inherit;
+            margin: 0;
         }
 
         .dropdown-content {
             display: none;
             position: absolute;
-            background-color: white;
-            min-width: 160px;
+            background-color: #f9f9f9;
+            min-width: 100px;
+            max-width: 150px;
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             z-index: 1;
+        }
+
+        .dropdown-content a {
+            float: none;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+            color: black;
         }
 
         .dropdown:hover .dropdown-content {
             display: block;
         }
 
-        .dropdown-content a {
-            display: block;  /* Each link on a new line */
-            padding: 8px 16px;
-            text-decoration: none;  /* No underline */
-            color: black;  /* Link color */
+        /* Navbar Styling */
+        .navbar {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 80px;
+            border-bottom: 1px solid #444;
         }
 
-        .dropdown-content a:hover {
-            background-color: #555; /* Change this to dark grey */
-            color: white; /* Change text color to white for better contrast */
+        .navbar a img {
+            height: 60px;
         }
 
-        .hover-change {
-            color: black; /* Default color */
-            transition: color 0.3s; /* Smooth transition */
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
         }
 
-        .hover-change:hover {
-            color: grey; /* Change color on hover */
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #f1f1f1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
         }
     </style>
 
@@ -71,6 +122,21 @@
 </head>
 <body>
 
+<!-- Navbar -->
+<div class="navbar">
+    <a href="home.php"><img src="images/logo.jpg" alt="Company Logo"></a> <!-- Link to homepage -->
+    <div class="dropdown">
+        <button class="dropbtn">New Requests</button>
+        <div class="dropdown-content">
+            <a href="apply_wfh.php">Apply for Work-From-Home</a>
+            <a href="apply_leave.php">Apply for Leave</a>
+            <a href="delete_wfh.php">Delete Request</a>
+            <a href="update_wfh.php">Update Request</a>
+        </div>
+    </div>
+</div>
+
+
 <?php
     # Display User Details
     $userID = $_SESSION['userID'];
@@ -79,17 +145,7 @@
     $dao = new RequestDAO;
     $requests = $dao->retrieveRequestInfo($userID);
 
-    echo "<h1 style='display: inline-block; margin-right: 20px;'>My Requests</h1><a href='home.php'>Back</a></br>";
-    
-    // New Requests Dropdown
-    echo "<div class='dropdown'>";
-    echo "<h2 class='hover-change' style='display: inline-block; margin-right: 20px; color:blue; text-decoration:underline'>New Requests</h2>";
-    echo "<div class='dropdown-content'>";
-    echo "<a href='apply_wfh.php'>Apply for Work-From-Home</a>";
-    echo "<a href='apply_leave.php'>Apply for Leave</a>";
-    echo "<a href='delete_wfh.php'>Delete Request</a>";
-    echo "<a href='update_wfh.php'>Update Request</a>";
-    echo "</div></div>";
+    echo "<br><br>";
 
     if (count($requests) > 0) {
         echo "<table border=1>";
