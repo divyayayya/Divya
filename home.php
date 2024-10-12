@@ -131,6 +131,7 @@
                     $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
                     $userDept = $employee->getDept();
                     $dao_req = new RequestDAO;
+                    $dao_req->rejectExpiredRequests();
                     $requests = $dao_req->retrieverequestInfo($userID);
 
                     if ($userRole != 2) {

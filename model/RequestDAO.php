@@ -192,7 +192,7 @@
             $conn = new ConnectionManager;
             $pdo = $conn->getConnection();
             
-            $sql = "SELECT * FROM employee_arrangement WHERE Staff_ID = :staffID AND Request_Status = 'Pending' ORDER BY Arrangement_Date";
+            $sql = "SELECT * FROM employee_arrangement WHERE Staff_ID = :staffID AND Request_Status = 'Pending' AND Arrangement_Date > CURRENT_DATE ORDER BY Arrangement_Date";
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':staffID', $staffID, PDO::PARAM_STR);
             $stmt->execute();
@@ -262,5 +262,29 @@
             return $result;
         }
         
+        public function rejectExpiredRequests(){
+            $conn = new ConnectionManager();
+            $pdo = $conn->getConnection();
+
+            $sql = "SELECT Request_ID FROM employee_arrangement WHERE Request_Status = 'Pending' AND Arrangement_Date <= CURRENT_DATE";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $expired = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $stmt = null;
+
+            $sql = "UPDATE employee_arrangement SET Request_Status = 'Rejected', Rejection_Reason = 'Not Approved past deadline' WHERE Request_ID = :reqID";
+            $stmt = $pdo->prepare($sql);
+            foreach ($expired as $req){
+                $reqID = $req['Request_ID'];
+                
+                $stmt->bindValue(':reqID', $reqID, PDO::PARAM_INT);
+                $stmt->execute();
+            }
+
+            $stmt = null;
+            $pdo = null;
+        }
+
     }
 ?>
