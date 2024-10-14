@@ -1,126 +1,70 @@
 <?php
 require_once "model/common.php";
 
-// Enable error reporting to see any issues during development
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 $connManager = new ConnectionManager();
 $conn = $connManager->getConnection();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if user ID is set in the session
-    if (!isset($_SESSION['userID'])) {
-        echo "Error: Employee ID is not set in session.";
-        exit();
-    }
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    session_start(); // Ensure session is started
+    $userID = $_SESSION['userID'];  // Get user ID from session
 
-    // Get necessary POST data
-    $userID = $_SESSION['userID'];
-    $reason = $_POST['reason'];
-    $requestType = $_POST['request_type'];  // Single or Recurring request type
-
-    //User Data
+    // Retrieve user department
     $dao = new EmployeeDAO;
     $result = $dao->retrieveEmployeeInfo($userID);   
     $employee = new Employee($result['Staff_ID'], $result['Staff_FName'], $result['Staff_LName'], $result['Dept'], $result['Position'], $result['Country'], $result['Email'], $result['Reporting_Manager'], $result['Role']);
-    $dept = $employee -> getDept();
+    $dept = $employee->getDept();
 
-    // Generate a new Request_ID based on the current number of requests
-    $sql = "SELECT COUNT(*) as total_requests FROM employee_arrangement";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    $requestID = $result['total_requests'] + 1;  // Increment the count for the new request ID
+    // Get request type (single_day or recurring)
+    $request_type = $_POST['request_type'];
+    $reason = $_POST['reason'];
+    $status = "Pending";  // Default status
 
-    // Check if the request is for 'single' day WFH
-    if ($requestType === 'single_day') {
-        $startDate = $_POST['single_start_date'];
-        $time = $_POST['time'];  // AM, PM, or Full Day
+    // Create a new DAO to handle leave requests
+    $dao = new RequestDAO();
+    
+    // Generate new Request ID
+    $requestID = $dao->generateReqID(); 
 
-        echo "Processing single day WFH request...<br>";
-        echo "User ID: $userID<br>";
-        echo "Start Date: $startDate<br>";
-        echo "Time: $time<br>";
-        echo "Reason: $reason<br>";
-        echo $requestType;
-        echo $time;
+    // Handle single day WFH request
+    if ($request_type === 'single_day') {
+        $leave_date = $_POST['single_start_date'];
+        $time = $_POST['time'];  // Get selected time (AM, PM, full_day)
 
-        // Prepare the SQL for a single request with time selection
-        $sql = "INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
+        // Submit the single-day WFH request
+        $result = $dao->submitWFHRequest($userID, $requestID, $dept, $leave_date, $time, $reason, $status);
 
-        // Execute the query with user data
-        $executed = $stmt->execute([$userID, $dept, $requestID, $startDate, 'WFH', $time, $reason, 'Pending', 'Home/ OOF', NULL]);
+    } elseif ($request_type === 'recurring') {  // Handle recurring WFH request
+        $recurring_start_date = $_POST['recurring_start_date'];
+        $end_date = $_POST['end_date'];
+        $days_of_week = $_POST['days_of_week'];
 
-        // Error handling and redirection
-        if (!$executed) {
-            echo "Error during execution: " . implode(", ", $stmt->errorInfo());
-            exit(); // Stop if there's an error
-        } else {
-            // Redirect to "my_requests.php" after successful submission
-            header("Location: my_requests.php");
-            exit();
-        }
-
-    } elseif ($requestType === 'recurring') {
-        // Recurring request handling
-        $startDate = $_POST['recurring_start_date'];  // Start date for recurring requests
-        $endDate = $_POST['end_date'];  // End date for recurring requests
-        $daysOfWeek = $_POST['days_of_week'];  // Days of the week selected (array)
-
-        // Convert dates to DateTime objects for comparison
-        $startDateObj = new DateTime($startDate);
-        $endDateObj = new DateTime($endDate);
-
-        // Make sure user has not selected more than 2 days per week
-        if (count($daysOfWeek) > 2) {
-            echo "Error: You can only select a maximum of 2 days per week.";
-            echo "<br><a href='javascript:history.back()'> Go Back</a>";
-            exit();
-        }
-
-        try {
-            // Begin transaction to ensure data integrity
-            $conn->beginTransaction();
-
-            // Iterate over the date range (from start to end)
-            while ($startDateObj <= $endDateObj) {
-                $dayOfWeek = $startDateObj->format('l');  // Get the day of the week (Monday, Tuesday, etc.)
-
-                // Check if the current day matches the selected days of the week
-                if (in_array($dayOfWeek, $daysOfWeek)) {
-                    // Prepare SQL for recurring requests
-                    $sql = "INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    $stmt = $conn->prepare($sql);
-
-                    // Execute the SQL for each valid recurring day
-                    $executed = $stmt->execute([$userID, $dept, $requestID, $startDateObj->format('Y-m-d'), 'WFH', 'Full Day', $reason, 'Pending', 'Home', NULL]);
-
-                    // Error handling in case of execution issues
-                    if (!$executed) {
-                        echo "Error during execution (recurring): " . implode(", ", $stmt->errorInfo());
-                        $conn->rollBack();  // Rollback in case of error
+        // Loop through selected days of the week and submit WFH request for each day
+        foreach ($days_of_week as $day) {
+            // For each day, create and submit a request for each week between the start and end date
+            $date = $recurring_start_date;
+            while (strtotime($date) <= strtotime($end_date)) {
+                if (date('l', strtotime($date)) == $day) {
+                    $result = $dao->submitWFHRequest($userID, $requestID, $dept, $date, 'full_day', $reason, $status);
+                    if (!$result) {
+                        // Show error message if any request fails
+                        echo "Error submitting request for $date.";
                         exit();
                     }
                 }
-
-                // Move to the next day
-                $startDateObj->modify('+1 day');
+                $date = date('Y-m-d', strtotime($date . ' +1 day'));
             }
-
-            // Commit the transaction after processing all days
-            $conn->commit();
-
-            // Redirect after successful submission
-            header("Location: my_requests.php");
-            exit();
-        } catch (Exception $e) {
-            // Rollback the transaction in case of any exception
-            $conn->rollBack();
-            echo "Failed to process recurring request: " . $e->getMessage();
         }
     }
+
+    // If all requests are successful, redirect to a success page
+    if ($result) {
+        header("Location: my_requests.php?message=Request submitted successfully.");
+    } else {
+        // Show error message if the final result failed
+        echo "Error submitting request.";
+    }
+} else {
+    header("Location: apply_wfh.php");
+    exit();
 }
+?>
