@@ -80,7 +80,7 @@
             margin-top: 30px;
         }
 
-        * Table Styling */
+        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -108,6 +108,14 @@
 
         tr:hover {
             background-color: #f1f1f1;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border: 1px solid #ccc;
+            z-index: 1000;
         }
 
     </style>
