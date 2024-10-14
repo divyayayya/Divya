@@ -116,41 +116,53 @@
         
         // Submit a new leave request
     
-            // Function to submit a new leave request
-            public function submitLeaveRequest($userID, $leave_date, $time, $reason, $status) {
-                $sql = "INSERT INTO leave_requests (Staff_ID, Leave_Date, Time, Reason, Status)
-                        VALUES (:userID, :leave_date, :time, :reason, :status)";
-                
+        public function submitLeaveRequest($userID, $leave_date, $leave_time, $reason) {
+            try {
                 $conn = new ConnectionManager();
                 $pdo = $conn->getConnection();
                 
+                // Get the time slot (AM, PM, or Full Day)
+                $time_slot = $this->getTimeSlot($leave_time);
+        
+                // Reuse generateReqID function to get a new Request ID
+                $newRequestID = $this->generateReqID();
+                if ($newRequestID === false) {
+                    throw new Exception("Failed to generate new Request ID.");
+                }
+        
+                // Prepare the SQL statement to insert the new leave request
+                $sql = "INSERT INTO employee_arrangement (Request_ID, Staff_ID, Arrangement_Date, Working_Arrangement, Request_Status, Reason, Working_Location)
+                        VALUES (:newRequestID, :userID, :leave_date, :time_slot, 'Pending', :reason, 'Office')";
+        
                 $stmt = $pdo->prepare($sql);
                 
                 // Bind parameters
-                $stmt->bindParam(':userID', $userID);
+                $stmt->bindParam(':newRequestID', $newRequestID, PDO::PARAM_INT);
+                $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
                 $stmt->bindParam(':leave_date', $leave_date);
-                $stmt->bindParam(':time', $time);
+                $stmt->bindParam(':time_slot', $time_slot);
                 $stmt->bindParam(':reason', $reason);
-                $stmt->bindParam(':status', $status);
-                
-                // Try to execute and check for success
-                try {
-                    if ($stmt->execute()) {
-                        return true;
-                    } else {
-                        // Output error information
-                        $errorInfo = $stmt->errorInfo();
-                        echo "SQLSTATE error code: " . $errorInfo[0] . "<br>";
-                        echo "Driver-specific error code: " . $errorInfo[1] . "<br>";
-                        echo "Driver-specific error message: " . $errorInfo[2] . "<br>";
-                        return false;
-                    }
-                } catch (PDOException $e) {
-                    echo "Database error: " . $e->getMessage();
-                    return false;
-                }
+        
+                // Execute the statement
+                $result = $stmt->execute();
+        
+                // Close the statement and connection
+                $stmt = null;
+                $pdo = null;
+        
+                // Return the result of the execution
+                return $result;
+        
+            } catch (PDOException $e) {
+                // Handle any SQL errors
+                echo "SQL error: " . $e->getMessage();
+                return false;
+            } catch (Exception $e) {
+                // Handle general exceptions
+                echo "Error: " . $e->getMessage();
+                return false;
             }
-            
+        }
         
             // You may also have other functions to fetch available leave days, etc.
         
