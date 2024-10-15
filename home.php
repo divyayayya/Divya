@@ -182,6 +182,7 @@
                         start: request.Arrangement_Date,
                         time: request.Arrangement_Time,
                         reason: request.Reason,
+                        status: request.Request_Status,
                         backgroundColor: (request.Request_Status === 'Pending') ? '#edb95e' : '',
                         extendedProps: {
                             status: request.Request_Status
@@ -191,6 +192,13 @@
             }).filter(event => event !== undefined);
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
+                // initialView: 'multiMonthFourMonth',
+                // views: {
+                //     multiMonthFourMonth: {
+                //     type: 'multiMonth',
+                //     duration: { months: 3 }
+                //     }
+                // },
                 initialView: 'dayGridMonth',
                 selectable: true,
                 events: events, 
@@ -200,7 +208,7 @@
                 eventMouseEnter: function(info) {
                     var tooltip = document.createElement('div');
                     tooltip.className = 'tooltip';
-                    tooltip.innerHTML = info.event.title + "<br>" + info.event.extendedProps.time + "<br>" + "Reason: " + info.event.extendedProps.reason;
+                    tooltip.innerHTML = info.event.title + "<br>" + info.event.extendedProps.time + "<br>" + "Reason: " + info.event.extendedProps.reason + "<br>" + "Status: " + info.event.extendedProps.status;
 
                     document.body.appendChild(tooltip);
                     tooltip.style.position = 'absolute';

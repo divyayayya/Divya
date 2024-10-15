@@ -185,7 +185,7 @@
         <select name="time" id="time" required>
             <option value='AM'>AM</option>
             <option value='PM'>PM</option>
-            <option value='full_day'>Full Day</option>
+            <option value='Full day'>Full Day</option>
         </select><br><br>
 
         <label for="reason">Reason for leave:</label><br>
