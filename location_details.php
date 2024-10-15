@@ -80,7 +80,7 @@
     // Display the filtered list of employees
     if (!empty($employeesInDept)) {
         echo "<table border=1>";
-        echo "<tr><th>ID</th><th>Name</th><th>Department</th><th>Position</th><th>Country</th><th>Location</th></tr>";
+        echo "<tr><th>ID</th><th>Name</th><th>Department</th><th>Position</th><th>Country</th><th>Location</th><th>Time Block</th></tr>";
 
         foreach ($employeesInDept as $emp) {
             # Retrieve the arrangement details for the employee
@@ -88,13 +88,15 @@
 
             # Check if $arrangement is an array and contains the 'Working_Location'
             if ($arrangement && isset($arrangement['Working_Location'])) {
+                var_dump($arrangement);
                 $workingLocation = $arrangement['Working_Location'];
+                $arrangementTime = $arrangement['Arrangement_Time'];
                 echo "<tr bgcolor='fbec5d'><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>
-                <td>{$emp['Dept']}</td><td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td></tr>";
+                <td>{$emp['Dept']}</td><td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td><td>{$arrangementTime}</td></tr>";
             } else {
                 $workingLocation = 'In-Office';  // Default if no arrangement is found
                 echo "<tr><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>
-                <td>{$emp['Dept']}</td><td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td></tr>";
+                <td>{$emp['Dept']}</td><td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td><td>Full Day</td></tr>";
             }
         }
         echo "</table>";

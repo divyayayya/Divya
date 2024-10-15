@@ -261,14 +261,20 @@
                 const eventDate = request.Arrangement_Date.substring(0, 10);  // Extract YYYY-MM-DD
                 // Initialize the date if not already present
                 if (!groupedEvents[eventDate]) {
-                    groupedEvents[eventDate] = { WFH: 0, Leave: 0, Office: 0 };
+                    groupedEvents[eventDate] = { TotalWFH: 0, WFH_AM: 0, Office_AM: 0, WFH_PM: 0, Office_PM: 0 };
                 }
 
                 // Count events based on Working_Arrangement
-                if (request.Working_Arrangement === 'WFH') {
-                    groupedEvents[eventDate].WFH++;
-                } else if(request.Working_Arrangement === 'Leave'){
-                    groupedEvents[eventDate].Leave++;
+                if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'AM') {
+                    groupedEvents[eventDate].TotalWFH++;
+                    groupedEvents[eventDate].WFH_AM++;
+                } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'PM') {
+                    groupedEvents[eventDate].TotalWFH++;
+                    groupedEvents[eventDate].WFH_PM++;
+                } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'Full Day') {
+                    groupedEvents[eventDate].TotalWFH++;
+                    groupedEvents[eventDate].WFH_AM++;
+                    groupedEvents[eventDate].WFH_PM++;
                 }
             }
         });
@@ -276,24 +282,17 @@
         // Step 2: Create one event per Working_Arrangement per date
         const events = Object.keys(groupedEvents).reduce((result, date) => {
             const counts = groupedEvents[date];
-            if (counts.WFH > 0) {
+            if (counts.TotalWFH > 0) {
                 result.push({
                     title: 'WFH',  // Only show 'WFH' as the title
                     start: date,
                     extendedProps: {
-                        wfhCount: counts.WFH,
-                        leaveCount: counts.Leave,
-                        officeCount: data.underlingCount - counts.WFH - counts.Leave
-                    }
-                });
-            } if (counts.Leave > 0) {
-                result.push({
-                    title: 'Leave',  // Display 'Leave' as the title
-                    start: date,
-                    extendedProps: {
-                        wfhCount: counts.WFH,
-                        leaveCount: counts.Leave,
-                        officeCount: data.underlingCount - counts.WFH - counts.Leave
+                        wfhCount: counts.TotalWFH,
+                        officeCount: data.underlingCount - counts.TotalWFH,
+                        wfh_am: counts.WFH_AM,
+                        office_am: data.underlingCount - counts.WFH_AM,
+                        wfh_pm: counts.WFH_PM,
+                        office_pm: data.underlingCount - counts.WFH_PM
                     }
                 });
             }
@@ -318,7 +317,7 @@
                 // Create a hidden input for arrangement_date
                 var input = document.createElement("input");
                 input.type = "hidden";
-                input.name = "arrangement_date";
+                input.name = "date";
                 input.value = arrangement_date;
 
                 // Append input to form and submit the form
@@ -330,10 +329,11 @@
                 document.body.removeChild(form);
             },
 
+
             eventMouseEnter: function(info) {
                 var tooltip = document.createElement('div');
                 tooltip.className = 'tooltip';
-                tooltip.innerHTML = `WFH: ${info.event.extendedProps.wfhCount} <br> Leave: ${info.event.extendedProps.leaveCount} <br> Office: ${info.event.extendedProps.officeCount}`;
+                tooltip.innerHTML = `<table><tr><td>WFH (AM)</td> <td>${info.event.extendedProps.wfh_am}</td></tr> <tr><td>Office (AM)</td><td> ${info.event.extendedProps.office_am}</td></tr> <tr><td> WFH (PM) </td> <td>${info.event.extendedProps.wfh_pm}</td></tr> <tr><td> Office (PM)</td><td> ${info.event.extendedProps.office_pm}</td></tr></table>`;
                 document.body.appendChild(tooltip);
                 
                 tooltip.style.position = 'absolute';

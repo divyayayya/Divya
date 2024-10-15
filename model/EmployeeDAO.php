@@ -182,7 +182,7 @@
             $conn = new ConnectionManager();
             $pdo = $conn->getConnection();
         
-            $sql = 'SELECT Working_Location 
+            $sql = 'SELECT Working_Location, Arrangement_Time 
                     FROM employee_arrangement 
                     WHERE Staff_ID = :staffID AND Arrangement_Date = :arrangement_date';
             
