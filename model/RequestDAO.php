@@ -1,8 +1,15 @@
 <?php
     Class RequestDAO{
+
+        private $connManager;
+
+        public function __construct($connManager = null) {
+            // Use the provided connection manager or create a new one
+            $this->connManager = $connManager ?? new ConnectionManager();
+        }
+
         public function retrieveRequestInfo($userID){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = 'SELECT * FROM employee_arrangement WHERE Staff_ID = :userID';
             $stmt = $pdo->prepare($sql);
@@ -18,8 +25,7 @@
 
         public function generateReqID() {
             try {
-                $conn = new ConnectionManager();
-                $pdo = $conn->getConnection();
+                $pdo = $this->connManager->getConnection();
         
                 // Query to get the max Request_ID
                 $sql = "SELECT MAX(Request_ID) AS maxID FROM employee_arrangement";
@@ -40,8 +46,7 @@
         
         public function submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason) {
             try {
-                $conn = new ConnectionManager();
-                $pdo = $conn->getConnection();
+                $pdo = $this->connManager->getConnection();
         
                 // Prepare the SQL statement to insert the new leave request
                 $sql = "INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason)
@@ -74,8 +79,7 @@
         
         public function submitRecurringWFHRequest($userID, $dept, $startDate, $endDate, $recurring_days, $time_slot, $reason) {
             try {
-                $conn = new ConnectionManager();
-                $pdo = $conn->getConnection();        
+                $pdo = $this->connManager->getConnection();        
                 // Convert start and end dates to timestamps
                 $current_date = strtotime($startDate);
                 $end_date = strtotime($endDate);
@@ -121,8 +125,7 @@
     
         public function submitLeaveRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason) {
             try {
-                $conn = new ConnectionManager();
-                $pdo = $conn->getConnection();
+                $pdo = $this->connManager->getConnection();
         
                 // Prepare the SQL statement to insert the new leave request
                 $sql = "INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason)
@@ -154,8 +157,7 @@
     }
     
         public function deleteRequest($requestId, $staffId, $arrangementDate) {
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
         
             // Prepare the SQL statement
             $sql = "DELETE FROM employee_arrangement 
@@ -175,8 +177,7 @@
         }
 
         public function retrievePendingArrangements($staffID){
-            $conn = new ConnectionManager;
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
             
             $sql = "SELECT * FROM employee_arrangement WHERE Staff_ID = :staffID AND Request_Status = 'Pending' AND Arrangement_Date > CURRENT_DATE ORDER BY Arrangement_Date";
             $stmt = $pdo->prepare($sql);
@@ -192,8 +193,7 @@
         }
         
         public function approveRequest($requestID){
-            $conn = new ConnectionManager;
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = "UPDATE employee_arrangement SET Request_Status = 'Approved' WHERE Request_ID = :requestID AND Request_Status = 'Pending'";
             $stmt = $pdo->prepare($sql);
@@ -212,8 +212,7 @@
         }
 
         public function rejectRequest($requestID, $reason){
-            $conn = new ConnectionManager;
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = "UPDATE employee_arrangement SET Request_Status = 'Rejected', Rejection_Reason = :reason WHERE Request_ID = :requestID AND Request_Status = 'Pending'";
             $stmt = $pdo->prepare($sql);
@@ -233,8 +232,7 @@
         }
 
         public function retrieveByReqID($requestID){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = 'SELECT * FROM employee_arrangement WHERE Request_ID = :requestID';
             $stmt = $pdo->prepare($sql);
@@ -249,8 +247,7 @@
         }
         
         public function rejectExpiredRequests(){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = "SELECT Request_ID FROM employee_arrangement WHERE Request_Status = 'Pending' AND Arrangement_Date <= CURRENT_DATE";
             $stmt = $pdo->prepare($sql);

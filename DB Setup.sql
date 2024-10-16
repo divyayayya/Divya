@@ -20,7 +20,7 @@ CREATE TABLE employee (
 SET FOREIGN_KEY_CHECKS=0;
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
 #Load Data from employeenew.csv into DB
-LOAD DATA INFILE "C:\\wamp64\\www\\GitHub\\Divya\\employeenew.csv"
+LOAD DATA INFILE "C:\\wamp64\\www\\SPM\\Divya\\employeenew.csv"
 INTO TABLE employee
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
@@ -46,7 +46,6 @@ CREATE TABLE employee_arrangement (
     CONSTRAINT employee_arrangement_pk PRIMARY KEY (Staff_ID, Request_ID, Arrangement_Date),
     CONSTRAINT employee_arrangement_fk FOREIGN KEY (Staff_ID) REFERENCES employee(Staff_ID) ON DELETE CASCADE
 );
-
 INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason)
 VALUES 
 (140001,'Sales',1,'2024-10-15','WFH','PM','Need to take care of family','Approved','Home',NULL),
@@ -55,7 +54,7 @@ VALUES
 (140008,'Sales',4,'2024-10-18','WFH','AM','Prefer to work from home','Pending','Home',NULL),
 (140894,'Sales',5,'2024-10-19','WFH','AM','Medical appointment','Approved','Home',NULL),
 (140880,'Sales',6,'2024-10-20','WFH','PM','Need to focus on training','Pending','Home',NULL),
-(140888,'Sales',7,'2024-10-21','WFH','AM','','Rejected','In-Office','Team needs physical presence'),
+(140888,'Sales',7,'2024-10-21','WFH','AM','','Rejected','WFH','Team needs physical presence'),
 (140890,'Sales',8,'2024-10-22','WFH','AM','Family commitment','Approved','Home',NULL),
 (140879,'Sales',9,'2024-10-23','WFH','AM','Personal reasons','Pending','Home',NULL),
 (140891,'Sales',10,'2024-10-24','WFH','PM','Need to take care of pet','Approved','Home',NULL),
@@ -63,21 +62,21 @@ VALUES
 (140901,'Sales',12,'2024-10-26','WFH','AM','Family gathering','Approved','Home',NULL),
 (140901,'Sales',13,'2024-10-27','WFH','AM','Home renovations','Pending','Home',NULL),
 (140904,'Sales',14,'2024-10-28','WFH','PM','Need to focus','Approved','Home',NULL),
-(140905,'Sales',15,'2024-10-29','WFH','AM','Have a visitor','Rejected','In-Office','Not Valid'),
+(140905,'Sales',15,'2024-10-29','WFH','AM','Have a visitor','Rejected','WFH','Not Valid'),
 (140905,'Sales',16,'2024-10-30','WFH','AM','Working on urgent tasks','Approved','Home',NULL),
 (140905,'Sales',17,'2024-10-31','WFH','AM','Child care','Approved','Home',NULL),
 (140908,'Sales',18,'2024-11-01','WFH','PM','Need quiet time','Pending','Home',NULL),
 (140909,'Sales',19,'2024-11-02','WFH','AM','Health reasons','Approved','Home',NULL),
 (140910,'Sales',20,'2024-11-03','WFH','PM','Need to rest','Pending','Home',NULL),
 (140911,'Sales',21,'2024-11-04','WFH','AM','Personal matters','Approved','Home',NULL),
-(140912,'Sales',22,'2024-11-05','WFH','AM','Emergency','Rejected','In-Office','Not Valid'),
+(140912,'Sales',22,'2024-11-05','WFH','AM','Emergency','Rejected','WFH','Not Valid'),
 (140912,'Sales',23,'2024-11-06','WFH','AM','Family event','Pending','Home',NULL),
 (140911,'Sales',24,'2024-11-07','WFH','AM','Special family gathering','Approved','Home',NULL),
 (140911,'Sales',25,'2024-11-08','WFH','PM','Need to focus','Pending','Home',NULL),
 (140912,'Sales',26,'2024-11-09','WFH','AM','Medical reasons','Approved','Home',NULL),
 (140917,'Sales',27,'2024-11-10','WFH','AM','Taking care of a relative','Pending','Home',NULL),
 (140918,'Sales',28,'2024-11-11','WFH','AM','Home repairs','Approved','Home',NULL),
-(140919,'Sales',29,'2024-11-12','WFH','PM','Need quiet environment','Rejected','In-Office','Not Valid'),
+(140919,'Sales',29,'2024-11-12','WFH','PM','Need quiet environment','Rejected','WFH','Not Valid'),
 (140919,'Sales',30,'2024-11-13','WFH','AM','Working on presentation','Pending','Home',NULL),
 (140919,'Sales',31,'2024-11-14','WFH','AM','Health appointment','Approved','Home',NULL),
 (140917,'Sales',32,'2024-11-15','WFH','PM','Need to manage home affairs','Pending','Home',NULL),
@@ -86,7 +85,7 @@ VALUES
 (140925,'Sales',35,'2024-11-18','WFH','AM','Major family issue','Approved','Home',NULL),
 (140926,'Sales',36,'2024-11-19','WFH','PM','Need to work on deadlines','Pending','Home',NULL),
 (140927,'Sales',37,'2024-11-20','WFH','AM','Quiet work environment needed','Approved','Home',NULL),
-(140928,'Sales',38,'2024-11-21','WFH','PM','Need to reflect','Rejected','In-Office','Team collaboration required'),
+(140928,'Sales',38,'2024-11-21','WFH','PM','Need to reflect','Rejected','WFH','Team collaboration required'),
 (140929,'Sales',39,'2024-11-22','WFH','AM','Urgent project work','Approved','Home',NULL),
 (140929,'Sales',40,'2024-11-23','WFH','AM','Children at home','Pending','Home',NULL),
 (140928,'Sales',41,'2024-11-24','WFH','AM','Important family meeting','Approved','Home',NULL),
@@ -94,7 +93,7 @@ VALUES
 (140933,'Sales',43,'2024-11-26','WFH','PM','Need to help family','Approved','Home',NULL),
 (140934,'Sales',44,'2024-11-27','WFH','AM','Moving houses','Pending','Home',NULL),
 (140935,'Sales',45,'2024-11-28','WFH','AM','Working on a big project','Approved','Home',NULL),
-(140933,'Sales',46,'2024-11-29','WFH','AM','Child care duties','Rejected','In-Office','Team needs physical presence'),
+(140933,'Sales',46,'2024-11-29','WFH','AM','Child care duties','Rejected','WFH','Team needs physical presence'),
 (140933,'Sales',47,'2024-11-30','WFH','AM','Health issues','Approved','Home',NULL),
 (140938,'Sales',48,'2024-12-01','WFH','AM','Quiet time needed','Pending','Home',NULL),
 (140938,'Sales',49,'2024-12-02','WFH','PM','Need to prepare for meetings','Approved','Home',NULL),
@@ -107,8 +106,8 @@ VALUES
 (150148,'Engineering',56,'2024-01-01','WFH','Full Day','Visiting Father in Azerbaijan','Approved','Home',NULL),
 (150148,'Engineering',57,'2024-01-08','WFH','Full Day','Visiting Mother in Liechtenstein','Approved','Home',NULL),
 (150148,'Engineering',58,'2024-01-15','WFH','Full Day','Visiting Husband in Hawaii','Approved','Home',NULL),
-(150148,'Engineering',59,'2024-01-22','WFH','AM','want to sleep more','Rejected','In-Office','Not Valid'),
-(150148,'Engineering',60,'2024-01-29','WFH','AM','Carousel deal at home','Withdrawn','In-Office','Canceled'),
+(150148,'Engineering',59,'2024-01-22','WFH','AM','want to sleep more','Rejected','WFH','Not Valid'),
+(150148,'Engineering',60,'2024-01-29','WFH','AM','Carousel deal at home','Withdrawn','WFH','Canceled'),
 (140878,'Sales',61,'2024-10-15','WFH','AM','Take care of baby','Approved','Home',NULL),
 (140880,'Sales',62,'2024-10-31','WFH','AM','Family','Pending','Home',NULL),
 (140881,'Sales',63,'2024-11-03','WFH','AM','Take care of baby','Pending','Home',NULL),
@@ -187,4 +186,5 @@ VALUES
 (180002,'Consultancy',115,'2024-12-26','WFH','Full Day','Govt Protocol','Approved','Home',NULL),
 (150148,'Engineering',137,'2024-10-24','WFH','PM','Going to meet Cooper Koch','Pending','Home/ OOF',NULL);
 
-SET FOREIGN_KEY_CHECKS=1; 
+
+SET FOREIGN_KEY_CHECKS=1;

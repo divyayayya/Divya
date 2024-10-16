@@ -25,8 +25,7 @@
         }
 
         public function retrieveAllEmployees() {
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = 'SELECT * FROM employee';
             $stmt = $pdo->prepare($sql);
@@ -50,8 +49,7 @@
 
         // New method to retrieve all employees in the same department
         public function retrieveEmployeesInSameDept($dept){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = 'SELECT * FROM employee WHERE Dept = :dept';
             $stmt = $pdo->prepare($sql);
@@ -75,8 +73,7 @@
         }
 
         public function retrieveUnderlings($userID){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = 'SELECT * FROM employee WHERE Reporting_Manager = :userID';
             $stmt = $pdo->prepare($sql);
@@ -94,8 +91,7 @@
         
         public function getAllDepartments() {
             // Database connection
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
     
             // Query to get all unique departments
             $sql = 'SELECT DISTINCT Dept FROM employee ORDER BY Dept';
@@ -186,8 +182,7 @@
         // }
 
         public function retrieveArrangementDetailsByDate($staffID, $arrangement_date) {
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
         
             $sql = 'SELECT Working_Location, Arrangement_Time 
                     FROM employee_arrangement 
@@ -207,8 +202,7 @@
         }
         
         public function searchEmployee($sql){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
@@ -224,8 +218,7 @@
         }
 
         public function retrieveUnderlingsID($userID){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = 'SELECT Staff_ID FROM employee WHERE Reporting_Manager = :userID ORDER BY Staff_ID';
             $stmt = $pdo->prepare($sql);
@@ -247,8 +240,7 @@
         }
 
         public function getStaffName($userID){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();
 
             $sql = "SELECT CONCAT(Staff_FName, ' ', Staff_LName) AS staffName FROM employee WHERE Staff_ID = :userID";
             $stmt = $pdo->prepare($sql);
