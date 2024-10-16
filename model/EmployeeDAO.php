@@ -1,8 +1,15 @@
 <?php
     Class EmployeeDAO{
+
+        private $connManager;
+
+        public function __construct($connManager = null) {
+            // Use the provided connection manager or create a new one
+            $this->connManager = $connManager ?? new ConnectionManager();
+        }
+
         public function retrieveEmployeeInfo($userID){
-            $conn = new ConnectionManager();
-            $pdo = $conn->getConnection();
+            $pdo = $this->connManager->getConnection();  // Use the injected connection manager
 
             $sql = 'SELECT * FROM employee WHERE Staff_ID = :userID';
             $stmt = $pdo->prepare($sql);
