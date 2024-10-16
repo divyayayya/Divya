@@ -65,8 +65,8 @@
 <?php
     // For non-HR users, limit to their own department
     if ($userDept != 'HR') {
-        $employeesInDept = $dao->retrieveEmployeesInSameDept($userDept);
-        echo "<br>In the <strong>$userDept</strong> department: <br>";
+        $employeesInDept = $dao->retrieveUnderlings($userID);
+        echo "<br>Employees reporting to <strong>$userID</strong><br>";
     } else {
         // For HR users, filter by selected department
         if ($selectedDept == 'All Departments') {
@@ -88,7 +88,6 @@
 
             # Check if $arrangement is an array and contains the 'Working_Location'
             if ($arrangement && isset($arrangement['Working_Location'])) {
-                var_dump($arrangement);
                 $workingLocation = $arrangement['Working_Location'];
                 $arrangementTime = $arrangement['Arrangement_Time'];
                 echo "<tr bgcolor='fbec5d'><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>
