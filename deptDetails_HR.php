@@ -34,13 +34,14 @@
             justify-content: space-between;
             align-items: center;
             height: 80px;
-            padding: 0 30px;
-            margin-bottom: 20px;
+            padding: 0 20px;
+            margin-bottom: 10px;
             border-radius: 5px;
         }
 
         .navbar img {
             height: 60px;
+            margin-top: 2px;
         }
 
         .navbar h1 {
@@ -51,11 +52,10 @@
         .navbar form {
             display: flex;
             align-items: center;
-            gap: 15px; /* Spacing between form elements */
         }
 
         .navbar label {
-            margin-right: 5px;
+            margin-right: 10px;
             font-size: 16px;
             color: #fff;
         }
@@ -75,6 +75,7 @@
             color: #333;
             border: none;
             border-radius: 5px;
+            margin-left: 10px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -120,6 +121,16 @@
             border: 1px solid #ddd;
             padding: 10px;
             border-radius: 5px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
     </style>
 </head>
@@ -202,34 +213,140 @@
     }
     echo "</table>";
 
+    echo "</div>";
+
     echo "<br><h1>Calendar</h1>";
-?>
+
+    //Retrieve Underling Requests
+    $underlings = $dao->retrieveUnderlings($userID);
+    $underlingCount = count($underlings);
+    $requests = [];
+    $dao_req = new RequestDAO;
+    foreach($underlings as $underling){
+        $single_request = $dao_req -> retrieveRequestInfo($underling['Staff_ID']);
+        if(!empty($single_request)){
+            $requests = array_merge($requests, $single_request);
+        }
+    }
+    $data = ['requests' => $requests, 'underlingCount' => $underlingCount ];
+    $data_json = json_encode($data);
+?>  
+
+
+?>  
 
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                events: [
-                    {
-                        title: 'Event 1',
-                        start: '2024-09-17',
-                        end: '2024-09-18'
-                    },
-                ],
-                dateClick: function() {
-                    alert('a day has been clicked!');
+    const data = <?php echo $data_json; ?>;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        // Step 1: Group requests by date and Working_Arrangement
+        const groupedEvents = {};
+
+        data.requests.forEach(function(request) {
+            if (request.Request_Status === 'Approved') {
+                const eventDate = request.Arrangement_Date.substring(0, 10);  // Extract YYYY-MM-DD
+                // Initialize the date if not already present
+                if (!groupedEvents[eventDate]) {
+                    groupedEvents[eventDate] = { TotalWFH: 0, WFH_AM: 0, Office_AM: 0, WFH_PM: 0, Office_PM: 0 };
                 }
-            });
-            calendar.render();
+
+                // Count events based on Working_Arrangement
+                if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'AM') {
+                    groupedEvents[eventDate].TotalWFH++;
+                    groupedEvents[eventDate].WFH_AM++;
+                } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'PM') {
+                    groupedEvents[eventDate].TotalWFH++;
+                    groupedEvents[eventDate].WFH_PM++;
+                } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'Full Day') {
+                    groupedEvents[eventDate].TotalWFH++;
+                    groupedEvents[eventDate].WFH_AM++;
+                    groupedEvents[eventDate].WFH_PM++;
+                }
+            }
         });
+
+        // Step 2: Create one event per Working_Arrangement per date
+        const events = Object.keys(groupedEvents).reduce((result, date) => {
+            const counts = groupedEvents[date];
+            if (counts.TotalWFH > 0) {
+                result.push({
+                    title: 'WFH',  // Only show 'WFH' as the title
+                    start: date,
+                    extendedProps: {
+                        wfhCount: counts.TotalWFH,
+                        officeCount: data.underlingCount - counts.TotalWFH,
+                        wfh_am: counts.WFH_AM,
+                        office_am: data.underlingCount - counts.WFH_AM,
+                        wfh_pm: counts.WFH_PM,
+                        office_pm: data.underlingCount - counts.WFH_PM
+                    }
+                });
+            }
+            return result;
+        }, []);
+
+        // Initialize the FullCalendar
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            events: events,  // Add aggregated events here
+            dateClick: function(info) {
+                // Extract the clicked date
+                var arrangement_date = info.dateStr;  // Date in YYYY-MM-DD format
+
+                // Create a form
+                var form = document.createElement("form");
+                form.method = "POST";
+                form.action = "location_details.php";
+                form.target = "_blank";  // Open in a new tab
+
+                // Create a hidden input for arrangement_date
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "date";
+                input.value = arrangement_date;
+
+                // Append input to form and submit the form
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+
+                // Remove the form after submission (optional)
+                document.body.removeChild(form);
+            },
+
+
+            eventMouseEnter: function(info) {
+                var tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.innerHTML = `<table><tr><td>WFH (AM)</td> <td>${info.event.extendedProps.wfh_am}</td></tr> <tr><td>Office (AM)</td><td> ${info.event.extendedProps.office_am}</td></tr> <tr><td> WFH (PM) </td> <td>${info.event.extendedProps.wfh_pm}</td></tr> <tr><td> Office (PM)</td><td> ${info.event.extendedProps.office_pm}</td></tr></table>`;
+                document.body.appendChild(tooltip);
+                
+                tooltip.style.position = 'absolute';
+                tooltip.style.top = info.jsEvent.pageY + 'px';
+                tooltip.style.left = info.jsEvent.pageX + 'px';
+                tooltip.style.backgroundColor = '#f9f9f9';
+                tooltip.style.padding = '5px';
+                tooltip.style.border = '1px solid #ccc';
+                tooltip.style.zIndex = '1000';
+            },
+            eventMouseLeave: function() {
+                var tooltip = document.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            }
+        });
+
+        calendar.render();
+    });
+</script>
     </script>
 
-    <!-- Calendar container -->
     <div id='calendar'></div>
-
 </body>
 </html>
+
