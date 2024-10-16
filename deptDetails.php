@@ -250,110 +250,247 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script>
     const data = <?php echo $data_json; ?>;
-
     document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        // Step 1: Group requests by date and Working_Arrangement
-        const groupedEvents = {};
+    var calendarEl = document.getElementById('calendar');
+    
+    // Step 1: Get the full year range (for example, the current year)
+    const currentYear = new Date().getFullYear();
+    const startDate = new Date(currentYear, 0, 1);  // January 1st of the current year
+    const endDate = new Date(currentYear, 11, 31);  // December 31st of the current year
+    
+    const groupedEvents = {};
 
-        data.requests.forEach(function(request) {
-            if (request.Request_Status === 'Approved') {
-                const eventDate = request.Arrangement_Date.substring(0, 10);  // Extract YYYY-MM-DD
-                // Initialize the date if not already present
-                if (!groupedEvents[eventDate]) {
-                    groupedEvents[eventDate] = { TotalWFH: 0, WFH_AM: 0, Office_AM: 0, WFH_PM: 0, Office_PM: 0 };
-                }
+    // Step 2: Group existing requests by date
+    data.requests.forEach(function(request) {
+        if (request.Request_Status === 'Approved') {
+            const eventDate = request.Arrangement_Date.substring(0, 10);  // Extract YYYY-MM-DD
+            if (!groupedEvents[eventDate]) {
+                groupedEvents[eventDate] = { TotalWFH: 0, WFH_AM: 0, Office_AM: 0, WFH_PM: 0, Office_PM: 0 };
+            }
 
-                // Count events based on Working_Arrangement
-                if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'AM') {
+            // Count WFH events based on Arrangement_Time
+            if (request.Working_Arrangement === 'WFH') {
+                if (request.Arrangement_Time === 'AM') {
                     groupedEvents[eventDate].TotalWFH++;
                     groupedEvents[eventDate].WFH_AM++;
-                } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'PM') {
+                } else if (request.Arrangement_Time === 'PM') {
                     groupedEvents[eventDate].TotalWFH++;
                     groupedEvents[eventDate].WFH_PM++;
-                } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'Full Day') {
+                } else if (request.Arrangement_Time === 'Full Day') {
                     groupedEvents[eventDate].TotalWFH++;
                     groupedEvents[eventDate].WFH_AM++;
                     groupedEvents[eventDate].WFH_PM++;
                 }
             }
-        });
-
-        // Step 2: Create one event per Working_Arrangement per date
-        const events = Object.keys(groupedEvents).reduce((result, date) => {
-            const counts = groupedEvents[date];
-            if (counts.TotalWFH > 0) {
-                result.push({
-                    title: 'WFH',  // Only show 'WFH' as the title
-                    start: date,
-                    extendedProps: {
-                        wfhCount: counts.TotalWFH,
-                        officeCount: data.underlingCount - counts.TotalWFH,
-                        wfh_am: counts.WFH_AM,
-                        office_am: data.underlingCount - counts.WFH_AM,
-                        wfh_pm: counts.WFH_PM,
-                        office_pm: data.underlingCount - counts.WFH_PM
-                    }
-                });
-            }
-            return result;
-        }, []);
-
-        // Initialize the FullCalendar
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            selectable: true,
-            events: events,  // Add aggregated events here
-            dateClick: function(info) {
-                // Extract the clicked date
-                var arrangement_date = info.dateStr;  // Date in YYYY-MM-DD format
-
-                // Create a form
-                var form = document.createElement("form");
-                form.method = "POST";
-                form.action = "location_details.php";
-                form.target = "_blank";  // Open in a new tab
-
-                // Create a hidden input for arrangement_date
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "date";
-                input.value = arrangement_date;
-
-                // Append input to form and submit the form
-                form.appendChild(input);
-                document.body.appendChild(form);
-                form.submit();
-
-                // Remove the form after submission (optional)
-                document.body.removeChild(form);
-            },
-
-
-            eventMouseEnter: function(info) {
-                var tooltip = document.createElement('div');
-                tooltip.className = 'tooltip';
-                tooltip.innerHTML = `<table><tr><td>WFH (AM)</td> <td>${info.event.extendedProps.wfh_am}</td></tr> <tr><td>Office (AM)</td><td> ${info.event.extendedProps.office_am}</td></tr> <tr><td> WFH (PM) </td> <td>${info.event.extendedProps.wfh_pm}</td></tr> <tr><td> Office (PM)</td><td> ${info.event.extendedProps.office_pm}</td></tr></table>`;
-                document.body.appendChild(tooltip);
-                
-                tooltip.style.position = 'absolute';
-                tooltip.style.top = info.jsEvent.pageY + 'px';
-                tooltip.style.left = info.jsEvent.pageX + 'px';
-                tooltip.style.backgroundColor = '#f9f9f9';
-                tooltip.style.padding = '5px';
-                tooltip.style.border = '1px solid #ccc';
-                tooltip.style.zIndex = '1000';
-            },
-            eventMouseLeave: function() {
-                var tooltip = document.querySelector('.tooltip');
-                if (tooltip) {
-                    tooltip.remove();
-                }
-            }
-        });
-
-        calendar.render();
+        }
     });
+
+    // Step 3: Loop through all days in the year range and create events
+    const events = [];
+    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+        const dateStr = date.toISOString().substring(0, 10);  // Convert date to YYYY-MM-DD format
+        
+        // If the date has no requests, create an Office event
+        if (!groupedEvents[dateStr]) {
+            events.push({
+                title: 'Office',
+                start: dateStr,
+                color: 'green',
+                extendedProps: {
+                    wfhCount: 0,
+                    officeCount: data.underlingCount,  // All staff in office
+                    wfh_am: 0,
+                    office_am: data.underlingCount,
+                    wfh_pm: 0,
+                    office_pm: data.underlingCount
+                }
+            });
+        } else {
+            // If WFH events exist for the date, create WFH event
+            const counts = groupedEvents[dateStr];
+            events.push({
+                title: 'WFH',
+                start: dateStr,
+                extendedProps: {
+                    wfhCount: counts.TotalWFH,
+                    officeCount: data.underlingCount - counts.TotalWFH,
+                    wfh_am: counts.WFH_AM,
+                    office_am: data.underlingCount - counts.WFH_AM,
+                    wfh_pm: counts.WFH_PM,
+                    office_pm: data.underlingCount - counts.WFH_PM
+                }
+            });
+        }
+    }
+
+    // Step 4: Initialize the FullCalendar for a year
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',  // Change to year view (you might need a plugin for this)
+        selectable: true,
+        events: events,  // Add the complete list of events
+        dateClick: function(info) {
+            // Create and submit the form
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "location_details.php";
+            form.target = "_blank";  // Open in a new tab
+
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "date";
+            input.value = info.dateStr;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);  // Clean up
+        },
+
+        eventMouseEnter: function(info) {
+            var tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.innerHTML = `<table><tr><td>WFH (AM)</td> <td>${info.event.extendedProps.wfh_am}</td></tr> 
+                                 <tr><td>Office (AM)</td><td> ${info.event.extendedProps.office_am}</td></tr> 
+                                 <tr><td>WFH (PM)</td> <td>${info.event.extendedProps.wfh_pm}</td></tr> 
+                                 <tr><td>Office (PM)</td><td> ${info.event.extendedProps.office_pm}</td></tr></table>`;
+            document.body.appendChild(tooltip);
+
+            tooltip.style.position = 'absolute';
+            tooltip.style.top = info.jsEvent.pageY + 'px';
+            tooltip.style.left = info.jsEvent.pageX + 'px';
+            tooltip.style.backgroundColor = '#f9f9f9';
+            tooltip.style.padding = '5px';
+            tooltip.style.border = '1px solid #ccc';
+            tooltip.style.zIndex = '1000';
+        },
+        eventMouseLeave: function() {
+            var tooltip = document.querySelector('.tooltip');
+            if (tooltip) {
+                tooltip.remove();
+            }
+        }
+    });
+
+    calendar.render();
+});
+
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     var calendarEl = document.getElementById('calendar');
+    //     // Step 1: Group requests by date and Working_Arrangement
+    //     const groupedEvents = {};
+
+    //     data.requests.forEach(function(request) {
+    //         if (request.Request_Status === 'Approved') {
+    //             const eventDate = request.Arrangement_Date.substring(0, 10);  // Extract YYYY-MM-DD
+    //             // Initialize the date if not already present
+    //             if (!groupedEvents[eventDate]) {
+    //                 groupedEvents[eventDate] = { TotalWFH: 0, WFH_AM: 0, Office_AM: 0, WFH_PM: 0, Office_PM: 0 };
+    //             }
+
+    //             // Count events based on Working_Arrangement
+    //             if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'AM') {
+    //                 groupedEvents[eventDate].TotalWFH++;
+    //                 groupedEvents[eventDate].WFH_AM++;
+    //             } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'PM') {
+    //                 groupedEvents[eventDate].TotalWFH++;
+    //                 groupedEvents[eventDate].WFH_PM++;
+    //             } else if (request.Working_Arrangement === 'WFH' && request.Arrangement_Time === 'Full Day') {
+    //                 groupedEvents[eventDate].TotalWFH++;
+    //                 groupedEvents[eventDate].WFH_AM++;
+    //                 groupedEvents[eventDate].WFH_PM++;
+    //             }
+    //         }
+    //     });
+
+    //     // Step 2: Create one event per Working_Arrangement per date
+    //     const events = Object.keys(groupedEvents).reduce((result, date) => {
+    //         const counts = groupedEvents[date];
+    //         if (counts.TotalWFH > 0) {
+    //             result.push({
+    //                 title: 'WFH',  // Only show 'WFH' as the title
+    //                 start: date,
+    //                 extendedProps: {
+    //                     wfhCount: counts.TotalWFH,
+    //                     officeCount: data.underlingCount - counts.TotalWFH,
+    //                     wfh_am: counts.WFH_AM,
+    //                     office_am: data.underlingCount - counts.WFH_AM,
+    //                     wfh_pm: counts.WFH_PM,
+    //                     office_pm: data.underlingCount - counts.WFH_PM
+    //                 }
+    //             });
+    //         }
+    //         else{
+    //             result.push({
+    //                 title: 'Office',  // Only show 'Office' as the title
+    //                 start: date,
+    //                 extendedProps: {
+    //                     wfhCount: counts.TotalWFH,
+    //                     officeCount: data.underlingCount - counts.TotalWFH,
+    //                     wfh_am: counts.WFH_AM,
+    //                     office_am: data.underlingCount - counts.WFH_AM,
+    //                     wfh_pm: counts.WFH_PM,
+    //                     office_pm: data.underlingCount - counts.WFH_PM
+    //                 }
+    //             });
+    //         }
+    //         return result;
+    //     }, []);
+
+    //     // Initialize the FullCalendar
+    //     var calendar = new FullCalendar.Calendar(calendarEl, {
+    //         initialView: 'dayGridMonth',
+    //         selectable: true,
+    //         events: events,  // Add aggregated events here
+    //         dateClick: function(info) {
+    //             // Extract the clicked date
+    //             var arrangement_date = info.dateStr;  // Date in YYYY-MM-DD format
+
+    //             // Create a form
+    //             var form = document.createElement("form");
+    //             form.method = "POST";
+    //             form.action = "location_details.php";
+    //             form.target = "_blank";  // Open in a new tab
+
+    //             // Create a hidden input for arrangement_date
+    //             var input = document.createElement("input");
+    //             input.type = "hidden";
+    //             input.name = "date";
+    //             input.value = arrangement_date;
+
+    //             // Append input to form and submit the form
+    //             form.appendChild(input);
+    //             document.body.appendChild(form);
+    //             form.submit();
+
+    //             // Remove the form after submission (optional)
+    //             document.body.removeChild(form);
+    //         },
+
+
+    //         eventMouseEnter: function(info) {
+    //             var tooltip = document.createElement('div');
+    //             tooltip.className = 'tooltip';
+    //             tooltip.innerHTML = `<table><tr><td>WFH (AM)</td> <td>${info.event.extendedProps.wfh_am}</td></tr> <tr><td>Office (AM)</td><td> ${info.event.extendedProps.office_am}</td></tr> <tr><td> WFH (PM) </td> <td>${info.event.extendedProps.wfh_pm}</td></tr> <tr><td> Office (PM)</td><td> ${info.event.extendedProps.office_pm}</td></tr></table>`;
+    //             document.body.appendChild(tooltip);
+                
+    //             tooltip.style.position = 'absolute';
+    //             tooltip.style.top = info.jsEvent.pageY + 'px';
+    //             tooltip.style.left = info.jsEvent.pageX + 'px';
+    //             tooltip.style.backgroundColor = '#f9f9f9';
+    //             tooltip.style.padding = '5px';
+    //             tooltip.style.border = '1px solid #ccc';
+    //             tooltip.style.zIndex = '1000';
+    //         },
+    //         eventMouseLeave: function() {
+    //             var tooltip = document.querySelector('.tooltip');
+    //             if (tooltip) {
+    //                 tooltip.remove();
+    //             }
+    //         }
+    //     });
+
+    //     calendar.render();
+    // });
 </script>
     <!-- Calendar container -->
     <div id='calendar'></div>
