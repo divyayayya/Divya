@@ -217,8 +217,8 @@
 
     echo "<br><h1>Calendar</h1>";
 
-    //Retrieve Underling Requests
-    $underlings = $dao->retrieveUnderlings($userID);
+    //Retrieve Requests of employees in the selected department
+    $underlings = $dao->retrieveEmployeesInSameDept($selectedDept);
     $underlingCount = count($underlings);
     $requests = [];
     $dao_req = new RequestDAO;
@@ -231,9 +231,7 @@
     $data = ['requests' => $requests, 'underlingCount' => $underlingCount ];
     $data_json = json_encode($data);
 ?>  
-
-
-?>  
+  
 
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
