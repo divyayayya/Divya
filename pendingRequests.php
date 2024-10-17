@@ -31,7 +31,7 @@
             echo "NO PENDING REQUESTS~";
         } else {
             echo "<table border='1'>";
-            echo "<tr><th>Staff ID</th><th>Staff Name</th><th>Arrangement Date</th><th>Arrangement Type</th><th>Reasons</th><th>Actions</th></tr>";
+            echo "<tr><th>Staff ID</th><th>Staff Name</th><th>Arrangement Date</th><th>Arrangement Type</th><th>Time Block</th><th>Reasons</th><th>Actions</th></tr>";
         
             foreach ($pendingRequestsArray as $request) {
                 $requestID = $request['Request_ID'];
@@ -39,6 +39,7 @@
                 $staffName = $eDao->getStaffName($staffID);
                 $arrangementDate = $request['Arrangement_Date'];
                 $arrangementType = $request['Working_Arrangement'];
+                $timeBlock = $request['Arrangement_Time'];
                 $reasons = $request['Reason'];
         
                 echo "<tr>";
@@ -46,6 +47,7 @@
                 echo "<td>{$staffName}</td>";
                 echo "<td>{$arrangementDate}</td>";
                 echo "<td>{$arrangementType}</td>";
+                echo "<td>{$timeBlock}</td>";
                 echo "<td>{$reasons}</td>";
         
                 // Create buttons for 'Approve' and 'Reject' actions
