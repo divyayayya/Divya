@@ -32,16 +32,16 @@
             color: #fff;
             display: flex;
             justify-content: space-between;
-            align-items: center; /* This keeps items vertically centered */
-            height: 80px; /* Set a fixed height for the navbar */
-            padding: 0 20px; /* Adjust padding for left and right */
-            margin-bottom: 10px;
+            align-items: center;
+            height: 10vh; /* Adjust height relative to viewport */
+            padding: 0 5vw; /* Padding adjusted for responsiveness */
+            margin-bottom: 20px;
             border-radius: 5px;
+            position: relative;
         }
 
         .navbar img {
-            height: 100px; /* Set the logo height */
-            margin-top: 2px; /* Adjust the top margin to align the image properly */
+            height: 8vh; /* Responsive height */
         }
 
         .navbar h1 {
@@ -84,19 +84,6 @@
             background-color: #ddd;
         }
 
-        /* Link Styling */
-        a {
-            /* color: #fff; Change color to white for visibility */
-            text-decoration: none;
-            padding: 0; /* Remove padding */
-            margin-right: 15px; /* Add some margin if needed */
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: #ddd; /* Change color on hover */
-        }
-
         /* Table Styling */
         table {
             width: 100%;
@@ -136,13 +123,82 @@
             border-radius: 5px;
         }
 
-
         .tooltip {
             position: absolute;
             background-color: #f9f9f9;
             padding: 5px;
             border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+        }
+
+        /* For tablets and larger screens (width between 768px and 1024px) */
+        @media (max-width: 900px) {
+            .navbar {
+                flex-direction: column;
+                height: auto;
+                padding: 20px;
+            }
+            
+            .navbar img {
+                height: 6vh; /* Reduce image height */
+            }
+            
+            .navbar h1 {
+                font-size: 20px;
+            }
+            
+            .navbar form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar label, .navbar select, .navbar input {
+                margin: 5px 0;
+            }
+
+            table, th, td {
+                font-size: 14px; /* Smaller font size */
+                padding: 10px; /* Adjust padding */
+            }
+        }
+
+        /* For mobile devices (width less than 768px) */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+
+            .navbar img {
+                height: 5vh; /* Smaller logo for mobile */
+            }
+
+            .navbar h1 {
+                font-size: 18px;
+            }
+
+            .navbar form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar label, .navbar select, .navbar input {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            table {
+                font-size: 12px;
+                overflow-x: auto; /* Add horizontal scroll for tables on small screens */
+            }
+
+            table, th, td {
+                font-size: 12px; /* Smaller font size */
+                padding: 8px;
+            }
         }
 
     </style>
