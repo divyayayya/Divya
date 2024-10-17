@@ -20,15 +20,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 80px;
-            padding: 0 30px;
+            height: 10vh; /* Adjust height relative to viewport */
+            padding: 0 5vw; /* Padding adjusted for responsiveness */
             margin-bottom: 20px;
             border-radius: 5px;
             position: relative;
         }
 
         .navbar img {
-            height: 60px;
+            height: 8vh; /* Responsive height */
         }
 
         .dropdown {
@@ -81,6 +81,11 @@
         }
 
         /* Table Styling */
+        .table-responsive {
+        max-width: 100%;
+            overflow-x: auto; /* Allows horizontal scrolling on small screens */
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -110,14 +115,29 @@
             background-color: #f1f1f1;
         }
 
-        .tooltip {
-            position: absolute;
-            background-color: #f9f9f9;
-            padding: 5px;
-            border: 1px solid #ccc;
-            z-index: 1000;
+        /* Adjust padding and font size for smaller screens */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
         }
 
+        @media (max-width: 576px) {
+            th, td {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+        @media screen and (max-width: 480px) {
+            th, td {
+                font-size: 4vw;
+            }
+
+            .navbar img {
+                height: 5vh;
+            }
+        }
     </style>
 </head>
 <body>
