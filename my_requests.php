@@ -62,16 +62,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 30px;
-            height: 80px;
+            height: 10vh; /* Adjust height relative to viewport */
+            padding: 0 5vw; /* Padding adjusted for responsiveness */
             border-bottom: 1px solid #444;
         }
 
         .navbar a img {
-            height: 60px;
+            height: 8vh;
         }
 
         /* Table Styling */
+        .table-responsive {
+        max-width: 100%;
+            overflow-x: auto; /* Allows horizontal scrolling on small screens */
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -99,6 +104,31 @@
 
         tr:hover {
             background-color: #f1f1f1;
+        }
+
+
+        /* Adjust padding and font size for smaller screens */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            th, td {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+        @media screen and (max-width: 480px) {
+            th, td {
+                font-size: 4vw;
+            }
+
+            .navbar img {
+                height: 5vh;
+            }
         }
     </style>
 
