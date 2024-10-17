@@ -30,6 +30,9 @@ jobs:
     - name: Install dependencies with Composer
       run: |
         composer install --prefer-dist --no-progress --no-suggest
+        
+    - name: Make PHPUnit executable
+      run: chmod +x ./vendor/bin/phpunit
 
     # Step 4: Run PHPUnit (Unit tests in the base directory)
     - name: Run Unit Tests
