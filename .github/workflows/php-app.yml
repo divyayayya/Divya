@@ -37,7 +37,7 @@ jobs:
     # Step 4: Run PHPUnit (Unit tests in the base directory)
     - name: Run Unit Tests
       run: |
-        ./vendor/bin/phpunit tests/EmployeeDAOTest.php  
+        ./vendor/bin/phpunit tests
 
 
 
