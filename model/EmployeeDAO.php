@@ -109,8 +109,7 @@
         }
 
         public function getAllPositions() {
-            $conn = new ConnectionManager(); 
-            $pdo = $conn ->getConnection(); 
+            $pdo = $this->connManager->getConnection();
 
             $sql = "SELECT DISTINCT Position FROM employee ORDER BY Position"; // Adjust the table name if it's different
             $stmt = $pdo->prepare($sql);
@@ -125,8 +124,7 @@
         }
 
         public function retrieveEmployeesByDeptAndPosition($department, $position = '') {
-            $conn = new ConnectionManager();
-            $pdo = $conn ->getConnection(); 
+            $pdo = $this->connManager->getConnection();
         
             // Basic SQL query to retrieve employees by department
             $sql = "SELECT Staff_ID, Staff_FName, Staff_LName, Position, Country, Email 
