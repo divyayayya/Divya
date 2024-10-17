@@ -23,17 +23,24 @@
     <title>Apply for Leave</title>
     <style>
 
-        body {
-            background-color: #f0f0f0;
-            color: #333;
-            margin: 0;
-            padding: 0;
+body { 
+            font-family: 'Segoe UI'; 
+            background-color: #f0f0f0; 
+            color: #333; 
+            margin: 0; 
+            padding: 0; 
         }
 
         h1 {
             text-align: center;
             margin-top: 50px;
         }
+
+        h2, h3 {
+            color: #333; 
+            text-align: center; 
+        }
+
         /* Navbar Styling */
         .navbar {
             background-color: #000;
@@ -50,42 +57,44 @@
             height: 60px;
         }
 
-        /* Form Styling */
-        form {
-            max-width: 600px;
-            margin: 30px auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
+        form { 
+            max-width: 600px; 
+            margin: 30px auto; 
+            background-color: #fff; 
+            padding: 30px; 
+            border-radius: 8px; 
         }
 
-        label {
-            display: block;
-            margin: 15px 0 5px;
-            font-weight: bold;
+        label, input, textarea, button { 
+            display: block; 
+            width: 100%; 
+            margin-top: 10px; 
         }
 
-        input[type="date"], 
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
+        input[type="date"], textarea { 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
         }
 
-        textarea {
-            resize: vertical;
-            height: 100px;
+        textarea { 
+            resize: vertical; 
+            height: 100px; 
         }
 
-        /* Radio and Checkbox Styling */
-        input[type="radio"], input[type="checkbox"] {
-            margin-right: px;
+        button { 
+            padding: 12px; 
+            background-color: #000; 
+            color: #fff; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
         }
 
-        /* Button Styling */
+        button:hover { 
+            background-color: #333; 
+        }
+
         .backbutton a { 
             font-size: 16px;
             border: none;
@@ -103,47 +112,19 @@
             color: #fff; /* Change text color on hover */
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 15px;
+
+        .radio-group, .checkbox-group { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 10px; 
         }
 
-        button:hover {
-            background-color: #333;
+        #single-day-fields, #recurring-fields { 
+            display: none; 
         }
 
-        /* Form Sections */
-        #single-day-fields, #recurring-fields {
-            display: none;
-        }
-
-        #single-day-fields.active, #recurring-fields.active {
-            display: block;
-        }
-
-        /* Checkbox and Radio Button Alignment */
-        .checkbox-group, .radio-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 0 15px;
-            }
-
-            form {
-                padding: 15px;
-            }
+        #single-day-fields.active, #recurring-fields.active { 
+            display: block; 
         }
 
     </style>
@@ -195,3 +176,4 @@
     </form>
 </body>
 </html>
+
