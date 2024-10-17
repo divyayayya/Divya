@@ -162,7 +162,12 @@
     echo "</div>";
 
     echo "<div>";
-    $staffName = "";
+    // Check if the form has been submitted and the 'staffName' input is set
+    if (isset($_POST['submit']) && isset($_POST['staffName'])) {
+        $staffName = htmlspecialchars($_POST['staffName']); // Get the searched value
+    } else {
+        $staffName = ""; // Default empty value
+    }
     echo "<form action='deptDetails.php' method='POST'>";
     echo "<label for='staffName'>Search Employee: </label>";
     echo "<input type='text' id='staffName' name='staffName' placeholder='Employee Name' value='$staffName'>";
@@ -290,6 +295,12 @@
     for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
         const dateStr = date.toISOString().substring(0, 10);  // Convert date to YYYY-MM-DD format
         
+        // Check if the day is a weekend 
+        const dayOfWeek = date.getDay();
+        if (dayOfWeek === 0 || dayOfWeek === 1) {
+            continue;  // Skip weekends
+        }
+
         // If the date has no requests, create an Office event
         if (!groupedEvents[dateStr]) {
             events.push({
@@ -329,6 +340,14 @@
         selectable: true,
         events: events,  // Add the complete list of events
         dateClick: function(info) {
+            // Get day of the week
+            var dayOfWeek = new Date(info.dateStr).getDay();
+
+            // Prevent clicks on Saturday and Sunday
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                return;  // Do nothing if it's a weekend
+            }
+
             // Create and submit the form
             var form = document.createElement("form");
             form.method = "POST";
