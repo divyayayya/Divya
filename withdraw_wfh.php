@@ -11,14 +11,14 @@
     <script>
       
         function confirmDelete(requestId, staffId, arrangementDate) {
-            var message = "Are you sure you want to delete the request with:\n" +
+            var message = "Are you sure you want to withdraw the request with:\n" +
                         "Request ID: " + requestId + "\n" +
                         "Staff ID: " + staffId + "\n" +
                         "Arrangement Date: " + arrangementDate + "?";
             
             if (confirm(message)) {
                 // If confirmed, redirect to delete script with all parameters
-                window.location.href = "delete_request.php?request_id=" + requestId +
+                window.location.href = "withdraw_request.php?request_id=" + requestId +
                                     "&staff_id=" + staffId +
                                     "&arrangement_date=" + arrangementDate;
             }

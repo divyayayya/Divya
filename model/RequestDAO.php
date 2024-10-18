@@ -71,11 +71,11 @@
         
                 // Return the result of the execution
                 return $result;
-        } catch (PDOException $e) {
-            echo "SQL error: " . $e->getMessage();
-            return false;
+            } catch (PDOException $e) {
+                echo "SQL error: " . $e->getMessage();
+                return false;
+            }
         }
-    }
         
         public function submitRecurringWFHRequest($userID, $dept, $startDate, $endDate, $recurring_days, $time_slot, $reason) {
             try {
@@ -150,11 +150,11 @@
         
                 // Return the result of the execution
                 return $result;
-        } catch (PDOException $e) {
-            echo "SQL error: " . $e->getMessage();
-            return false;
+            } catch (PDOException $e) {
+                echo "SQL error: " . $e->getMessage();
+                return false;
+            }
         }
-    }
     
         public function deleteRequest($requestId, $staffId, $arrangementDate) {
             $pdo = $this->connManager->getConnection();
@@ -282,6 +282,23 @@
             $pdo = null;
 
             return $result;
+        }
+
+        public function withdrawRequest($requestId, $staffId, $arrangementDate) {
+            $pdo = $this->connManager->getConnection();
+        
+            // Prepare the SQL statement
+            $sql = "UPDATE employee_arrangement SET Request_Status = 'Withdrawn'WHERE Request_ID = :requestId AND Staff_ID = :staffId AND Arrangement_Date = :arrangementDate";
+        
+            $stmt = $pdo->prepare($sql);
+            
+            // Bind parameters
+            $stmt->bindParam(':requestId', $requestId, PDO::PARAM_INT);
+            $stmt->bindParam(':staffId', $staffId, PDO::PARAM_INT);
+            $stmt->bindParam(':arrangementDate', $arrangementDate);
+        
+            // Execute the statement and return the result
+            return $stmt->execute();
         }
 
     }
