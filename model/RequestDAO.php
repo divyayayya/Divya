@@ -269,5 +269,20 @@
             $pdo = null;
         }
 
+        public function retrieveApprovedRequestsByUserID($userID){
+            $pdo = $this->connManager->getConnection();
+
+            $sql = "SELECT * FROM employee_arrangement WHERE Staff_ID = :userID AND Request_Status = 'Approved' AND Arrangement_Date > Current_Date ORDER BY Arrangement_Date";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $stmt = null;
+            $pdo = null;
+
+            return $result;
+        }
+
     }
 ?>

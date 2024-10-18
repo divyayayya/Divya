@@ -172,6 +172,7 @@
                         }
                     }
                 ?>
+                <a href="withdraw_wfh.php">Withdraw Approved</a>
                 <a href="location_details.php">View where your colleagues are working</a>
             </div>
         </div>
