@@ -17,16 +17,30 @@
             padding: 0; 
         }
 
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+
         h2, h3 {
             color: #333; 
             text-align: center; 
         }
 
+        /* Navbar Styling */
         .navbar {
-            background-color: #000; 
-            color: #fff; 
-            padding: 20px; 
-            text-align: center; 
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 80px;
+            border-bottom: 1px solid #444;
+        }
+
+        .navbar a img {
+            height: 60px;
         }
 
         form { 
@@ -67,6 +81,24 @@
             background-color: #333; 
         }
 
+        .backbutton a { 
+            font-size: 16px;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 14px 20px;
+            background-color: inherit;
+            font-family: inherit;
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .backbutton a:hover {
+            background-color: #666; /* Change background on hover */
+            color: #fff; /* Change text color on hover */
+        }
+
+
         .radio-group, .checkbox-group { 
             display: flex; 
             gap: 10px; 
@@ -86,8 +118,13 @@
 
 <!-- Navbar -->
 <div class="navbar">
-    <h1>Work From Home Request</h1>
-</div>
+        <a href="home.php"><img src="images/logo.jpg" alt="Company Logo"></a> <!-- Link to homepage -->
+        <div class="backbutton">
+            <a href="my_requests.php">Back</a>
+        </div>
+    </div>
+
+<h1>Apply for Leave</h1>
 
 <!-- Request Type Selection Using Radio Buttons -->
 <div style="text-align:center;">
