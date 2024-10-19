@@ -8,6 +8,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Withdraw WFH</title>
+    <style>
+        /* Navbar Styling */
+        .navbar {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 80px;
+            border-bottom: 1px solid #444;
+        }
+
+        .navbar a img {
+            height: 60px;
+        }
+
+        button { 
+            padding: 12px; 
+            background-color: #000; 
+            color: #fff; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+
+        button:hover { 
+            background-color: #333; 
+        }
+
+        .backbutton a { 
+            font-size: 16px;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 14px 20px;
+            background-color: inherit;
+            font-family: inherit;
+            margin: 0;
+            text-decoration: none;
+        }
+
+        .backbutton a:hover {
+            background-color: #666; /* Change background on hover */
+            color: #fff; /* Change text color on hover */
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #f1f1f1;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
     <script>
       
         function confirmDelete(requestId, staffId, arrangementDate) {
@@ -28,6 +105,14 @@
 </head>
 
 <body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+            <a href="home.php"><img src="images/logo.jpg" alt="Company Logo"></a> <!-- Link to homepage -->
+            <div class="backbutton">
+                <a href="home.php">Back</a>
+            </div>
+    </div>
     <h1>Withdraw Approved</h1>
     <?php
         $userID = $_SESSION['userID'];
@@ -69,12 +154,6 @@
         }
         
         echo "</table>"
-
-
-
-
-
-
 
 
     ?>
