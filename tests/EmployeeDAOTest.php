@@ -423,7 +423,349 @@
             // Step 5: Assert the Results
             $this->assertCount(17, $result);
         } 
+        // retrieveEmployeesByDeptAndPositions() --> ED_10
+        public function test_retrieveEmployeesByDeptAndPositionOne(){
+            // Step 1: Set Up Mock Data
+            $dept = 'Sales';
+            $pos = 'Sales Manager';
+            $mockEmployeesDeptPos = [
+                [
+                    'Staff_ID' => 140008,
+                    'Staff_FName' => 'Jaclyn',
+                    'Staff_LName' => 'Lee',
+                    'Position' => 'Sales Manager',
+                    'Country' => 'Singapore',
+                    'Email' => 'Jaclyn.Lee@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 140103,
+                    'Staff_FName' => 'Sophia',
+                    'Staff_LName' => 'Toh',
+                    'Position' => 'Sales Manager',
+                    'Country' => 'Singapore',
+                    'Email' => 'Sophia.Toh@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 140879,
+                    'Staff_FName' => 'Siti',
+                    'Staff_LName' => 'Abdullah',
+                    'Position' => 'Sales Manager',
+                    'Country' => 'Singapore',
+                    'Email' => 'Siti.Abdullah@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 140894,
+                    'Staff_FName' => 'Rahim',
+                    'Staff_LName' => 'Khalid',
+                    'Position' => 'Sales Manager',
+                    'Country' => 'Singapore',
+                    'Email' => 'Rahim.Khalid@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 140944,
+                    'Staff_FName' => 'Yee',
+                    'Staff_LName' => 'Lim',
+                    'Position' => 'Sales Manager',
+                    'Country' => 'Singapore',
+                    'Email' => 'Yee.Lim@allinone.com.sg'
+                ]
+            ];
 
+            // Step 2: Mock Database Interactions
+            $pdoMock = $this->createMock(PDO::class);
+            $stmtMock = $this->createMock(PDOStatement::class);
+    
+            // Step 3: Configure Mock Behavior
+            $stmtMock->expects($this->once())
+                        ->method('execute')
+                        ->willReturn(true);
+            $stmtMock->expects($this->once())
+                        ->method('fetchAll')
+                        ->willReturn($mockEmployeesDeptPos);
+            $pdoMock->expects($this->once())
+                    ->method('prepare')
+                    ->with('SELECT Staff_ID, Staff_FName, Staff_LName, Position, Country, Email FROM employee WHERE Dept = :department AND Position = :position')
+                    ->willReturn($stmtMock);
+    
+            // Mock the ConnectionManager to return the mocked PDO
+            $connMock = $this->createMock(ConnectionManager::class);
+            $connMock->expects($this->once())
+                        ->method('getConnection')
+                        ->willReturn($pdoMock);
+    
+            // Inject the mock connection manager into EmployeeDAO
+            $employeeDAO = new EmployeeDAO($connMock);
+
+            // Step 4: Execute the Method Under Test
+            $result = $employeeDAO->retrieveEmployeesByDeptAndPosition($dept, $pos);
+            
+            // Step 5: Assert the Results
+            $this->assertEquals($mockEmployeesDeptPos, $result);
+        } 
+
+        // retrieveEmployeesByDeptAndPositions() --> ED_11
+        public function test_retrieveEmployeesByDeptAndPositionTwo(){
+            // Step 1: Set Up Mock Data
+            $dept = 'Consultancy';
+            $mockEmployeesDeptPos = $employees = [
+                [
+                    'Staff_ID' => 180001,
+                    'Staff_FName' => 'Ernst',
+                    'Staff_LName' => 'Sim',
+                    'Position' => 'Director',
+                    'Country' => 'Singapore',
+                    'Email' => 'Ernst.Sim@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180002,
+                    'Staff_FName' => 'Rithy',
+                    'Staff_LName' => 'Chong',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Rithy.Chong@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180003,
+                    'Staff_FName' => 'Mani',
+                    'Staff_LName' => 'Phalp',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Mani.Phalp@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180004,
+                    'Staff_FName' => 'Sokunthea',
+                    'Staff_LName' => 'Beng',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Sokunthea.Beng@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180005,
+                    'Staff_FName' => 'Mani',
+                    'Staff_LName' => 'Pheap',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Mani.Pheap@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180006,
+                    'Staff_FName' => 'Somnang',
+                    'Staff_LName' => 'Harun',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Somnang.Harun@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180010,
+                    'Staff_FName' => 'Samsul',
+                    'Staff_LName' => 'Rahman',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Samsul.Rahman@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180011,
+                    'Staff_FName' => 'Bui Lui',
+                    'Staff_LName' => 'Phan',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Bui Lui.Phan@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180012,
+                    'Staff_FName' => 'Ji',
+                    'Staff_LName' => 'Khung',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Ji.Khung@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180013,
+                    'Staff_FName' => 'Rahim',
+                    'Staff_LName' => 'Pich',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Rahim.Pich@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180014,
+                    'Staff_FName' => 'Dewi',
+                    'Staff_LName' => 'Hoang',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Dewi.Hoang@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180015,
+                    'Staff_FName' => 'Sokha',
+                    'Staff_LName' => 'Kumar',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Sokha.Kumar@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180019,
+                    'Staff_FName' => 'Tuan',
+                    'Staff_LName' => 'Le',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Tuan.Le@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180020,
+                    'Staff_FName' => 'Bao',
+                    'Staff_LName' => 'Seng',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Bao.Seng@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180021,
+                    'Staff_FName' => 'Amara',
+                    'Staff_LName' => 'Kesavan',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Amara.Kesavan@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180022,
+                    'Staff_FName' => 'Srey',
+                    'Staff_LName' => 'Ahmad',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Srey.Ahmad@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180023,
+                    'Staff_FName' => 'Arifi',
+                    'Staff_LName' => 'Sok',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Arifi.Sok@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180025,
+                    'Staff_FName' => 'Chin',
+                    'Staff_LName' => 'Pham',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Chin.Pham@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180026,
+                    'Staff_FName' => 'Siti',
+                    'Staff_LName' => 'Suon',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Siti.Suon@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180027,
+                    'Staff_FName' => 'Siti',
+                    'Staff_LName' => 'Vo',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Siti.Vo@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180029,
+                    'Staff_FName' => 'Chandra',
+                    'Staff_LName' => 'Nguyen',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Chandra.Nguyen@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180030,
+                    'Staff_FName' => 'Rina',
+                    'Staff_LName' => 'Singh',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Rina.Singh@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180032,
+                    'Staff_FName' => 'Chandara',
+                    'Staff_LName' => 'Yong',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Chandara.Yong@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180033,
+                    'Staff_FName' => 'Heng Meng',
+                    'Staff_LName' => 'Sou',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Heng Meng.Sou@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180034,
+                    'Staff_FName' => 'Priya',
+                    'Staff_LName' => 'Lim',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Priya.Lim@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180036,
+                    'Staff_FName' => 'Ngoc',
+                    'Staff_LName' => 'Sun',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Ngoc.Sun@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180037,
+                    'Staff_FName' => 'Manoj',
+                    'Staff_LName' => 'Mao',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Manoj.Mao@allinone.com.sg'
+                ],
+                [
+                    'Staff_ID' => 180038,
+                    'Staff_FName' => 'Somi',
+                    'Staff_LName' => 'Seng',
+                    'Position' => 'Counsultant',
+                    'Country' => 'Singapore',
+                    'Email' => 'Somi.Seng@allinone.com.sg'
+                ]
+            ];
+            
+
+            // Step 2: Mock Database Interactions
+            $pdoMock = $this->createMock(PDO::class);
+            $stmtMock = $this->createMock(PDOStatement::class);
+    
+            // Step 3: Configure Mock Behavior
+            $stmtMock->expects($this->once())
+                        ->method('execute')
+                        ->willReturn(true);
+            $stmtMock->expects($this->once())
+                        ->method('fetchAll')
+                        ->willReturn($mockEmployeesDeptPos);
+            $pdoMock->expects($this->once())
+                    ->method('prepare')
+                    ->with('SELECT Staff_ID, Staff_FName, Staff_LName, Position, Country, Email FROM employee WHERE Dept = :department')
+                    ->willReturn($stmtMock);
+    
+            // Mock the ConnectionManager to return the mocked PDO
+            $connMock = $this->createMock(ConnectionManager::class);
+            $connMock->expects($this->once())
+                        ->method('getConnection')
+                        ->willReturn($pdoMock);
+    
+            // Inject the mock connection manager into EmployeeDAO
+            $employeeDAO = new EmployeeDAO($connMock);
+    
+            // Step 4: Execute the Method Under Test
+            $result = $employeeDAO->retrieveEmployeesByDeptAndPosition($dept);
+    
+            // Step 5: Assert the Results
+            $this->assertEquals($mockEmployeesDeptPos, $result);
+        } 
 // paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/EmployeeDAOTest.php
     }
 ?>

@@ -127,9 +127,7 @@
             $pdo = $this->connManager->getConnection();
         
             // Basic SQL query to retrieve employees by department
-            $sql = "SELECT Staff_ID, Staff_FName, Staff_LName, Position, Country, Email 
-                    FROM employee 
-                    WHERE Dept = :department";
+            $sql = "SELECT Staff_ID, Staff_FName, Staff_LName, Position, Country, Email FROM employee WHERE Dept = :department";
         
             // If position is provided, append a condition to the query
             if (!empty($position)) {
