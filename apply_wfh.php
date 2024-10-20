@@ -124,7 +124,7 @@
         </div>
     </div>
 
-<h1>Apply for Leave</h1>
+<h1>Apply for WFH</h1>
 
 <!-- Request Type Selection Using Radio Buttons -->
 <div style="text-align:center;">
