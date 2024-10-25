@@ -423,8 +423,9 @@
             // Step 5: Assert the Results
             $this->assertCount(17, $result);
         } 
+
         // retrieveEmployeesByDeptAndPositions() --> ED_10
-        public function test_retrieveEmployeesByDeptAndPositionOne(){
+        public function test_retrieveEmployeesByDeptAndPosition_positive1(){
             // Step 1: Set Up Mock Data
             $dept = 'Sales';
             $pos = 'Sales Manager';
@@ -435,7 +436,7 @@
                     'Staff_LName' => 'Lee',
                     'Position' => 'Sales Manager',
                     'Country' => 'Singapore',
-                    'Email' => 'Jaclyn.Lee@allinone.com.sg'
+                    'Email' => 'Jaclyn.Lee@allinone.com.sg',
                 ],
                 [
                     'Staff_ID' => 140103,
@@ -443,7 +444,7 @@
                     'Staff_LName' => 'Toh',
                     'Position' => 'Sales Manager',
                     'Country' => 'Singapore',
-                    'Email' => 'Sophia.Toh@allinone.com.sg'
+                    'Email' => 'Sophia.Toh@allinone.com.sg',
                 ],
                 [
                     'Staff_ID' => 140879,
@@ -451,7 +452,7 @@
                     'Staff_LName' => 'Abdullah',
                     'Position' => 'Sales Manager',
                     'Country' => 'Singapore',
-                    'Email' => 'Siti.Abdullah@allinone.com.sg'
+                    'Email' => 'Siti.Abdullah@allinone.com.sg',
                 ],
                 [
                     'Staff_ID' => 140894,
@@ -459,7 +460,7 @@
                     'Staff_LName' => 'Khalid',
                     'Position' => 'Sales Manager',
                     'Country' => 'Singapore',
-                    'Email' => 'Rahim.Khalid@allinone.com.sg'
+                    'Email' => 'Rahim.Khalid@allinone.com.sg',
                 ],
                 [
                     'Staff_ID' => 140944,
@@ -467,44 +468,51 @@
                     'Staff_LName' => 'Lim',
                     'Position' => 'Sales Manager',
                     'Country' => 'Singapore',
-                    'Email' => 'Yee.Lim@allinone.com.sg'
+                    'Email' => 'Yee.Lim@allinone.com.sg',
                 ]
             ];
 
             // Step 2: Mock Database Interactions
             $pdoMock = $this->createMock(PDO::class);
             $stmtMock = $this->createMock(PDOStatement::class);
-    
+            
             // Step 3: Configure Mock Behavior
             $stmtMock->expects($this->once())
-                        ->method('execute')
-                        ->willReturn(true);
+                ->method('execute')
+                ->willReturn(true);
+
+            // Set the fetchAll behavior to return the mock data
             $stmtMock->expects($this->once())
-                        ->method('fetchAll')
-                        ->willReturn($mockEmployeesDeptPos);
+                ->method('fetchAll')
+                ->willReturn($mockEmployeesDeptPos);
+
+            // Configure the prepare method to return the mock statement
             $pdoMock->expects($this->once())
-                    ->method('prepare')
-                    ->with('SELECT Staff_ID, Staff_FName, Staff_LName, Position, Country, Email FROM employee WHERE Dept = :department AND Position = :position')
-                    ->willReturn($stmtMock);
-    
+                ->method('prepare')
+                ->with('SELECT Staff_ID, Staff_FName, Staff_LName, Position, Country, Email FROM employee WHERE Dept = :department AND Position = :position')
+                ->willReturn($stmtMock);
+            
             // Mock the ConnectionManager to return the mocked PDO
             $connMock = $this->createMock(ConnectionManager::class);
             $connMock->expects($this->once())
-                        ->method('getConnection')
-                        ->willReturn($pdoMock);
-    
+                ->method('getConnection')
+                ->willReturn($pdoMock);
+
             // Inject the mock connection manager into EmployeeDAO
             $employeeDAO = new EmployeeDAO($connMock);
 
             // Step 4: Execute the Method Under Test
             $result = $employeeDAO->retrieveEmployeesByDeptAndPosition($dept, $pos);
-            
+            echo "Expected:\n";
+            print_r($mockEmployeesDeptPos);
+            echo "Actual:\n";
+            print_r($result);
             // Step 5: Assert the Results
             $this->assertEquals($mockEmployeesDeptPos, $result);
-        } 
+        }
 
         // retrieveEmployeesByDeptAndPositions() --> ED_11
-        public function test_retrieveEmployeesByDeptAndPositionTwo(){
+        public function test_retrieveEmployeesByDeptAndPosition_positive2(){
             // Step 1: Set Up Mock Data
             $dept = 'Consultancy';
             $mockEmployeesDeptPos = $employees = [
@@ -734,7 +742,6 @@
                 ]
             ];
             
-
             // Step 2: Mock Database Interactions
             $pdoMock = $this->createMock(PDO::class);
             $stmtMock = $this->createMock(PDOStatement::class);
@@ -765,7 +772,9 @@
     
             // Step 5: Assert the Results
             $this->assertEquals($mockEmployeesDeptPos, $result);
-        } 
+        }
+
+        
 // paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/EmployeeDAOTest.php
     }
 ?>

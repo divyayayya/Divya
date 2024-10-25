@@ -146,13 +146,11 @@
         
             $stmt->execute();
         
-            $employees = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $employees[] = $row;
-            }
+            $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-            $stmt->closeCursor();
-            $conn = null;
+        
+            $stmt = null;
+            $pdo = null;
         
             return $employees; // Returns an array of employees matching the filters
         }

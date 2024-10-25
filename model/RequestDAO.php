@@ -288,7 +288,7 @@
             $pdo = $this->connManager->getConnection();
         
             // Prepare the SQL statement
-            $sql = "UPDATE employee_arrangement SET Request_Status = 'Withdrawn'WHERE Request_ID = :requestId AND Staff_ID = :staffId AND Arrangement_Date = :arrangementDate";
+            $sql = "UPDATE employee_arrangement SET Request_Status = 'Withdrawn' WHERE Request_ID = :requestId AND Staff_ID = :staffId AND Arrangement_Date = :arrangementDate";
         
             $stmt = $pdo->prepare($sql);
             
