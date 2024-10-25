@@ -115,6 +115,19 @@
             background-color: #f1f1f1;
         }
 
+        .tooltip {
+            font-size: 14px;
+            color: #333;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 3px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
         /* Adjust padding and font size for smaller screens */
         @media (max-width: 768px) {
             th, td {
@@ -206,6 +219,8 @@
                         status: request.Request_Status,
                         backgroundColor: (request.Request_Status === 'Pending') ? '#edb95e' : '',
                         extendedProps: {
+                            time: request.Arrangement_Time,
+                            reason: request.Reason,
                             status: request.Request_Status
                         }
                     };
