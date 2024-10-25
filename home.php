@@ -196,7 +196,7 @@
         echo "<table border=1>";
         echo "<tr><th>ID</th><th>Name</th><th>Department</th><th>Position</th><th>Country</th><th>Email</th></tr>";
         echo "<tr><td>{$employee->getID()}</td><td>{$employee->getStaffName()}</td><td>{$employee->getDept()}</td><td>{$employee->getPosition()}</td><td>{$employee->getCountry()}</td><td>{$employee->getEmail()}</td></tr></table>";
-
+        echo "DEON'S TEST";
         echo "</br></br><h1>Calendar</h1>";
         $requests_json = json_encode($requests);
     ?>
