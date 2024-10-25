@@ -20,7 +20,7 @@ CREATE TABLE employee (
 SET FOREIGN_KEY_CHECKS=0;
 #NOTE THAT U WILL NEED TO CHANGE THE PATH FILE TO UR OWN PATH
 #Load Data from employeenew.csv into DB
-LOAD DATA INFILE "C:\\wamp64\\www\\SPM\\Divya\\employeenew.csv"
+LOAD DATA INFILE "C:\\wamp64\\www\\GitHub\\Divya\\employeenew.csv"
 INTO TABLE employee
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
@@ -48,7 +48,7 @@ CREATE TABLE employee_arrangement (
 );
 INSERT INTO employee_arrangement (Staff_ID, Department, Request_ID, Arrangement_Date, Working_Arrangement, Arrangement_Time, Reason, Request_Status, Working_Location, Rejection_Reason)
 VALUES 
-(140001,'Sales',1,'2024-10-15','WFH','PM','Need to take care of family','Approved','Home',NULL),
+(140001,'Sales',1,'2024-10-15','WFH','PM','Need to take care of family','Approved','Home',NULL);
 (140002,'Sales',2,'2024-10-16','WFH','AM','Working on a special project','Pending','Home',NULL),
 (140003,'Sales',3,'2024-10-17','WFH','PM','Need to concentrate on tasks','Approved','Home',NULL),
 (140008,'Sales',4,'2024-10-18','WFH','AM','Prefer to work from home','Pending','Home',NULL),

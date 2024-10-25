@@ -11,33 +11,45 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: employeeDB
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-    # Step 1: Checkout the code
-    - uses: actions/checkout@v4
+      # Step 1: Checkout the code
+      - uses: actions/checkout@v4
 
-    # Step 2: Set up PHP with Composer
-    - name: Set up PHP 8.1
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: "8.1"  # Set the PHP version you need
-        extensions: mbstring, xml
-        tools: composer
+      # Step 2: Set up PHP with Composer
+      - name: Set up PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          extensions: mbstring, xml
+          tools: composer
 
-    # Step 3: Install dependencies
-    - name: Install dependencies with Composer
-      run: |
-        composer install --prefer-dist --no-progress --no-suggest
+      # Step 3: Install dependencies
+      - name: Install dependencies with Composer
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Make PHPUnit executable
-      run: chmod +x ./vendor/bin/phpunit
+      - name: Make PHPUnit executable
+        run: chmod +x ./vendor/bin/phpunit
 
-    # Step 4: Run PHPUnit (Unit tests in the base directory)
-    - name: Run Unit Tests
-      run: |
-        ./vendor/bin/phpunit tests
-
-
-
+      # Step 4: Run PHPUnit with environment variables
+      - name: Run Unit Tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: employeeDB
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: |
+          ./vendor/bin/phpunit tests

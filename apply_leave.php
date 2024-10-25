@@ -21,9 +21,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply for Leave</title>
-    <style>
-
-body { 
+<style>
+    body { 
             font-family: 'Segoe UI'; 
             background-color: #f0f0f0; 
             color: #333; 
@@ -127,7 +126,7 @@ body {
             display: block; 
         }
 
-    </style>
+</style>
 </head>
 <body>
     <!-- Navbar -->
