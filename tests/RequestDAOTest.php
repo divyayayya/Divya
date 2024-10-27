@@ -54,7 +54,7 @@ class RequestDAOTest extends TestCase {
         $requestDAO = new RequestDAO($connMock);
 
         // Act
-        $result = $requestDAO->retrieveRequestInfo($staffID, $requestID, $arrangementDate);
+        $result = $requestDAO->retrieveRequestInfo($staffID);
 
         // Assert
         $this->assertEquals($expectedRequest, $result);
