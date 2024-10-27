@@ -160,8 +160,6 @@
         <div class="dropdown-content">
             <a href="apply_wfh.php">Apply for Work-From-Home</a>
             <a href="apply_leave.php">Apply for Leave</a>
-            <a href="delete_wfh.php">Delete Request</a>
-            <a href="update_wfh.php">Update Request</a>
         </div>
     </div>
 </div>
