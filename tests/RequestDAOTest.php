@@ -32,9 +32,7 @@ class RequestDAOTest extends TestCase {
         $stmtMock->expects($this->once())
                  ->method('execute')
                  ->with($this->equalTo([
-                     ':staffID' => $staffID,
-                     ':requestID' => $requestID,
-                     ':arrangementDate' => $arrangementDate
+                     ':userID' => $staffID,
                  ]));
         $stmtMock->expects($this->once())
                  ->method('fetch')
@@ -43,7 +41,7 @@ class RequestDAOTest extends TestCase {
         // Set up expectations for the PDO mock
         $pdoMock->expects($this->once())
                 ->method('prepare')
-                ->with('SELECT * FROM employee_arrangement WHERE Staff_ID = :staffID AND Request_ID = :requestID AND Arrangement_Date = :arrangementDate')
+                ->with('SELECT * FROM employee_arrangement WHERE Staff_ID = :userID')
                 ->willReturn($stmtMock);
 
         // Mock the connection manager to return the mocked PDO
