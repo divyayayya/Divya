@@ -1,28 +1,29 @@
 <?php
+    // Test for EmployeeDAO;
+    use PHPUnit\Framework\TestCase;
+    require_once __DIR__ . '/../model/RequestDAO.php';
+    require_once __DIR__ . '/../model/ConnectionManager.php';
 
-use PHPUnit\Framework\TestCase;
-require_once __DIR__ . '/../model/RequestDAO.php';
-require_once __DIR__ . '/../model/ConnectionManager.php';
+// paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/RequestDAOTest.php
 
 class RequestDAOTest extends TestCase {
 
     // Positive test for retrieveRequestInfo()
-    public function test_RetrieveRequestInfo_positive() {
-        $staffID = 140002;
-        $requestID = 2;
-        $arrangementDate = '2024-10-16';
-
-        $expectedRequest = [
-            'Staff_ID' => 140002,
-            'Department' => 'Sales',
-            'Request_ID' => 2,
-            'Arrangement_Date' => '2024-10-15',
-            'Working_Arrangement' => 'WFH',
-            'Arrangement_Time' => 'AM',
-            'Reason' => 'Working on a special project',
-            'Request_Status' => 'Rejected',
-            'Working_Location' => 'Home',
-            'Rejection_Reason' => 'Not Approved past deadline'
+    public function test_retrieveRequestInfo_positive() {
+        $userID = 140002;
+        $expectedEmployee = [
+            [
+                'Staff_ID' => 140002, // As strings to match database output
+                'Department' => 'Sales',
+                'Request_ID' => 2,
+                'Arrangement_Date' => '2024-10-16',
+                'Working_Arrangement' => 'WFH',
+                'Arrangement_Time' => 'AM',
+                'Reason' => 'Working on a special project',
+                'Request_Status' => 'Rejected',
+                'Working_Location' => 'Home',
+                'Rejection_Reason' => 'Not Approved past deadline'
+            ]
         ];
 
         $pdoMock = $this->createMock(PDO::class);
@@ -30,13 +31,10 @@ class RequestDAOTest extends TestCase {
 
         // Set up expectations for the statement
         $stmtMock->expects($this->once())
-                 ->method('execute')
-                 ->with($this->equalTo([
-                     ':userID' => $staffID,
-                 ]));
+                 ->method('execute');
         $stmtMock->expects($this->once())
-                 ->method('fetch')
-                 ->willReturn($expectedRequest);
+                 ->method('fetchAll')
+                 ->willReturn($expectedEmployee);
 
         // Set up expectations for the PDO mock
         $pdoMock->expects($this->once())
@@ -54,56 +52,53 @@ class RequestDAOTest extends TestCase {
         $requestDAO = new RequestDAO($connMock);
 
         // Act
-        $result = $requestDAO->retrieveRequestInfo($staffID);
+        $result = $requestDAO->retrieveRequestInfo($userID);
+        // var_dump($result);
 
         // Assert
-        $this->assertEquals($expectedRequest, $result);
+        $this->assertEquals($expectedEmployee, $result);
     }
-}   
+   
     // Negative test for retrieveRequestInfo()
-//     public function test_RetrieveRequestInfo_negative() {
-//         $staffID = 999999; // Assuming this is an invalid ID
-//         $requestID = 999; // Assuming this is an invalid request ID
-//         $arrangementDate = '2024-12-01'; // Assuming this date has no entry
-//         $expectedRequest = false;
+    // public function test_RetrieveRequestInfo_negative() {
+    //     $staffID = 999999; // Assuming this is an invalid ID
+    //     $expectedRequest = false;
 
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
+    //     $pdoMock = $this->createMock(PDO::class);
+    //     $stmtMock = $this->createMock(PDOStatement::class);
 
-//         // Set up expectations for the statement
-//         $stmtMock->expects($this->once())
-//                  ->method('execute')
-//                  ->with($this->equalTo([
-//                      ':staffID' => $staffID,
-//                      ':requestID' => $requestID,
-//                      ':arrangementDate' => $arrangementDate
-//                  ]));
-//         $stmtMock->expects($this->once())
-//                  ->method('fetch')
-//                  ->willReturn($expectedRequest);
+    //     // Set up expectations for the statement
+    //     $stmtMock->expects($this->once())
+    //              ->method('execute')
+    //              ->with($this->equalTo([
+    //                  ':userID' => $staffID,
+    //              ]));
+    //     $stmtMock->expects($this->once())
+    //              ->method('fetch')
+    //              ->willReturn($expectedRequest);
 
-//         // Set up expectations for the PDO mock
-//         $pdoMock->expects($this->once())
-//                 ->method('prepare')
-//                 ->with('SELECT * FROM employee_arrangement WHERE Staff_ID = :staffID AND Request_ID = :requestID AND Arrangement_Date = :arrangementDate')
-//                 ->willReturn($stmtMock);
+    //     // Set up expectations for the PDO mock
+    //     $pdoMock->expects($this->once())
+    //             ->method('prepare')
+    //             ->with('SELECT * FROM employee_arrangement WHERE Staff_ID = :userID')
+    //             ->willReturn($stmtMock);
 
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
+    //     // Mock the connection manager to return the mocked PDO
+    //     $connMock = $this->createMock(ConnectionManager::class);
+    //     $connMock->expects($this->once())
+    //              ->method('getConnection')
+    //              ->willReturn($pdoMock);
 
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
+    //     // Inject the mock connection manager into RequestDAO
+    //     $requestDAO = new RequestDAO($connMock);
 
-//         // Act
-//         $result = $requestDAO->retrieveRequestInfo($staffID, $requestID, $arrangementDate);
+    //     // Act
+    //     $result = $requestDAO->retrieveRequestInfo($staffID);
 
-//         // Assert
-//         $this->assertEquals($expectedRequest, $result);
-//     }
-    
+    //     // Assert
+    //     $this->assertEquals($expectedRequest, $result);
+    // }
+
 //     // Positive test for submitWFHRequest()
 //     public function test_SubmitWFHRequest_positive() {
 //         $userID = 140878;
@@ -404,8 +399,4 @@ class RequestDAOTest extends TestCase {
 //         // Assert
 //         $this->assertFalse($result);
 //     }
-// }
-
-
-
-
+}

@@ -50,7 +50,7 @@
     
             // Act
             $result = $employeeDAO->retrieveEmployeeInfo($userID);
-    
+            var_dump($result);
             // Assert
             $this->assertEquals($expectedEmployee, $result);
         }
