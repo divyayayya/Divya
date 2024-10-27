@@ -178,9 +178,7 @@
         public function retrieveArrangementDetailsByDate($staffID, $arrangement_date) {
             $pdo = $this->connManager->getConnection();
         
-            $sql = 'SELECT Working_Location, Arrangement_Time 
-                    FROM employee_arrangement 
-                    WHERE Staff_ID = :staffID AND Arrangement_Date = :arrangement_date';
+            $sql = 'SELECT Working_Location, Arrangement_Time FROM employee_arrangement WHERE Staff_ID = :staffID AND Arrangement_Date = :arrangement_date';
             
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(':staffID', $staffID, PDO::PARAM_INT);
