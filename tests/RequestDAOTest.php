@@ -59,6 +59,203 @@ class RequestDAOTest extends TestCase {
         $this->assertEquals($expectedEmployee, $result);
     }
    
+<<<<<<< Updated upstream
+}   
+=======
+
+    public function testApproveRequest() {
+        $requestID = 1;
+    
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+    
+        // Expect execute and rowCount to indicate one row was updated
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true);
+        $stmtMock->expects($this->once())
+                 ->method('rowCount')
+                 ->willReturn(1);
+    
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+    
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        $requestDAO = new RequestDAO($connMock);
+    
+        // Act
+        $result = $requestDAO->approveRequest($requestID);
+    
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    public function testDeleteRequest() {
+        $requestID = 1;
+        $staffID = 12345;
+        $arrangementDate = '2024-11-01';
+    
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+    
+        // Set up the statement to expect execution
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true);
+    
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+    
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        $requestDAO = new RequestDAO($connMock);
+    
+        // Act
+        $result = $requestDAO->deleteRequest($requestID, $staffID, $arrangementDate);
+    
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    public function testSubmitWFHRequest() {
+        $userID = 12345;
+        $requestID = 6;
+        $dept = 'HR';
+        $leaveDate = '2024-11-01';
+        $leaveTime = 'AM';
+        $reason = 'Doctor appointment';
+    
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+    
+        // Set up the statement to expect execution
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true);
+    
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+    
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        $requestDAO = new RequestDAO($connMock);
+    
+        // Act
+        $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leaveDate, $leaveTime, $reason);
+    
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    public function testGenerateReqID() {
+        // Arrange
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+    
+        // Set up the statement's behavior
+        $stmtMock->expects($this->once())
+                 ->method('execute');
+        $stmtMock->expects($this->once())
+                 ->method('fetch')
+                 ->willReturn(['maxID' => 5]);
+    
+        // Set up the PDO mock to return the statement mock
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+    
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        $requestDAO = new RequestDAO($connMock);
+    
+        // Act
+        $newRequestID = $requestDAO->generateReqID();
+    
+        // Assert
+        $this->assertEquals(6, $newRequestID); // Expected ID is maxID + 1
+    }
+
+    public function testSubmitWFHRequestWithInvalidDataTypes() {
+        $userID = 1; // Valid user ID
+        $requestID = 'not_a_number'; // Invalid request ID
+        $dept = "HR";
+        $leave_date = "2024-10-30";
+        $leave_time = "09:00";
+        $reason = "Personal reasons";
+    
+        $dao = new RequestDAO();
+        $result = $dao->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
+        assert($result === false, "Expected false for invalid request ID.");
+    }
+
+    public function testSubmitWFHRequestWithNonExistingDepartment() {
+        $userID = 1; // Valid user ID
+        $requestID = 123; // Assuming this request ID is valid
+        $dept = "NonExistingDept"; // Invalid department
+        $leave_date = "2024-10-30";
+        $leave_time = "09:00";
+        $reason = "Personal reasons";
+    
+        $dao = new RequestDAO();
+        $result = $dao->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
+        assert($result === false, "Expected false for non-existing department.");
+    }
+
+    public function testDeleteRequestWithNonExistingRequest() {
+        $requestId = 99999; // Non-existing request ID
+        $staffId = 1; // Valid staff ID
+        $arrangementDate = "2024-10-30"; // Valid date
+    
+        $dao = new RequestDAO();
+        $result = $dao->deleteRequest($requestId, $staffId, $arrangementDate);
+        assert($result === false, "Expected false for deleting non-existing request.");
+    }
+
+    public function testApproveRequestAlreadyApproved() {
+        $requestID = 1; // Assuming this request ID is already approved
+    
+        $dao = new RequestDAO();
+        $result = $dao->approveRequest($requestID);
+        assert($result === false, "Expected false when approving already approved request.");
+    }
+
+    public function testRejectRequestWithNonExistingRequest() {
+        $requestID = 99999; // Non-existing request ID
+        $reason = "Not valid";
+    
+        $dao = new RequestDAO();
+        $result = $dao->rejectRequest($requestID, $reason);
+        assert($result === false, "Expected false for rejecting non-existing request.");
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+>>>>>>> Stashed changes
     // Negative test for retrieveRequestInfo()
     // public function test_RetrieveRequestInfo_negative() {
     //     $staffID = 999999; // Assuming this is an invalid ID
