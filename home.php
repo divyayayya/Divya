@@ -202,6 +202,14 @@
     ?>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+    <!-- DEON'S TEST STRAT -->
+    <?php
+            $dao1 = new RequestDAO();
+            $test_retInfo = $dao1 -> retrieveRequestInfo($userID);
+            var_dump($test_retInfo);
+    ?>
+    <!-- DEON'S TEST END -->
     <script>
         const requests = <?php echo $requests_json; ?>;
 
