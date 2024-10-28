@@ -183,9 +183,9 @@
                             echo "<a href='deptDetails.php'>Department Details</a>";
                             echo "<a href='pendingRequests.php'>Pending Requests</a>";
                         }
+                        echo '<a href="withdraw_wfh.php">Withdraw Approved</a>';
                     }
                 ?>
-                <a href="withdraw_wfh.php">Withdraw Approved</a>
                 <a href="location_details.php">View where your colleagues are working</a>
             </div>
         </div>

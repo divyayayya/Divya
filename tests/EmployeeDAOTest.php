@@ -50,7 +50,7 @@
     
             // Act
             $result = $employeeDAO->retrieveEmployeeInfo($userID);
-            var_dump($result);
+        
             // Assert
             $this->assertEquals($expectedEmployee, $result);
         }
@@ -846,10 +846,51 @@
     
             // Step 4: Execute the Method Under Test
             $result = $employeeDAO->retrieveArrangementDetailsByDate($staffID, $arrangementDate);
-            
+
             // Step 5: Assert the Results
             $this->assertEquals($mockExpected, $result);           
         }
+
+        public function test_retrieveArrangementDetailsByDate_negative(){
+            $staffID = "lalala";
+            $arrangementDate = 'hehe';
+
+            $mockExpected = [];
+            
+            // Step 2: Mock Database Interactions
+            $pdoMock = $this->createMock(PDO::class);
+            $stmtMock = $this->createMock(PDOStatement::class);
+    
+            // Step 3: Configure Mock Behavior
+            $stmtMock->expects($this->once())
+                        ->method('execute')
+                        ->willReturn(true);
+            $stmtMock->expects($this->once())
+                        ->method('fetch')
+                        ->willReturn($mockExpected);
+            $pdoMock->expects($this->once())
+                    ->method('prepare')
+                    ->with('SELECT Working_Location, Arrangement_Time FROM employee_arrangement WHERE Staff_ID = :staffID AND Arrangement_Date = :arrangement_date')
+                    ->willReturn($stmtMock);
+    
+            // Mock the ConnectionManager to return the mocked PDO
+            $connMock = $this->createMock(ConnectionManager::class);
+            $connMock->expects($this->once())
+                        ->method('getConnection')
+                        ->willReturn($pdoMock);
+    
+            // Inject the mock connection manager into EmployeeDAO
+            $employeeDAO = new EmployeeDAO($connMock);
+    
+            // Step 4: Execute the Method Under Test
+            $result = $employeeDAO->retrieveArrangementDetailsByDate($staffID, $arrangementDate);
+
+            // Step 5: Assert the Results
+            $this->assertEquals($mockExpected, $result);           
+        }
+
+        // searchEmployee() --> ED_15 | ED_16
+        
 // paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/EmployeeDAOTest.php
     }
 ?>
