@@ -1050,6 +1050,129 @@
             // Step 5: Assert the Results
             $this->assertEquals($expectedResult, $result);
         }
+
+        public function test_retrieveUnderlingsID_negative(){
+            $userID = 140880;
+            $dbResult = [];
+            $expectedResult = [];
+
+            // Step 2: Mock Database Interactions
+            $pdoMock = $this->createMock(PDO::class);
+            $stmtMock = $this->createMock(PDOStatement::class);
+            
+            // Step 3: Configure Mock Behavior
+            $stmtMock->expects($this->once())
+                ->method('execute')
+                ->willReturn(true);
+
+            // Set the fetchAll behavior to return the mock data
+            $stmtMock->expects($this->once())
+                ->method('fetchAll')
+                ->willReturn($dbResult);
+
+            // Configure the prepare method to return the mock statement
+            $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->with('SELECT Staff_ID FROM employee WHERE Reporting_Manager = :userID ORDER BY Staff_ID')
+                ->willReturn($stmtMock);
+            
+            // Mock the ConnectionManager to return the mocked PDO
+            $connMock = $this->createMock(ConnectionManager::class);
+            $connMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($pdoMock);
+
+            // Inject the mock connection manager into EmployeeDAO
+            $employeeDAO = new EmployeeDAO($connMock);
+
+            // Step 4: Execute the Method Under Test
+            $result = $employeeDAO->retrieveUnderlingsID($userID);
+            // Step 5: Assert the Results
+            $this->assertEquals($expectedResult, $result);
+        }
+
+        // retrieveUnderlingsID() --> ED_19 | ED_20
+        public function test_getStaffName_positive(){
+            $userID = 140008;
+            $expectedResult = "Jaclyn Lee";
+            $sql = "SELECT CONCAT(Staff_FName, ' ', Staff_LName) AS staffName FROM employee WHERE Staff_ID = :userID";
+
+            // Step 2: Mock Database Interactions
+            $pdoMock = $this->createMock(PDO::class);
+            $stmtMock = $this->createMock(PDOStatement::class);
+            
+            // Step 3: Configure Mock Behavior
+            $stmtMock->expects($this->once())
+                ->method('execute')
+                ->willReturn(true);
+
+            // Set the fetchAll behavior to return the mock data
+            $stmtMock->expects($this->once())
+                ->method('fetch')
+                ->willReturn($expectedResult);
+
+            // Configure the prepare method to return the mock statement
+            $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->with($sql)
+                ->willReturn($stmtMock);
+            
+            // Mock the ConnectionManager to return the mocked PDO
+            $connMock = $this->createMock(ConnectionManager::class);
+            $connMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($pdoMock);
+
+            // Inject the mock connection manager into EmployeeDAO
+            $employeeDAO = new EmployeeDAO($connMock);
+
+            // Step 4: Execute the Method Under Test
+            $result = $employeeDAO->searchEmployee($sql);
+
+            // Step 5: Assert the Results
+            $this->assertEquals($expectedResult, $result);
+        }
+        public function test_getStaffName_negative(){
+            $userID = 140008;
+            $expectedResult = "No employee found!";
+            $sql = "SELECT CONCAT(Staff_FName, ' ', Staff_LName) AS staffName FROM employee WHERE Staff_ID = :userID";
+
+            // Step 2: Mock Database Interactions
+            $pdoMock = $this->createMock(PDO::class);
+            $stmtMock = $this->createMock(PDOStatement::class);
+            
+            // Step 3: Configure Mock Behavior
+            $stmtMock->expects($this->once())
+                ->method('execute')
+                ->willReturn(true);
+
+            // Set the fetchAll behavior to return the mock data
+            $stmtMock->expects($this->once())
+                ->method('fetch')
+                ->willReturn($expectedResult);
+
+            // Configure the prepare method to return the mock statement
+            $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->with($sql)
+                ->willReturn($stmtMock);
+            
+            // Mock the ConnectionManager to return the mocked PDO
+            $connMock = $this->createMock(ConnectionManager::class);
+            $connMock->expects($this->once())
+                ->method('getConnection')
+                ->willReturn($pdoMock);
+
+            // Inject the mock connection manager into EmployeeDAO
+            $employeeDAO = new EmployeeDAO($connMock);
+
+            // Step 4: Execute the Method Under Test
+            $result = $employeeDAO->searchEmployee($sql);
+
+            // Step 5: Assert the Results
+            $this->assertEquals($expectedResult, $result);
+        }
+
 // paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/EmployeeDAOTest.php
     }
 ?>
