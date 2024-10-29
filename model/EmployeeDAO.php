@@ -227,7 +227,7 @@
                 $id = $row['Staff_ID'];
                 $idArray[] = $id;
             }
-
+            print_r($results);
             return $idArray;
         }
 
