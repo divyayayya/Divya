@@ -1002,18 +1002,18 @@
             //     ['9' => ['Staff_ID' => 140891]],
             //     ['10' => ['Staff_ID' => 140892]]
             // ];
-            // $expectedResult = [
-            //     ['Staff_ID' => 140880],
-            //     ['Staff_ID' => 140881],
-            //     ['Staff_ID' => 140882],
-            //     ['Staff_ID' => 140883],
-            //     ['Staff_ID' => 140886],
-            //     ['Staff_ID' => 140887],
-            //     ['Staff_ID' => 140888],
-            //     ['Staff_ID' => 140889],
-            //     ['Staff_ID' => 140890],
-            //     ['Staff_ID' => 140891],
-            //     ['Staff_ID' => 140892]];
+            $dbResult = [
+                ['Staff_ID' => 140880],
+                ['Staff_ID' => 140881],
+                ['Staff_ID' => 140882],
+                ['Staff_ID' => 140883],
+                ['Staff_ID' => 140886],
+                ['Staff_ID' => 140887],
+                ['Staff_ID' => 140888],
+                ['Staff_ID' => 140889],
+                ['Staff_ID' => 140890],
+                ['Staff_ID' => 140891],
+                ['Staff_ID' => 140892]];
             
             $expectedResult = [140880, 140881, 140882, 140883, 140886, 140887, 140888, 140889, 140890, 140891, 140892];
             // Step 2: Mock Database Interactions
@@ -1028,7 +1028,7 @@
             // Set the fetchAll behavior to return the mock data
             $stmtMock->expects($this->once())
                 ->method('fetchAll')
-                ->willReturn($expectedResult);
+                ->willReturn($dbResult);
 
             // Configure the prepare method to return the mock statement
             $pdoMock->expects($this->once())
