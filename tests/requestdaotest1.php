@@ -3,11 +3,13 @@ use PHPUnit\Framework\TestCase;
 require_once __DIR__ . '/../model/RequestDAO.php';
 require_once __DIR__ . '/../model/ConnectionManager.php';
 
+// paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/RequestDAOTest1.php
+
 class requestdaotest1 extends TestCase {
     // Negative test for retrieveRequestInfo()
     public function test_RetrieveRequestInfo_negative() {
-        $staffID = 999999;
-        $expectedRequest = [false];
+        $staffID = 1;
+        $expectedRequest = false;
 
         $pdoMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
@@ -19,7 +21,7 @@ class requestdaotest1 extends TestCase {
                      ':userID' => $staffID,
                  ]));
         $stmtMock->expects($this->once())
-                 ->method('fetchAll')
+                 ->method('fetch')
                  ->willReturn($expectedRequest);
 
         // Set up expectations for the PDO mock

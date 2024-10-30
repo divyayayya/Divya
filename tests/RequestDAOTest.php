@@ -1,5 +1,4 @@
 <?php
-    // Test for EmployeeDAO;
     use PHPUnit\Framework\TestCase;
     require_once __DIR__ . '/../model/RequestDAO.php';
     require_once __DIR__ . '/../model/ConnectionManager.php';
@@ -29,33 +28,27 @@ class RequestDAOTest extends TestCase {
         $pdoMock = $this->createMock(PDO::class);
         $stmtMock = $this->createMock(PDOStatement::class);
 
-        // Set up expectations for the statement
         $stmtMock->expects($this->once())
                  ->method('execute');
         $stmtMock->expects($this->once())
                  ->method('fetchAll')
                  ->willReturn($expectedEmployee);
 
-        // Set up expectations for the PDO mock
         $pdoMock->expects($this->once())
                 ->method('prepare')
                 ->with('SELECT * FROM employee_arrangement WHERE Staff_ID = :userID')
                 ->willReturn($stmtMock);
 
-        // Mock the connection manager to return the mocked PDO
         $connMock = $this->createMock(ConnectionManager::class);
         $connMock->expects($this->once())
                  ->method('getConnection')
                  ->willReturn($pdoMock);
 
-        // Inject the mock connection manager into RequestDAO
         $requestDAO = new RequestDAO($connMock);
 
-        // Act
         $result = $requestDAO->retrieveRequestInfo($userID);
-        var_dump($result);
+        // var_dump($result);
 
-        // Assert
         $this->assertEquals($expectedEmployee, $result);
     }
    
