@@ -1172,7 +1172,7 @@
             // Step 5: Assert the Results
             $this->assertEquals($expectedResult, $result);
         }
-
+// test
 // paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/EmployeeDAOTest.php
     }
 ?>
