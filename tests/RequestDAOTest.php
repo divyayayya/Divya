@@ -7,17 +7,7 @@
 
 class RequestDAOTest extends TestCase {
 
-    protected $mockConnManager;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        
-        // Create a mock for ConnectionManager (replace with your actual class)
-        $this->mockConnManager = $this->createMock(ConnectionManager::class);
-    }
-
-    // Positive test for retrieveRequestInfo()
+    // RD 1: Positive test for retrieveRequestInfo()
     public function test_retrieveRequestInfo_positive() {
         $userID = 140002;
         $expectedEmployee = [
@@ -62,7 +52,7 @@ class RequestDAOTest extends TestCase {
         $this->assertEquals($expectedEmployee, $result);
     }
 
-    // Negative test for retrieveRequestInfo()
+    // RD 2: Negative test for retrieveRequestInfo()
     public function test_retrieveRequestInfo_negative() {
         $userID = 999999; // Assume this ID does not exist
         $expectedEmployee = []; // No employee data expected
@@ -93,7 +83,7 @@ class RequestDAOTest extends TestCase {
         $this->assertEquals($expectedEmployee, $result);
     }
 
-    // Positive testcase of the approveRequest() 
+    // RD 3: Positive testcase of the approveRequest() 
     public function testApproveRequest() {
         $requestID = 1;
     
@@ -126,7 +116,7 @@ class RequestDAOTest extends TestCase {
         $this->assertTrue($result);
     }
 
-    // Negative test for approveRequest()
+    // RD 4: Negative test for approveRequest()
     public function testApproveRequest_nonExistentRequest() {
         $requestID = 999; // Assume this request ID does not exist
 
@@ -159,7 +149,7 @@ class RequestDAOTest extends TestCase {
         $this->assertFalse($result); // Should return false when no rows are affected
     }
 
-    // Positive test for generateReqID()
+    // RD 5: Positive test for generateReqID()
     public function testGenerateReqID_ValidCase() {
         $expectedReqID = '68'; // Example of expected request ID
         $pdoMock = $this->createMock(PDO::class);
@@ -194,7 +184,7 @@ class RequestDAOTest extends TestCase {
         $this->assertEquals($expectedReqID, $result);
     }
 
-    // Negative test for generateReqID()
+    // RD 6: Negative test for generateReqID()
     public function testGenerateReqID_NoRequests() {
         $expectedReqID = '1'; // Example of the first request ID when there are no existing requests
         $pdoMock = $this->createMock(PDO::class);
@@ -229,6 +219,175 @@ class RequestDAOTest extends TestCase {
         $this->assertEquals($expectedReqID, $result);
     }
 
+    // RD 7: Positive test for RejectRequest()
+    public function testRejectRequest_Success() {
+        $requestID = 1;
+        $reason = "Duplicate request";
+
+        // Mocking PDO and PDOStatement
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+
+        // Expect prepare to be called once
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+
+        // Set expectations for the statement mock
+        $stmtMock->expects($this->exactly(2))
+                 ->method('bindParam')
+                 ->withConsecutive(
+                     [$this->equalTo(':requestID'), $this->equalTo($requestID), PDO::PARAM_INT],
+                     [$this->equalTo(':reason'), $this->equalTo($reason), PDO::PARAM_STR]
+                 );
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true); // Simulate successful execution
+        $stmtMock->expects($this->once())
+                 ->method('rowCount')
+                 ->willReturn(1); // Simulate one row affected
+
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+
+        // Inject the mock connection manager into RequestDAO
+        $requestDAO = new RequestDAO($connMock);
+
+        // Act
+        $result = $requestDAO->rejectRequest($requestID, $reason);
+
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    // RD 8: Negative test for RejectRequest()
+    public function testRejectRequest_NoAffectedRows() {
+        $requestID = 2;
+        $reason = "Request already processed";
+
+        // Mocking PDO and PDOStatement
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+
+        // Expect prepare to be called once
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+
+        // Set expectations for the statement mock
+        $stmtMock->expects($this->exactly(2))
+                 ->method('bindParam')
+                 ->withConsecutive(
+                     [$this->equalTo(':requestID'), $this->equalTo($requestID), PDO::PARAM_INT],
+                     [$this->equalTo(':reason'), $this->equalTo($reason), PDO::PARAM_STR]
+                 );
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true); // Simulate successful execution
+        $stmtMock->expects($this->once())
+                 ->method('rowCount')
+                 ->willReturn(0); // Simulate no rows affected
+
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+
+        // Inject the mock connection manager into RequestDAO
+        $requestDAO = new RequestDAO($connMock);
+
+        // Act
+        $result = $requestDAO->rejectRequest($requestID, $reason);
+
+        // Assert
+        $this->assertFalse($result);
+    }
+
+    // RD 9: Positive test for RejectExpiredRequest()
+    public function testRejectExpiredRequests_Success() {
+        // Arrange
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMockSelect = $this->createMock(PDOStatement::class);
+        $stmtMockUpdate = $this->createMock(PDOStatement::class);
+    
+        // Simulate expired requests
+        $expiredRequests = [
+            ['Request_ID' => 1],
+            ['Request_ID' => 2],
+        ];
+    
+        // Set up expectations for the SELECT statement
+        $stmtMockSelect->expects($this->once())
+                       ->method('execute');
+        $stmtMockSelect->expects($this->once())
+                       ->method('fetchAll')
+                       ->willReturn($expiredRequests);
+    
+        // Expect the first call to prepare to return the SELECT statement mock
+        $pdoMock->expects($this->exactly(2)) // First for SELECT, then for UPDATE
+                ->method('prepare')
+                ->will($this->onConsecutiveCalls($stmtMockSelect, $stmtMockUpdate));
+    
+        // Set up expectations for the UPDATE statement
+        $stmtMockUpdate->expects($this->exactly(2)) // Expect to execute for each expired request
+                       ->method('execute')
+                       ->willReturn(true); // Simulate successful execution of update
+    
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        // Inject the mock connection manager into RequestDAO
+        $requestDAO = new RequestDAO($connMock);
+    
+        // Act
+        $requestDAO->rejectExpiredRequests();
+    
+        // No assertion is necessary; if no exceptions are thrown, the test passes
+    }
+    
+    // RD 10: Negative test for RejectExpiredRequest()
+    public function testRejectExpiredRequests_NoExpiredRequests() {
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        
+        // Create a mock for the PDOStatement for the SELECT query
+        $stmtSelectMock = $this->createMock(PDOStatement::class);
+    
+        // Set up expectations for the SELECT statement
+        $stmtSelectMock->expects($this->once())
+                       ->method('execute');
+        $stmtSelectMock->expects($this->once())
+                       ->method('fetchAll')
+                       ->willReturn([]); // Simulate no expired requests
+    
+        // Set up expectations for the PDO mock
+        $pdoMock->expects($this->once()) // We expect prepare to be called exactly once for the SELECT
+                ->method('prepare')
+                ->with("SELECT Request_ID FROM employee_arrangement WHERE Request_Status = 'Pending' AND Arrangement_Date <= CURRENT_DATE")
+                ->willReturn($stmtSelectMock);
+    
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        // Act
+        $requestDAO = new RequestDAO($connMock);
+        $requestDAO->rejectExpiredRequests();
+    
+        // Assert - No assertions needed, but you can assert that nothing unexpected occurred
+        $this->assertTrue(true); // Mark the test as successful.
+    }
+    
+    
 
     // public function testDeleteRequest() {
     //     $requestID = 1;
