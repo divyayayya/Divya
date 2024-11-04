@@ -2,11 +2,11 @@
     Class ConnectionManager{
         public function getConnection(){
         
-        $host     = 'localhost';
+        $host     = 'transformers.mysql.database.azure.com';
         $port     = '3306';
         $dbname   = 'employeedb';
-        $username = 'root';
-        $password = '';
+        $username = 'user';
+        $password = 'username0!';
 
         $dsn = "mysql:host=$host;port=$port;dbname=$dbname";
         $pdo = new PDO($dsn, $username, $password);
