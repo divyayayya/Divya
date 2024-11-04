@@ -1,4 +1,5 @@
 <?php
+ob_start();
 require_once "model/common.php";
 
 $connMgr = new ConnectionManager();
@@ -38,5 +39,5 @@ if (isset($_POST['userID'])) {
     header("Location: home.php");
     exit();
 }
-
+ob_end_flush();
 ?>
