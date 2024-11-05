@@ -90,6 +90,30 @@
             color: #fff; /* Change text color on hover */
         }
 
+        /* Adjust padding and font size for smaller screens */
+        @media (max-width: 768px) {
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            th, td {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+        @media screen and (max-width: 480px) {
+            th, td {
+                font-size: 4vw;
+            }
+
+            .navbar img {
+                height: 5vh;
+            }
+        }
+
     </style>
 </head>
 <body>
