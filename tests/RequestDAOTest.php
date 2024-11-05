@@ -6,7 +6,6 @@
 // paste into terminal: php vendor/bin/phpunit --bootstrap vendor/autoload.php tests/RequestDAOTest.php
 
 class RequestDAOTest extends TestCase {
-
     // RD 1: Positive test for retrieveRequestInfo()
     public function test_retrieveRequestInfo_positive() {
         $userID = 140002;
@@ -710,498 +709,398 @@ class RequestDAOTest extends TestCase {
         $this->assertEquals([], $result);
     }
     
-
-
     // RD 19: Exception handling for retrieveApprovedRequestByUserID() 
-
-     
-    // public function testDeleteRequest() {
-    //     $requestID = 1;
-    //     $staffID = 12345;
-    //     $arrangementDate = '2024-11-01';
+    public function testRetrieveApprovedRequests_Exception() {
+        $userID = 1;
     
-    //     $pdoMock = $this->createMock(PDO::class);
-    //     $stmtMock = $this->createMock(PDOStatement::class);
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        $connMock = $this->createMock(ConnectionManager::class);
+        
+        // Mock the connection manager to return the mocked PDO
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
     
-    //     // Set up the statement to expect execution
-    //     $stmtMock->expects($this->once())
-    //              ->method('execute')
-    //              ->willReturn(true);
+        // Set up expectations for the prepare method to throw an exception
+        $pdoMock->expects($this->once())
+                 ->method('prepare')
+                 ->will($this->throwException(new Exception('Database error')));
     
-    //     $pdoMock->expects($this->once())
-    //             ->method('prepare')
-    //             ->willReturn($stmtMock);
+        // Act & Assert
+        $requestDAO = new RequestDAO($connMock);
     
-    //     $connMock = $this->createMock(ConnectionManager::class);
-    //     $connMock->expects($this->once())
-    //              ->method('getConnection')
-    //              ->willReturn($pdoMock);
+        // Assert that the exception is thrown
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Database error');
     
-    //     $requestDAO = new RequestDAO($connMock);
+        $requestDAO->retrieveApprovedRequestsByUserID($userID);
+    }
+
+    // RD 20: Positive test for SubmitLeaveRequest() 
+    public function testSubmitLeaveRequest_SuccessfulSubmission() {
+        $userID = 'U12345';
+        $requestID = 1001;
+        $dept = 'Sales';
+        $leave_date = '2024-11-01';
+        $leave_time = 'Full Day';
+        $reason = 'Vacation';
     
-    //     // Act
-    //     $result = $requestDAO->deleteRequest($requestID, $staffID, $arrangementDate);
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
     
-    //     // Assert
-    //     $this->assertTrue($result);
-    // }
-
-    // public function testSubmitWFHRequest() {
-    //     $userID = 12345;
-    //     $requestID = 6;
-    //     $dept = 'HR';
-    //     $leaveDate = '2024-11-01';
-    //     $leaveTime = 'AM';
-    //     $reason = 'Doctor appointment';
+        // Set up expectations for the prepare and execute methods
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
     
-    //     $pdoMock = $this->createMock(PDO::class);
-    //     $stmtMock = $this->createMock(PDOStatement::class);
+        $stmtMock->expects($this->exactly(6)) // We expect six bindParam calls
+                 ->method('bindParam');
     
-    //     // Set up the statement to expect execution
-    //     $stmtMock->expects($this->once())
-    //              ->method('execute')
-    //              ->willReturn(true);
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true); // Simulate successful execution
     
-    //     $pdoMock->expects($this->once())
-    //             ->method('prepare')
-    //             ->willReturn($stmtMock);
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
     
-    //     $connMock = $this->createMock(ConnectionManager::class);
-    //     $connMock->expects($this->once())
-    //              ->method('getConnection')
-    //              ->willReturn($pdoMock);
+        // Act
+        $requestDAO = new RequestDAO($connMock);
+        $result = $requestDAO->submitLeaveRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
     
-    //     $requestDAO = new RequestDAO($connMock);
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    // RD 21: Negative test for SubmitLeaveRequest() 
+    public function testSubmitLeaveRequest_InvalidUserID() {
+        $userID = ''; // Invalid user ID format (empty string)
+        $requestID = 1002;
+        $dept = 'Marketing';
+        $leave_date = '2024-11-02';
+        $leave_time = 'Full Day';
+        $reason = 'Family Event';
     
-    //     // Act
-    //     $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leaveDate, $leaveTime, $reason);
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
     
-    //     // Assert
-    //     $this->assertTrue($result);
-    // }
-
-    // public function testGenerateReqID() {
-    //     // Arrange
-    //     $pdoMock = $this->createMock(PDO::class);
-    //     $stmtMock = $this->createMock(PDOStatement::class);
+        // Set up expectations for the prepare method but simulate failure due to invalid user ID
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
     
-    //     // Set up the statement's behavior
-    //     $stmtMock->expects($this->once())
-    //              ->method('execute');
-    //     $stmtMock->expects($this->once())
-    //              ->method('fetch')
-    //              ->willReturn(['maxID' => 5]);
+        // We expect bindParam to be called, but `execute` should not be successful due to invalid input
+        $stmtMock->expects($this->exactly(6)) // Expect six bindParam calls, regardless of input validity
+                 ->method('bindParam');
     
-    //     // Set up the PDO mock to return the statement mock
-    //     $pdoMock->expects($this->once())
-    //             ->method('prepare')
-    //             ->willReturn($stmtMock);
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(false); // Simulate failure of execution due to invalid input
     
-    //     $connMock = $this->createMock(ConnectionManager::class);
-    //     $connMock->expects($this->once())
-    //              ->method('getConnection')
-    //              ->willReturn($pdoMock);
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
     
-    //     $requestDAO = new RequestDAO($connMock);
+        // Act
+        $requestDAO = new RequestDAO($connMock);
+        $result = $requestDAO->submitLeaveRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
     
-    //     // Act
-    //     $newRequestID = $requestDAO->generateReqID();
+        // Assert
+        $this->assertFalse($result);
+    }
+
+    // RD 22: Positive test for retrievePendingArrangements() 
+    public function testRetrievePendingArrangements_SuccessfulRetrieval() {
+        $staffID = '160290';
+        $expectedResults = [
+            [
+                'Staff_ID' => '160290',
+                'Request_Status' => 'Approved',
+                'Arrangement_Date' => '2024-11-7',
+                'Arrangement_Time' => 'Full Day',
+                'Reason' => 'Take care of baby'
+            ]
+        ];
     
-    //     // Assert
-    //     $this->assertEquals(6, $newRequestID); // Expected ID is maxID + 1
-    // }
-
-    // public function testSubmitWFHRequestWithInvalidDataTypes() {
-    //     $userID = 1; // Valid user ID
-    //     $requestID = 'not_a_number'; // Invalid request ID
-    //     $dept = "HR";
-    //     $leave_date = "2024-10-30";
-    //     $leave_time = "09:00";
-    //     $reason = "Personal reasons";
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
     
-    //     $dao = new RequestDAO();
-    //     $result = $dao->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-    //     assert($result === false, "Expected false for invalid request ID.");
-    // }
-
-    // public function testSubmitWFHRequestWithNonExistingDepartment() {
-    //     $userID = 1; // Valid user ID
-    //     $requestID = 123; // Assuming this request ID is valid
-    //     $dept = "NonExistingDept"; // Invalid department
-    //     $leave_date = "2024-10-30";
-    //     $leave_time = "09:00";
-    //     $reason = "Personal reasons";
+        // Set up expectations for the prepare and execute methods
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
     
-    //     $dao = new RequestDAO();
-    //     $result = $dao->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-    //     assert($result === false, "Expected false for non-existing department.");
-    // }
-
-    // public function testDeleteRequestWithNonExistingRequest() {
-    //     $requestId = 99999; // Non-existing request ID
-    //     $staffId = 1; // Valid staff ID
-    //     $arrangementDate = "2024-10-30"; // Valid date
+        $stmtMock->expects($this->once())
+                 ->method('bindParam')
+                 ->with($this->equalTo(':staffID'), $this->equalTo($staffID));
     
-    //     $dao = new RequestDAO();
-    //     $result = $dao->deleteRequest($requestId, $staffId, $arrangementDate);
-    //     assert($result === false, "Expected false for deleting non-existing request.");
-    // }
-
-    // public function testApproveRequestAlreadyApproved() {
-    //     $requestID = 1; // Assuming this request ID is already approved
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true);
     
-    //     $dao = new RequestDAO();
-    //     $result = $dao->approveRequest($requestID);
-    //     assert($result === false, "Expected false when approving already approved request.");
-    // }
-
-    // public function testRejectRequestWithNonExistingRequest() {
-    //     $requestID = 99999; // Non-existing request ID
-    //     $reason = "Not valid";
+        $stmtMock->expects($this->once())
+                 ->method('fetchAll')
+                 ->willReturn($expectedResults);
     
-    //     $dao = new RequestDAO();
-    //     $result = $dao->rejectRequest($requestID, $reason);
-    //     assert($result === false, "Expected false for rejecting non-existing request.");
-    // }
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
     
-    // Negative test for retrieveRequestInfo()
-    // public function test_RetrieveRequestInfo_negative() {
-    //     $staffID = 999999; // Assuming this is an invalid ID
-    //     $expectedRequest = false;
-
-    //     $pdoMock = $this->createMock(PDO::class);
-    //     $stmtMock = $this->createMock(PDOStatement::class);
-
-    //     // Set up expectations for the statement
-    //     $stmtMock->expects($this->once())
-    //              ->method('execute')
-    //              ->with($this->equalTo([
-    //                  ':userID' => $staffID,
-    //              ]));
-    //     $stmtMock->expects($this->once())
-    //              ->method('fetch')
-    //              ->willReturn($expectedRequest);
-
-    //     // Set up expectations for the PDO mock
-    //     $pdoMock->expects($this->once())
-    //             ->method('prepare')
-    //             ->with('SELECT * FROM employee_arrangement WHERE Staff_ID = :userID')
-    //             ->willReturn($stmtMock);
-
-    //     // Mock the connection manager to return the mocked PDO
-    //     $connMock = $this->createMock(ConnectionManager::class);
-    //     $connMock->expects($this->once())
-    //              ->method('getConnection')
-    //              ->willReturn($pdoMock);
-
-    //     // Inject the mock connection manager into RequestDAO
-    //     $requestDAO = new RequestDAO($connMock);
-
-    //     // Act
-    //     $result = $requestDAO->retrieveRequestInfo($staffID);
-
-    //     // Assert
-    //     $this->assertEquals($expectedRequest, $result);
-    // }
-
-//     // Positive test for submitWFHRequest()
-//     public function test_SubmitWFHRequest_positive() {
-//         $userID = 140878;
-//         $requestID = 61;
-//         $dept = 'Sales';
-//         $leave_date = '2024-10-15';
-//         $leave_time = 'AM';
-//         $reason = 'Take care of baby';
-
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
-
-//         // Expect the statement to execute successfully
-//         $stmtMock->expects($this->once())
-//                  ->method('execute')
-//                  ->willReturn(true);
-
-//         // Expect the PDO mock to prepare the correct SQL statement
-//         $pdoMock->expects($this->once())
-//                 ->method('prepare')
-//                 ->with($this->stringContains('INSERT INTO employee_arrangement'))
-//                 ->willReturn($stmtMock);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-
-//         // Assert
-//         $this->assertTrue($result);
-//     }
-
-//     // Negative test for submitWFHRequest() - Database execution failure
-//     public function test_SubmitWFHRequest_negative_db_error() {
-//         $userID = 140001;
-//         $requestID = 1;
-//         $dept = 'Sales';
-//         $leave_date = '2024-10-15';
-//         $leave_time = 'PM';
-//         $reason = 'Need to take care of family';
-
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
-
-//         // Expect the statement execution to fail
-//         $stmtMock->expects($this->once())
-//                  ->method('execute')
-//                  ->willReturn(false);
-
-//         // Expect the PDO mock to prepare the correct SQL statement
-//         $pdoMock->expects($this->once())
-//                 ->method('prepare')
-//                 ->with($this->stringContains('INSERT INTO employee_arrangement'))
-//                 ->willReturn($stmtMock);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-
-//         // Assert
-//         $this->assertFalse($result);
-//     }
-
-//     // Negative test for submitWFHRequest() - Invalid User ID
-//     public function test_SubmitWFHRequest_negative_invalid_userID() {
-//         $userID = 0; // Invalid User ID
-//         $requestID = 1;
-//         $dept = 'Sales';
-//         $leave_date = '2024-10-15';
-//         $leave_time = 'PM';
-//         $reason = 'Need to take care of family';
-
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
-
-//         // Expect the statement execution to fail (you can adjust the expectation based on your specific implementation)
-//         $stmtMock->expects($this->once())
-//                  ->method('execute')
-//                  ->willReturn(false);
-
-//         // Expect the PDO mock to prepare the correct SQL statement
-//         $pdoMock->expects($this->once())
-//                 ->method('prepare')
-//                 ->with($this->stringContains('INSERT INTO employee_arrangement'))
-//                 ->willReturn($stmtMock);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-
-//         // Assert
-//         $this->assertFalse($result);
-//     }
-
-//     // Negative test for submitWFHRequest() - Invalid Department
-//     public function test_SubmitWFHRequest_negative_invalid_dept() {
-//         $userID = 140001;
-//         $requestID = 1;
-//         $dept = 'InvalidDept'; // Invalid Department;
-//         $leave_date = '2024-10-15';
-//         $leave_time = 'PM';
-//         $reason = 'Need to take care of family';
-
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
-
-//         // Expect the statement execution to fail (you can adjust the expectation based on your specific implementation)
-//         $stmtMock->expects($this->once())
-//                  ->method('execute')
-//                  ->willReturn(false);
-
-//         // Expect the PDO mock to prepare the correct SQL statement
-//         $pdoMock->expects($this->once())
-//                 ->method('prepare')
-//                 ->with($this->stringContains('INSERT INTO employee_arrangement'))
-//                 ->willReturn($stmtMock);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-
-//         // Assert
-//         $this->assertFalse($result);
-//     }
-
-//     // Negative test for submitWFHRequest() - Invalid Leave Date
-//     public function test_SubmitWFHRequest_negative_invalid_leave_date() {
-//         $userID = 140001;
-//         $requestID = 1;
-//         $dept = 'Sales';
-//         $leave_date = '2024-10-15'; // Invalid past date
-//         $leave_time = 'PM';
-//         $reason = 'Need to take care of family';
-
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
-
-//         // Expect the statement execution to fail (you can adjust the expectation based on your specific implementation)
-//         $stmtMock->expects($this->once())
-//                  ->method('execute')
-//                  ->willReturn(false);
-
-//         // Expect the PDO mock to prepare the correct SQL statement
-//         $pdoMock->expects($this->once())
-//                 ->method('prepare')
-//                 ->with($this->stringContains('INSERT INTO employee_arrangement'))
-//                 ->willReturn($stmtMock);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-
-//         // Assert
-//         $this->assertFalse($result);
-//     }
-
-//     // Negative test for submitWFHRequest() - Invalid Leave Time
-//     public function test_SubmitWFHRequest_negative_invalid_leave_time() {
-//         $userID = 140001;
-//         $requestID = 1;
-//         $dept = 'Sales';
-//         $leave_date = '2024-10-15';
-//         $leave_time = 'InvalidTime'; // Invalid time
-//         $reason = 'Need to take care of family';
-
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
-//         // Expect the statement execution to fail (you can adjust the expectation based on your specific implementation)
-//         $stmtMock->expects($this->once())
-//                  ->method('execute')
-//                  ->willReturn(false);
-
-//         // Expect the PDO mock to prepare the correct SQL statement
-//         $pdoMock->expects($this->once())
-//                 ->method('prepare')
-//                 ->with($this->stringContains('INSERT INTO employee_arrangement'))
-//                 ->willReturn($stmtMock);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
-
-//         // Assert
-//         $this->assertFalse($result);
-//     }
-
-//     // Positive test for submitRecurringWFHRequest()
-//     public function test_SubmitRecurringWFHRequest_positive() {
-//         $userID = 150148;
-//         $dept = 'Engineering';
-//         $startDate = '2024-10-15';
-//         $endDate = '2024-10-30';
-//         $recurring_days = ['Tuesday', 'Thursday'];
-//         $time_slot = 'Full Day';
-//         $reason = 'Government Protocol';
-
-//         $pdoMock = $this->createMock(PDO::class);
-//         $stmtMock = $this->createMock(PDOStatement::class);
-
-//         // Expect the statement to execute successfully multiple times
-//         $stmtMock->expects($this->exactly(8))
-//                  ->method('execute')
-//                  ->willReturn(true);
-
-//         // Expect the PDO mock to prepare the correct SQL statement multiple times
-//         $pdoMock->expects($this->exactly(8))
-//                 ->method('prepare')
-//                 ->with($this->stringContains('INSERT INTO employee_arrangement'))
-//                 ->willReturn($stmtMock);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitRecurringWFHRequest($userID, $dept, $startDate, $endDate, $recurring_days, $time_slot, $reason);
-
-//         // Assert
-//         $this->assertTrue($result);
-//     }
-
-//     // Negative test for submitRecurringWFHRequest() - Invalid date range
-//     public function test_SubmitRecurringWFHRequest_negative() {
-//         $userID = 140001;
-//         $dept = 'Sales';
-//         $startDate = '2024-10-07';
-//         $endDate = '2024-10-01'; // Invalid range
-//         $recurring_days = ['Monday', 'Wednesday'];
-//         $time_slot = 'AM';
-//         $reason = 'Family obligations';
-
-//         $pdoMock = $this->createMock(PDO::class);
-
-//         // Mock the connection manager to return the mocked PDO
-//         $connMock = $this->createMock(ConnectionManager::class);
-//         $connMock->expects($this->once())
-//                  ->method('getConnection')
-//                  ->willReturn($pdoMock);
-
-//         // Inject the mock connection manager into RequestDAO
-//         $requestDAO = new RequestDAO($connMock);
-
-//         // Act
-//         $result = $requestDAO->submitRecurringWFHRequest($userID, $dept, $startDate, $endDate, $recurring_days, $time_slot, $reason);
-
-//         // Assert
-//         $this->assertFalse($result);
-//     }
+        // Act
+        $requestDAO = new RequestDAO($connMock);
+        $result = $requestDAO->retrievePendingArrangements($staffID);
+    
+        // Assert
+        $this->assertEquals($expectedResults, $result);
+    }
+
+    // RD 23: Negative test for retrievePendingArrangements() 
+    public function testRetrievePendingArrangements_InvalidStaffID() {
+        $staffID = '';
+    
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+    
+        // Set up expectations for the prepare and execute methods
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+    
+        $stmtMock->expects($this->once())
+                 ->method('bindParam')
+                 ->with($this->equalTo(':staffID'), $this->equalTo($staffID));
+    
+        $stmtMock->expects($this->once())
+                 ->method('execute')
+                 ->willReturn(true);
+    
+        $stmtMock->expects($this->once())
+                 ->method('fetchAll')
+                 ->willReturn([]); // Simulate no results found for invalid staff ID
+    
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        // Act
+        $requestDAO = new RequestDAO($connMock);
+        $result = $requestDAO->retrievePendingArrangements($staffID);
+    
+        // Assert
+        $this->assertEmpty($result); // Expect an empty result set for an invalid staff ID
+    }
+
+    // RD 24: Positive test for submitRecurringWFHRequest() 
+    public function testSubmitRecurringWFHRequest_SuccessfulSubmission() {
+        $userID = 160290;
+        $dept = 'HR';
+        $startDate = '2024-11-01';
+        $endDate = '2024-11-10';
+        $recurring_days = ['Monday', 'Wednesday', 'Friday'];
+        $time_slot = 'Full Day';
+        $reason = 'Medical reasons';
+    
+        // Calculate the expected number of insertions based on the date range and recurring days
+        $expectedInsertions = 0;
+        $current_date = strtotime($startDate);
+        $end_date = strtotime($endDate);
+    
+        while ($current_date <= $end_date) {
+            $day_of_week = date('l', $current_date);
+            if (in_array($day_of_week, $recurring_days)) {
+                $expectedInsertions++;
+            }
+            $current_date = strtotime('+1 day', $current_date);
+        }
+    
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+    
+        // Set up expectations for prepare, bindParam, and execute methods
+        $pdoMock->expects($this->exactly($expectedInsertions))
+                ->method('prepare')
+                ->willReturn($stmtMock);
+    
+        $stmtMock->expects($this->exactly($expectedInsertions * 5)) // 5 parameters per insertion
+                 ->method('bindParam')
+                 ->withConsecutive(
+                     [$this->equalTo(':userID'), $this->equalTo($userID)],
+                     [$this->equalTo(':dept'), $this->equalTo($dept)],
+                     [$this->equalTo(':arrangement_date')],
+                     [$this->equalTo(':time_slot'), $this->equalTo($time_slot)],
+                     [$this->equalTo(':reason'), $this->equalTo($reason)]
+                 );
+    
+        $stmtMock->expects($this->exactly($expectedInsertions))
+                 ->method('execute')
+                 ->willReturn(true); // Simulate successful insertions
+    
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+    
+        // Act
+        $requestDAO = new RequestDAO($connMock);
+        $result = $requestDAO->submitRecurringWFHRequest($userID, $dept, $startDate, $endDate, $recurring_days, $time_slot, $reason);
+    
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    // RD 25: Negative test for submitRecurringWFHRequest() 
+    public function testSubmitRecurringWFHRequest_InsertionFailure() {
+        // Arrange
+        $userID = 160290;
+        $dept = 'HR';
+        $startDate = '2024-11-01'; // Start date (Friday)
+        $endDate = '2024-11-05'; // End date (Tuesday)
+        $recurring_days = ['Friday', 'Monday']; // Recurring days to match
+        $time_slot = 'Full Day'; // Time slot
+        $reason = 'Working from home'; // Reason for request
+
+        // Create a mock for PDO
+        $pdoMock = $this->createMock(PDO::class);
+        $stmtMock = $this->createMock(PDOStatement::class);
+
+        // Expect the prepare method to be called
+        $pdoMock->expects($this->once())
+                ->method('prepare')
+                ->willReturn($stmtMock);
+
+        // Expect bindParam to be called for each parameter being bound
+        $stmtMock->expects($this->exactly(5)) // There are 5 bindParam calls
+                 ->method('bindParam');
+
+        // Expect execute to throw an exception to simulate an insertion failure
+        $stmtMock->expects($this->once()) // Expect execute to be called once
+                 ->method('execute')
+                 ->will($this->throwException(new PDOException('Insert failed'))); // Simulate failure
+
+        // Mock the connection manager to return the mocked PDO
+        $connMock = $this->createMock(ConnectionManager::class);
+        $connMock->expects($this->once())
+                 ->method('getConnection')
+                 ->willReturn($pdoMock);
+
+        // Act
+        $requestDAO = new RequestDAO($connMock);
+        $result = $requestDAO->submitRecurringWFHRequest($userID, $dept, $startDate, $endDate, $recurring_days, $time_slot, $reason);
+
+        // Assert
+        $this->assertFalse($result); // Expecting false due to insertion failure
+    }
+
+    // RD 26: Positive test for submitWFHRequest()
+    public function testSubmitWFHRequest_SuccessfulSubmission()
+    {
+        // Mock the connection manager
+        $mockConnManager = $this->createMock(ConnectionManager::class);
+        
+        // Mock the PDO object
+        $mockPdo = $this->createMock(PDO::class);
+        
+        // Mock the PDOStatement
+        $mockStmt = $this->createMock(PDOStatement::class);
+        
+        // Set up the expected behavior for the PDO::prepare method
+        $mockConnManager->expects($this->once())
+            ->method('getConnection')
+            ->willReturn($mockPdo);
+        
+        $mockPdo->expects($this->once())
+            ->method('prepare')
+            ->willReturn($mockStmt);
+        
+        // Set up the expected behavior for the PDOStatement::bindParam method
+        $mockStmt->expects($this->exactly(6)) // Expect to be called 6 times for 6 parameters
+            ->method('bindParam')
+            ->willReturn(true);
+        
+        // Set up the expected behavior for the PDOStatement::execute method
+        $mockStmt->expects($this->once())
+            ->method('execute')
+            ->willReturn(true); // Simulate a successful execution
+
+        // Instantiate the class that contains the submitWFHRequest method
+        $requestDAO = new RequestDAO($mockConnManager);
+
+        // Define the parameters for the method
+        $userID = 1;
+        $requestID = 1001;
+        $dept = "IT";
+        $leave_date = "2024-11-10";
+        $leave_time = "Full Day";
+        $reason = "Working from home";
+
+        // Call the method under test
+        $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
+
+        // Assert that the result is true
+        $this->assertTrue($result);
+    }
+
+    // RD 27: Negative test for submitWFHRequest() 
+    public function testSubmitWFHRequest_FailedSubmission()
+    {
+        // Mock the connection manager
+        $mockConnManager = $this->createMock(ConnectionManager::class);
+        
+        // Mock the PDO object
+        $mockPdo = $this->createMock(PDO::class);
+        
+        // Mock the PDOStatement
+        $mockStmt = $this->createMock(PDOStatement::class);
+        
+        // Set up the expected behavior for the PDO::prepare method
+        $mockConnManager->expects($this->once())
+            ->method('getConnection')
+            ->willReturn($mockPdo);
+        
+        $mockPdo->expects($this->once())
+            ->method('prepare')
+            ->willReturn($mockStmt);
+        
+        // Set up the expected behavior for the PDOStatement::bindParam method
+        $mockStmt->expects($this->exactly(6)) // Expect to be called 6 times for 6 parameters
+            ->method('bindParam')
+            ->willReturn(true);
+        
+        // Simulate a failure in the execute method
+        $mockStmt->expects($this->once())
+            ->method('execute')
+            ->will($this->throwException(new PDOException("SQL error: Insert failed")));
+
+        // Instantiate the class that contains the submitWFHRequest method
+        $requestDAO = new RequestDAO($mockConnManager);
+
+        // Define the parameters for the method
+        $userID = 1;
+        $requestID = 1001;
+        $dept = "IT";
+        $leave_date = "2024-11-10";
+        $leave_time = "Full Day";
+        $reason = "Working from home";
+
+        // Call the method under test
+        $result = $requestDAO->submitWFHRequest($userID, $requestID, $dept, $leave_date, $leave_time, $reason);
+
+        // Assert that the result is false
+        $this->assertFalse($result);
+    }  
 }
