@@ -84,6 +84,30 @@
         tr:hover {
             background-color: #f1f1f1;
         }
+
+        /* Adjust padding and font size for smaller screens */
+        @media (max-width: 768px) {
+            th, td, form {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            th, td, form {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+        @media screen and (max-width: 480px) {
+            th, td, form {
+                font-size: 4vw;
+            }
+
+            .navbar img {
+                height: 5vh;
+            }
+        }
     </style>
     <script>
       
@@ -159,3 +183,4 @@
     ?>
 </body>
 </html>
+
