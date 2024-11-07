@@ -223,7 +223,7 @@
     // For non-HR users, limit to their own department
     if ($userDept != 'HR') {
         $employeesInDept = $dao->retrieveEmployeesInSameDept($userDept);
-        echo "<br>Employees reporting to <strong>$userID</strong><br>";
+        echo "<br>Colleagues in <strong>{$userDept}</strong><br>";
     } else {
         // For HR users, filter by selected department
         if ($selectedDept == 'All Departments') {
