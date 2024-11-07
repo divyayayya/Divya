@@ -247,7 +247,7 @@
             if ($arrangement && isset($arrangement['Working_Location'])) {
                 $workingLocation = $arrangement['Working_Location'];
                 $arrangementTime = $arrangement['Arrangement_Time'];
-                echo "<tr bgcolor='fbec5d'><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>
+                echo "<tr><td>{$emp['Staff_ID']}</td><td>{$emp['Staff_FName']} {$emp['Staff_LName']}</td>
                 <td>{$emp['Dept']}</td><td>{$emp['Position']}</td><td>{$emp['Country']}</td><td>{$workingLocation}</td><td>{$arrangementTime}</td></tr>";
             } else {
                 $workingLocation = 'In-Office';  // Default if no arrangement is found
