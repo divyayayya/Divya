@@ -406,7 +406,7 @@
             // Create and submit the form
             var form = document.createElement("form");
             form.method = "POST";
-            form.action = "location_details.php";
+            form.action = "underlings_location_details.php";
             form.target = "_blank";  // Open in a new tab
 
             var input = document.createElement("input");
