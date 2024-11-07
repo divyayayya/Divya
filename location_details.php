@@ -222,7 +222,7 @@
 <?php
     // For non-HR users, limit to their own department
     if ($userDept != 'HR') {
-        $employeesInDept = $dao->retrieveUnderlings($userID);
+        $employeesInDept = $dao->retrieveEmployeesInSameDept($userDept);
         echo "<br>Employees reporting to <strong>$userID</strong><br>";
     } else {
         // For HR users, filter by selected department
