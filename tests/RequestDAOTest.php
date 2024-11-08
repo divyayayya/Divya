@@ -1103,4 +1103,4 @@ class RequestDAOTest extends TestCase {
         // Assert that the result is false
         $this->assertFalse($result);
     }  
-}
+} 
