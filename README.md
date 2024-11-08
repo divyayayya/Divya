@@ -6,7 +6,7 @@
 Access the starting page from login.php
 
 # Unit Testing
-1. Install Composer - Go to [text](https://getcomposer.org/download/) and install Composer-Setup.exe. 
+1. Install Composer - Go to [Composer Website](https://getcomposer.org/download/) and install Composer-Setup.exe. 
 2. After this, Composer should work from any directory
 3. Open a Terminal, navigate to the root directory of the folder 'Divya' and enter: composer require --dev phpunit/phpunit
 4. After this, PHPUnit should be installed
